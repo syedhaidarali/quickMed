@@ -9,7 +9,7 @@ import "leaflet/dist/leaflet.css";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename='/quickMed'>
       <div className='min-h-screen bg-gray-50'>
         <Header />
         <AppRoutes />
