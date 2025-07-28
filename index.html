@@ -18,5 +18,9 @@
     <script
       type="module"
       src="/src/main.jsx"></script>
+    <script>
+      // Redirect all 404s to index.html for React Router to handle
+      location.replace("/quickMid" + location.pathname);
+    </script>
   </body>
 </html>
