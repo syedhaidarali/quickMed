@@ -28,7 +28,7 @@ export const navLinks = [
         label: "Psychologist",
         href: "doctor/psychologist",
       },
-      { label: "Urologist", href: "urologist" },
+      { label: "Urologist", href: "doctor/urologist" },
       {
         label: "General Physician",
         href: "doctor/general-physician",
@@ -116,7 +116,7 @@ export const doctors = [
     reviews: 245,
     hospital: "Aga Khan Hospital",
     location: "Karachi",
-    image: "/images/doctor1.jpg",
+    image: `${import.meta.env.BASE_URL}images/doctor1.jpg`,
     consultationFee: 2500,
     availability: "Available Today",
   },
@@ -129,7 +129,7 @@ export const doctors = [
     reviews: 189,
     hospital: "Shaukat Khanum Hospital",
     location: "Lahore",
-    image: "/images/doctor2.jpg",
+    image: `${import.meta.env.BASE_URL}/images/doctor2.jpg`,
     consultationFee: 3000,
     availability: "Available Tomorrow",
   },
@@ -142,7 +142,7 @@ export const doctors = [
     reviews: 321,
     hospital: "PIMS Hospital",
     location: "Islamabad",
-    image: "/images/doctor3.jpg",
+    image: `${import.meta.env.BASE_URL}/images/doctor3.jpg`,
     consultationFee: 2800,
     availability: "Available Today",
   },
@@ -155,7 +155,7 @@ export const doctors = [
     reviews: 156,
     hospital: "Civil Hospital",
     location: "Karachi",
-    image: "/images/doctor4.jpg",
+    image: `${import.meta.env.BASE_URL}/images/doctor4.jpg`,
     consultationFee: 2200,
     availability: "Available Today",
   },
@@ -384,7 +384,7 @@ export const hospitals = [
     address: "Stadium Road, Karachi",
     contact: "021-111-911-911",
     beds: 500,
-    image: "/images/hospital1.jpeg",
+    image: `${import.meta.env.BASE_URL}/images/hospital1.jpeg`,
   },
   {
     name: "Shaukat Khanum Hospital",
@@ -393,7 +393,7 @@ export const hospitals = [
     address: "Johar Town, Lahore",
     contact: "042-3590-5000",
     beds: 300,
-    image: "/images/hospital2.jpeg",
+    image: `${import.meta.env.BASE_URL}/images/hospital2.jpeg`,
   },
   // Add more hospitals as needed
 ];
@@ -405,7 +405,7 @@ export const medicines = [
     type: "Tablet",
     description: "Pain reliever and fever reducer.",
     price: 50,
-    image: "/images/medicine1.jpg",
+    image: `${import.meta.env.BASE_URL}/images/medicine1.jpg`,
   },
   {
     name: "Amoxicillin",
@@ -413,7 +413,7 @@ export const medicines = [
     type: "Capsule",
     description: "Antibiotic for bacterial infections.",
     price: 120,
-    image: "/images/medicine2.jpg",
+    image: `${import.meta.env.BASE_URL}/images/medicine2.jpg`,
   },
   // Add more medicines as needed
 ];
@@ -426,7 +426,7 @@ export const labs = [
     address: "Main Boulevard, Lahore",
     contact: "042-111-456-789",
     tests: 120,
-    image: "/images/lab1.jpg",
+    image: `${import.meta.env.BASE_URL}/images/lab1.jpg`,
   },
   {
     name: "Excel Labs",
@@ -435,7 +435,7 @@ export const labs = [
     address: "Blue Area, Islamabad",
     contact: "051-111-222-333",
     tests: 80,
-    image: "/images/lab2.jpg",
+    image: `${import.meta.env.BASE_URL}/images/lab2.jpg`,
   },
   // Add more labs as needed
 ];

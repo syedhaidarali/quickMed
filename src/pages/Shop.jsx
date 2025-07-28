@@ -7,7 +7,7 @@ const products = [
     name: "Stethoscope",
     price: 1500,
     image:
-      "https://images.unsplash.com/photo-1511174511562-5f97f4f4e0c8?auto=format&fit=facearea&w=256&q=80",
+      "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=facearea&w=256&q=80",
   },
   {
     name: "Thermometer",

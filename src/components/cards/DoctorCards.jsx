@@ -1,6 +1,7 @@
 /** @format */
 
 import React from "react";
+import { Link } from "react-router-dom";
 
 const DoctorCard = ({ doctor }) => {
   return (
@@ -63,12 +64,16 @@ const DoctorCard = ({ doctor }) => {
         </div>
 
         <div className='grid grid-cols-2 gap-2'>
-          <button className='px-3 py-2 text-sm border border-emerald-600 text-emerald-600 rounded-md hover:bg-emerald-50 transition-colors duration-200'>
+          <Link
+            to={`/doctor/profile/${doctor.slug}`}
+            className='px-3 py-2 text-sm border border-emerald-600 text-emerald-600 rounded-md hover:bg-emerald-50 transition-colors duration-200 text-center'>
             View Profile
-          </button>
-          <button className='px-3 py-2 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors duration-200'>
+          </Link>
+          <Link
+            to={`/doctor/book/${doctor.slug}`}
+            className='px-3 py-2 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors duration-200 text-center'>
             Book Now
-          </button>
+          </Link>
         </div>
       </div>
     </div>

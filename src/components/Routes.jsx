@@ -16,6 +16,10 @@ import AllDoctors from "../pages/AllDoctors";
 import AllHospitals from "../pages/AllHospitals";
 import AllLabs from "../pages/AllLabs";
 import AllMedicines from "../pages/AllMedicines";
+import DoctorProfile from "../pages/DoctorProfile";
+import BookNow from "../pages/BookNow";
+import HospitalDoctors from "../pages/HospitalDoctors";
+import BookAppointmentHospital from "../pages/BookAppointmentHospital";
 
 const AppRoutes = () => (
   <Routes>
@@ -82,6 +86,22 @@ const AppRoutes = () => (
     <Route
       path='/register/doctor'
       element={<JoinAsDoctor />}
+    />
+    <Route
+      path='/doctor/profile/:slug'
+      element={<DoctorProfile />}
+    />
+    <Route
+      path='/doctor/book/:slug'
+      element={<BookNow />}
+    />
+    <Route
+      path='/hospitals/:slug/doctors'
+      element={<HospitalDoctors />}
+    />
+    <Route
+      path='/hospitals/:slug/book'
+      element={<BookAppointmentHospital />}
     />
   </Routes>
 );

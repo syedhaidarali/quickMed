@@ -43,7 +43,7 @@ const Header = () => {
             className='flex items-center'
             onClick={handleRoute}>
             <img
-              src='/images/logo.png'
+              src={`${import.meta.env.BASE_URL}/images/logo.png`}
               alt='logo'
               className='w-[120px] h-auto'
             />

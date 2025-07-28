@@ -1,6 +1,7 @@
 /** @format */
 
 import React from "react";
+import { Link } from "react-router-dom";
 
 const HospitalCard = ({ hospital }) => {
   return (
@@ -28,12 +29,16 @@ const HospitalCard = ({ hospital }) => {
       <div className='text-gray-700 text-sm mb-2'>
         <span className='font-semibold'>Beds:</span> {hospital.beds}
       </div>
-      <button className='px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors duration-200 font-medium w-full mb-2'>
+      <Link
+        to={`/hospitals/${hospital.slug}/book`}
+        className='px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors duration-200 font-medium w-full mb-2 text-center'>
         Book Appointment
-      </button>
-      <button className='px-4 py-2 border border-emerald-600 text-emerald-600 rounded-md hover:bg-emerald-50 transition-colors duration-200 font-medium w-full'>
+      </Link>
+      <Link
+        to={`/hospitals/${hospital.slug}/doctors`}
+        className='px-4 py-2 border border-emerald-600 text-emerald-600 rounded-md hover:bg-emerald-50 transition-colors duration-200 font-medium w-full text-center'>
         View Doctors
-      </button>
+      </Link>
     </div>
   );
 };
