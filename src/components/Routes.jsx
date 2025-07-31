@@ -5,11 +5,11 @@ import { Routes, Route } from "react-router-dom";
 import Home from "../pages/home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import DoctorLogin from "../pages/DoctorLogin";
 import DoctorDetail from "../pages/DoctorDetail";
 import HospitalDetail from "../pages/HospitalDetail";
 import MedicineDetail from "../pages/MedicineDetail";
 import LabDetail from "../pages/LabDetail";
-import Surgeries from "../pages/Surgeries";
 import Shop from "../pages/Shop";
 import JoinAsDoctor from "../pages/JoinAsDoctor";
 import AllDoctors from "../pages/AllDoctors";
@@ -30,6 +30,10 @@ const AppRoutes = () => (
     <Route
       path='/login'
       element={<Login />}
+    />
+    <Route
+      path='/doctor/login'
+      element={<DoctorLogin />}
     />
     <Route
       path='/register'
@@ -72,11 +76,7 @@ const AppRoutes = () => (
       path='/lab/:slug'
       element={<LabDetail />}
     />
-    {/* Surgeries */}
-    <Route
-      path='/surgeries'
-      element={<Surgeries />}
-    />
+
     {/* Shop */}
     <Route
       path='/shop'

@@ -2,12 +2,21 @@
 
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import InputField from "../components/InputField";
+import { formatCNIC } from "../helpers/CNICFormat";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const initialState = {};
+  const [form, setForm] = useState(initialState);
+
+  const handleCnicChange = (e) => {
+    const formattedCNIC = formatCNIC(e.target.value);
+    setForm((prev) => ({ ...prev, cnic: formattedCNIC }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,74 +32,53 @@ const Register = () => {
         <form
           className='space-y-6'
           onSubmit={handleSubmit}>
-          <div>
-            <label
-              htmlFor='name'
-              className='block text-sm font-medium text-emerald-700'>
-              Name
-            </label>
-            <input
-              id='name'
-              name='name'
-              type='text'
-              autoComplete='name'
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className='appearance-none rounded-md relative block w-full px-3 py-2 border border-emerald-200 placeholder-emerald-300 text-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500'
-            />
-          </div>
-          <div>
-            <label
-              htmlFor='email'
-              className='block text-sm font-medium text-emerald-700'>
-              Email address
-            </label>
-            <input
-              id='email'
-              name='email'
-              type='email'
-              autoComplete='email'
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className='appearance-none rounded-md relative block w-full px-3 py-2 border border-emerald-200 placeholder-emerald-300 text-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500'
-            />
-          </div>
-          <div>
-            <label
-              htmlFor='password'
-              className='block text-sm font-medium text-emerald-700'>
-              Password
-            </label>
-            <input
-              id='password'
-              name='password'
-              type='password'
-              autoComplete='new-password'
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className='appearance-none rounded-md relative block w-full px-3 py-2 border border-emerald-200 placeholder-emerald-300 text-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500'
-            />
-          </div>
-          <div>
-            <label
-              htmlFor='confirmPassword'
-              className='block text-sm font-medium text-emerald-700'>
-              Confirm Password
-            </label>
-            <input
-              id='confirmPassword'
-              name='confirmPassword'
-              type='password'
-              autoComplete='new-password'
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className='appearance-none rounded-md relative block w-full px-3 py-2 border border-emerald-200 placeholder-emerald-300 text-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500'
-            />
-          </div>
+          <InputField
+            label='Name'
+            type='text'
+            name='name'
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            autoComplete='name'
+          />
+          <InputField
+            label='Email address'
+            type='email'
+            name='email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete='email'
+          />
+          <InputField
+            label='CNIC'
+            name='cnic'
+            value={form.cnic}
+            onChange={handleCnicChange}
+            required
+            placeholder='xxxxx-xxxxxxx-x'
+            maxLength={15}
+            onlyNumbers
+            allowDashes
+          />
+          <InputField
+            label='Password'
+            type='password'
+            name='password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete='new-password'
+          />
+          <InputField
+            label='Confirm Password'
+            type='password'
+            name='confirmPassword'
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            autoComplete='new-password'
+          />
           <div>
             <button
               type='submit'
@@ -104,6 +92,9 @@ const Register = () => {
             Already have an account?
           </span>
           <Link
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
             to='/login'
             className='ml-1 text-emerald-600 hover:underline font-medium'>
             Login

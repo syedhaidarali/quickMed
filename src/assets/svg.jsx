@@ -133,7 +133,7 @@ export const PhoneIcon = () => {
 export const Map = () => {
   return (
     <svg
-      class='ml-0'
+      className='ml-0'
       width='14.01'
       height='17.513'
       viewBox='0 0 18 22'

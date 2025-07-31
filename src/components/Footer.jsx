@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <footer className='bg-emerald-900 text-emerald-100'>
       <div className='container mx-auto px-4 sm:px-6 lg:px-8 py-12'>
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
           {footerSections.map((section, index) => (
             <div
               key={index}
@@ -54,7 +54,7 @@ const Footer = () => {
                   />
                 </svg>
                 <span className='text-xl font-bold text-emerald-50'>
-                  Marham
+                  quickMed
                 </span>
               </div>
               <p className='text-emerald-200 mt-2'>
@@ -77,7 +77,7 @@ const Footer = () => {
 
           <div className='text-center mt-8 pt-8 border-t border-emerald-700'>
             <p className='text-emerald-200 text-sm'>
-              © 2024 Marham. All rights reserved. |
+              © 2024 Sadeeq and Haider. All rights reserved. |
               <Link
                 to='#'
                 className='hover:text-white ml-1'>

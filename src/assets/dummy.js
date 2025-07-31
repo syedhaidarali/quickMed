@@ -1,12 +1,4 @@
 /** @format */
-// export const navItems = [
-//   { name: "Find Doctors", href: "#" },
-//   { name: "Book Appointment", href: "#" },
-//   { name: "Consult Online", href: "#" },
-//   { name: "Hospitals", href: "#" },
-//   { name: "Labs", href: "#" },
-//   { name: "Medicines", href: "#" },
-// ];
 
 export const navLinks = [
   {
@@ -73,7 +65,7 @@ export const navLinks = [
       },
     ],
   },
-  { label: "Surgeries", href: "/surgeries" },
+
   {
     label: "Medicines",
     dropdown: [
@@ -103,7 +95,7 @@ export const navLinks = [
       { label: "All Labs", href: "/labs" },
     ],
   },
-  { label: "Join as Doctor", href: "/register/doctor" },
+  // { label: "Doctor", href: "/register/doctor" },
 ];
 
 export const doctors = [
@@ -190,13 +182,6 @@ export const features = [
 
 export const footerSections = [
   {
-    title: "Download Marham App",
-    links: [
-      { name: "Download from App Store", href: "#" },
-      { name: "Download from Google Play", href: "#" },
-    ],
-  },
-  {
     title: "For Patients",
     links: [
       { name: "Find Doctors", href: "#" },
@@ -216,7 +201,7 @@ export const footerSections = [
     ],
   },
   {
-    title: "Company",
+    title: "Pages",
     links: [
       { name: "About Us", href: "#" },
       { name: "Careers", href: "#" },
@@ -367,13 +352,51 @@ export const cities = [
 ];
 
 export const specialities = [
-  "Dermatologist -  ماہر امراض جلد",
-  "Gynecologist - ماہر امراض نسواں",
-  "Urologist - نظامِ اخراج کے ماہر ڈاکٹر",
-  "Gastroenterologist - معدہ کے ماہر ڈاکٹر",
-  "General Practitioner - جنرل ڈاکٹر",
-  "Pediatrician - ماہر نفسیات (ڈاکٹر)",
-  "Psychiatrist - بچوں کے ماہر ڈاکٹر",
+  "Allergy & Immunology - الرجی اور مدافعت کے امراض کے ماہر",
+  "Anesthesiology & Critical Care - بے ہوشی اور تنقیدی نگہداشت",
+  "Cardiology - ماہر امراض قلب",
+  "Cardiothoracic Surgery - کارڈیو تھوراسک سرجری",
+  "Clinical Biochemical Genetics - کلینیکل بائیوکیمیکل جینیات",
+  "Dermatology - جلد کے امراض کے ماہر",
+  "Emergency Medicine - ایمرجنسی میڈیسن",
+  "Endocrinology - غدود داخلیہ کے امراض",
+  "Family Medicine - فیملی میڈیسن (خاندان ڈاکٹر)",
+  "Forensic Pathology - قانونی تشخیصی علم",
+  "Gastroenterology & Hepatology - معدہ، آنتوں اور جگر کے امراض",
+  "Geriatric Medicine - بزرگوں کے امراض کے ماہر",
+  "Hematology / Medical Oncology - خون اور کینسر کے امراض کے ماہر",
+  "Infectious Diseases - متعدی بیماریوں کے ماہر",
+  "Internal Medicine - داخلیہ کے امراض کے ماہر",
+  "Interventional Cardiology - مداخلتی قلبی امراض",
+  "Neonatology (Pediatric Subspecialty) - نوزائیدہ بچوں کے امراض",
+  "Nephrology - گردے کے امراض کے ماہر",
+  "Neurology - اعصابی نظام کے امراض کے ماہر",
+  "Neurosurgery - نیوروسرجری (دماغ و ریڑھ کی ہڈی)",
+  "Nuclear Medicine - جوہری ادویات کے طبی استعمال",
+  "Obstetrics & Gynecology (OB/GYN) - زچہ و حمل و نسواں کے امراض",
+  "Ophthalmology - چشم کے امراض کے ماہر",
+  "Oral & Maxillofacial Surgery - منہ و چہرے کی سرجری",
+  "Otorhinolaryngology (ENT) - کان، ناک، گلا کے ماہر",
+  "Orthopedic Surgery - ہڈیوں اور جوڑوں کے سرجن",
+  "Palliative Medicine - آرام افزا علاج",
+  "Pathology (Anatomical & Clinical) - تشخیصی علم",
+  "Physical Medicine & Rehabilitation (PM&R) - بحالی معالجے کے ماہر",
+  "Plastic, Reconstructive & Aesthetic Surgery - پلاسٹک و جمالیاتی سرجری",
+  "Preventive & Lifestyle Medicine - روک تھام اور طرز زندگی طب",
+  "Psychiatry & Child-Adolescent Psychiatry - ماہر نفسیات",
+  "Public Health & Occupational Medicine - عوامی صحت اور پیشہ ورانہ طب",
+  "Pulmonology / Respiratory Medicine - پھیپھڑوں کے امراض کے ماہر",
+  "Radiation Oncology - شعاعی علاج برائے کینسر",
+  "Radiology & Interventional Radiology - تشخیصی اور مداخلتی ریڈیالوجی",
+  "Rheumatology - ریمیٹائیڈ اور مشترکہ امراض کے ماہر",
+  "Sleep Medicine - نیند کے امراض کے ماہر",
+  "Sports Medicine - کھیلوں اور چوٹوں کے ماہر",
+  "Thoracic Surgery - چھاتی کے داخلی اور پھیپھڑوں کی سرجری",
+  "Toxicology - زہریلے مادوں اور زہریلے امراض کے ماہر",
+  "Transfusion Medicine - خون کی منتقلی سے متعلق طب",
+  "Urology - نظام اخراج اور تولیدی نظام کے امراض کے ماہر",
+  "Vascular Surgery & Interventional Radiologists - خون کی نالیوں کے سرجن",
+  "Research Physicians - طبی تحقیق کرنے والے ڈاکٹر",
 ];
 
 export const hospitals = [

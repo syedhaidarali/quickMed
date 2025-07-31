@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import InputField from "../components/InputField";
 
-const Login = () => {
+const DoctorLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -17,13 +17,13 @@ const Login = () => {
     <div className='min-h-screen flex items-center justify-center bg-emerald-50 py-12 px-4 sm:px-6 lg:px-8'>
       <div className='max-w-md w-full bg-white p-8 rounded-xl shadow-md'>
         <h2 className='mb-6 text-center text-3xl font-extrabold text-emerald-900'>
-          Sign in to your account
+          Login as a Doctor
         </h2>
         <form
           className='space-y-6'
           onSubmit={handleSubmit}>
           <InputField
-            label='Email OR CNIC'
+            label='Email OR PMDC'
             type='email'
             name='email'
             value={email}
@@ -56,7 +56,7 @@ const Login = () => {
             onClick={() => {
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            to='/register'
+            to='/register/doctor'
             className='ml-1 text-emerald-600 hover:underline font-medium'>
             Register
           </Link>
@@ -66,4 +66,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default DoctorLogin;
