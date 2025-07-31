@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { citiesMap, cityCoordsMap, specialities } from "../assets/dummy";
 import { Map, Search } from "../assets/svg";
 import Dropdown from "./Dropdown";
@@ -9,7 +9,18 @@ const SearchBar = ({ onCitySelect }) => {
   const [city, setCity] = useState("");
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const [showSpecialities, setShowSpecialities] = useState(false);
+  const cityInputRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (cityInputRef.current && !cityInputRef.current.contains(e.target)) {
+        setSuggestions([]);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
 
   const handleCityChange = (e) => {
     const value = e.target.value;
@@ -39,7 +50,9 @@ const SearchBar = ({ onCitySelect }) => {
     <div className='p-6 max-w-4xl mx-auto mb-6 mt-10'>
       <div className='flex flex-col md:flex-row justify-center gap-4'>
         {/* City Input */}
-        <div className='relative w-full md:w-1/2'>
+        <div
+          className='relative w-full md:w-1/2'
+          ref={cityInputRef}>
           <input
             type='text'
             value={city}
