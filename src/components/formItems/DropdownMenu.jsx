@@ -1,8 +1,8 @@
 /** @format */
 
 import React from "react";
-import { DropdownIcon } from "../assets/svg";
 import { Link } from "react-router-dom";
+import { DropdownIcon } from "../../assets/svg";
 
 const DropdownMenu = ({
   link,

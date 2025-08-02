@@ -1,8 +1,8 @@
 /** @format */
 
 import React, { useState, useRef, useEffect } from "react";
-import { citiesMap, cityCoordsMap, specialities } from "../assets/dummy";
-import { Map, Search } from "../assets/svg";
+import { citiesMap, cityCoordsMap, specialities } from "../../assets/dummy";
+import { Map, Search } from "../../assets/svg";
 import Dropdown from "./Dropdown";
 
 const SearchBar = ({ onCitySelect }) => {

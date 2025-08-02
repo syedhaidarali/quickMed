@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { useState } from "react";
-import SearchBar from "../SearchBar";
+import SearchBar from "../formItems/SearchBar";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import { FaUserMd } from "react-icons/fa";
 

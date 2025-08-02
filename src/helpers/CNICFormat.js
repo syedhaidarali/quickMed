@@ -1,7 +1,6 @@
 /** @format */
 
 /**
- * Formats CNIC input as xxxxx-xxxxxxx-x
  * @param {string} value - Raw input value
  * @returns {string} - Formatted CNIC string
  */
@@ -44,18 +43,3 @@ export const validateCNIC = (cnic) => {
 export const extractCNICDigits = (cnic) => {
   return cnic.replace(/\D/g, "");
 };
-
-/*
-Test cases for formatCNIC:
-- formatCNIC("15601") → "15601"
-- formatCNIC("15601102") → "15601-102"
-- formatCNIC("156011028208") → "15601-1028208"
-- formatCNIC("1560110282085") → "15601-1028208-5"
-- formatCNIC("1560110282085abc") → "15601-1028208-5"
-
-Test cases for validateCNIC:
-- validateCNIC("15601-1028208-5") → true
-- validateCNIC("15601-1028208") → false
-- validateCNIC("1560110282085") → false
-- validateCNIC("") → false
-*/

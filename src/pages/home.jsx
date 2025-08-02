@@ -1,12 +1,12 @@
 /** @format */
 
 import React from "react";
-import Hero from "../components/home_sections/Hero";
-import ServicesGrid from "../components/home_sections/ServicesGrid";
-import FeaturesSection from "../components/home_sections/FeaturesSection";
-import StatsSection from "../components/home_sections/StatsSection";
-import TestimonialSection from "../components/home_sections/TestimonialSection";
-import DoctorSections from "../components/home_sections/DoctorSections";
+import Hero from "../components/homeSections/Hero";
+import ServicesGrid from "../components/homeSections/ServicesGrid";
+import FeaturesSection from "../components/homeSections/FeaturesSection";
+import StatsSection from "../components/homeSections/StatsSection";
+import TestimonialSection from "../components/homeSections/TestimonialSection";
+import DoctorSections from "../components/homeSections/DoctorSections";
 
 const Home = () => {
   return (

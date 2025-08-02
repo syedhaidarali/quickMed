@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import InputField from "../components/InputField";
+import InputField from "../components/formItems/InputField";
 import { formatCNIC } from "../helpers/CNICFormat";
 
 const Register = () => {

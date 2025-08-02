@@ -1,21 +1,18 @@
 /** @format */
 
 import React from "react";
-import Header from "./components/Header.jsx";
-import Footer from "./components/Footer.jsx";
-import AppRoutes from "./components/Routes.jsx";
 import { BrowserRouter } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import AppRoutes from "./Routes.jsx";
 
 function App() {
   return (
-    <BrowserRouter basename='/quickMed'>
-      <div className='min-h-screen bg-gray-50'>
-        <Header />
+    <AuthProvider>
+      <BrowserRouter basename='/quickMed'>
         <AppRoutes />
-        <Footer />
-      </div>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

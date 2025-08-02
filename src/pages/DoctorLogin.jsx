@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import InputField from "../components/InputField";
+import InputField from "../components/formItems/InputField";
 
 const DoctorLogin = () => {
   const [activeTab, setActiveTab] = useState("email"); // "email" or "pmdc"

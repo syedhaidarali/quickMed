@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { navLinks } from "../assets/dummy";
 import { CallButtonIcon, Logo, MenuIcon } from "../assets/svg";
-import DropdownMenu from "./DropdownMenu";
-import NavLink from "./NavLink";
+import DropdownMenu from "../components/formItems/DropdownMenu";
+import NavLink from "../components/formItems/NavLink";
 import { Link } from "react-router-dom";
 
 // ==========================
@@ -98,6 +98,10 @@ const Header = () => {
           href='/doctor/login'
           label='Doctor'
         />
+        <NavLink
+          href='/admin/login'
+          label='Admin'
+        />
       </div>
     </nav>
   );
@@ -138,6 +142,11 @@ const Header = () => {
         <NavLink
           href='/doctor/login'
           label='Doctor'
+          onClick={handleCloseMenu}
+        />
+        <NavLink
+          href='/admin/login'
+          label='Admin'
           onClick={handleCloseMenu}
         />
       </nav>
