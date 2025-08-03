@@ -1,17 +1,12 @@
 /** @format */
 
 import React from "react";
-import AppLayout from "./AppLayout.jsx";
-import AuthLayout from "./AuthLayout.jsx";
+import { Outlet } from "react-router-dom";
 
-const LayoutWrapper = ({ children, layout = "app" }) => {
-  switch (layout) {
-    case "auth":
-      return <AuthLayout>{children}</AuthLayout>;
-    case "app":
-    default:
-      return <AppLayout>{children}</AppLayout>;
-  }
-};
+const LayoutWrapper = ({ layout }) => (
+  <div className={`layout-wrapper ${layout || ""}`}>
+    <Outlet />
+  </div>
+);
 
 export default LayoutWrapper;

@@ -18,6 +18,7 @@ const InputField = ({
   className = "",
   onlyNumbers = false,
   allowDashes = false, // New prop for CNIC
+  checked, // For checkbox type
   ...rest
 }) => {
   const handleKeyDown = (e) => {
@@ -25,6 +26,31 @@ const InputField = ({
       e.preventDefault();
     }
   };
+
+  // Special handling for checkbox type
+  if (type === "checkbox") {
+    return (
+      <div className='flex items-center space-x-2'>
+        <input
+          id={name}
+          name={name}
+          type={type}
+          checked={checked}
+          onChange={onChange}
+          required={required}
+          className='h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500'
+          {...rest}
+        />
+        {label && (
+          <label
+            className='text-emerald-700 font-medium'
+            htmlFor={name}>
+            {label}
+          </label>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div>

@@ -33,7 +33,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className='min-h-[60vh] flex items-center justify-center bg-emerald-50 py-16 px-4'>
+    <div className='min-h-[60vh] flex items-center justify-center py-16 px-4'>
       <div className='bg-white rounded-2xl shadow-xl p-8 max-w-md w-full'>
         <div className='text-center mb-6'>
           <div className='text-4xl mb-2'>👨‍💼</div>

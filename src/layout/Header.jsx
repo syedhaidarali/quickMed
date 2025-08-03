@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { navLinks } from "../assets/dummy";
-import { CallButtonIcon, Logo, MenuIcon } from "../assets/svg";
+import { MenuIcon } from "../assets/svg";
 import DropdownMenu from "../components/formItems/DropdownMenu";
 import NavLink from "../components/formItems/NavLink";
 import { Link } from "react-router-dom";
@@ -10,18 +10,6 @@ import { Link } from "react-router-dom";
 // ==========================
 // Call Button Component
 // ==========================
-const CallButton = ({ className = "" }) => (
-  <button
-    className={`flex items-center gap-2 px-4 py-2 bg-[#004d71] text-white rounded border border-[#004d71] font-medium hover:bg-[#014e78] transition-colors duration-150 ${className}`}
-    onClick={() => {
-      window.location.href = "https://wa.me/923488597922";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }}
-    aria-label='Contact Sadeeq Khan'>
-    <CallButtonIcon />
-    Helpline
-  </button>
-);
 
 // ==========================
 // Login Button Component
@@ -92,12 +80,17 @@ const Header = () => {
         )
       )}
       <div className='flex justify-end space-x-3 w-fit ms-auto'>
-        <CallButton />
         <LoginButton className='ml-2' />
         <NavLink
           href='/doctor/login'
           label='Doctor'
         />
+        <NavLink
+          href='/register/hospital'
+          className={``}
+          label='Register Hospital'
+        />
+
         <NavLink
           href='/admin/login'
           label='Admin'
@@ -134,7 +127,7 @@ const Header = () => {
             />
           )
         )}
-        <CallButton className='mt-2' />
+
         <LoginButton
           onClick={handleCloseMenu}
           className='mt-2'
@@ -143,6 +136,11 @@ const Header = () => {
           href='/doctor/login'
           label='Doctor'
           onClick={handleCloseMenu}
+        />
+        <NavLink
+          href='/register/hospital'
+          className={`flex items-center gap-2 px-4 py-2 bg-[#004d71] text-white rounded border border-[#004d71] font-medium hover:bg-[#014e78] transition-colors duration-150 `}
+          label='Register Hospital'
         />
         <NavLink
           href='/admin/login'

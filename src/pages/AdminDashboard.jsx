@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import AdminStatsCards from "../components/admin/AdminStatsCards";
-import DoctorReviewTable from "../components/admin/DoctorReviewTable";
-import RejectDoctorModal from "../components/admin/RejectDoctorModal";
+import ReviewTable from "../components/admin/ReviewTable";
+import RejectModal from "../components/admin/RejectModal";
 import AdminHeader from "../components/admin/AdminHeader";
 
 const AdminDashboard = () => {
@@ -13,43 +13,56 @@ const AdminDashboard = () => {
     admin,
     pendingDoctors,
     approvedDoctors,
+    pendingHospitals,
+    approvedHospitals,
     approveDoctor,
     rejectDoctor,
+    approveHospital,
+    rejectHospital,
     logout,
   } = useAuth();
   const navigate = useNavigate();
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [modalType, setModalType] = useState(""); // "doctor" or "hospital"
 
   if (!admin) {
     navigate("/admin/login");
     return null;
   }
 
-  const handleApprove = async (doctorId) => {
-    const result = await approveDoctor(doctorId);
+  const handleApprove = async (itemId, type) => {
+    const approveFunction = type === "doctor" ? approveDoctor : approveHospital;
+    const result = await approveFunction(itemId);
     if (result.success) {
-      alert("Doctor approved successfully!");
+      alert(
+        `${type.charAt(0).toUpperCase() + type.slice(1)} approved successfully!`
+      );
     }
   };
 
-  const handleReject = async (doctorId) => {
+  const handleReject = async (itemId, type) => {
     if (!rejectionReason.trim()) {
       alert("Please provide a reason for rejection");
       return;
     }
-    const result = await rejectDoctor(doctorId, rejectionReason);
+    const rejectFunction = type === "doctor" ? rejectDoctor : rejectHospital;
+    const result = await rejectFunction(itemId, rejectionReason);
     if (result.success) {
-      alert("Doctor rejected successfully!");
+      alert(
+        `${type.charAt(0).toUpperCase() + type.slice(1)} rejected successfully!`
+      );
       setShowRejectModal(false);
       setRejectionReason("");
-      setSelectedDoctor(null);
+      setSelectedItem(null);
+      setModalType("");
     }
   };
 
-  const openRejectModal = (doctor) => {
-    setSelectedDoctor(doctor);
+  const openRejectModal = (item, type) => {
+    setSelectedItem(item);
+    setModalType(type);
     setShowRejectModal(true);
   };
 
@@ -62,12 +75,18 @@ const AdminDashboard = () => {
 
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
         <AdminStatsCards
-          pendingCount={pendingDoctors.length}
-          approvedCount={approvedDoctors.length}
-          totalCount={pendingDoctors.length + approvedDoctors.length}
+          pendingDoctorsCount={pendingDoctors.length}
+          approvedDoctorsCount={approvedDoctors.length}
+          totalDoctorsCount={pendingDoctors.length + approvedDoctors.length}
+          pendingHospitalsCount={pendingHospitals.length}
+          approvedHospitalsCount={approvedHospitals.length}
+          totalHospitalsCount={
+            pendingHospitals.length + approvedHospitals.length
+          }
         />
 
-        <div className='bg-white rounded-lg shadow'>
+        {/* Doctor Applications Section */}
+        <div className='bg-white rounded-lg shadow mb-8'>
           <div className='px-6 py-4 border-b border-gray-200'>
             <h2 className='text-xl font-semibold text-gray-900'>
               Pending Doctor Applications
@@ -77,25 +96,48 @@ const AdminDashboard = () => {
             </p>
           </div>
 
-          <DoctorReviewTable
-            pendingDoctors={pendingDoctors}
-            onApprove={handleApprove}
-            onReject={handleReject}
-            onOpenRejectModal={openRejectModal}
+          <ReviewTable
+            pendingItems={pendingDoctors}
+            type='doctor'
+            onApprove={(id) => handleApprove(id, "doctor")}
+            onReject={(id) => handleReject(id, "doctor")}
+            onOpenRejectModal={(item) => openRejectModal(item, "doctor")}
+          />
+        </div>
+
+        {/* Hospital Applications Section */}
+        <div className='bg-white rounded-lg shadow'>
+          <div className='px-6 py-4 border-b border-gray-200'>
+            <h2 className='text-xl font-semibold text-gray-900'>
+              Pending Hospital Applications
+            </h2>
+            <p className='text-sm text-gray-600 mt-1'>
+              Review and approve or reject hospital applications
+            </p>
+          </div>
+
+          <ReviewTable
+            pendingItems={pendingHospitals}
+            type='hospital'
+            onApprove={(id) => handleApprove(id, "hospital")}
+            onReject={(id) => handleReject(id, "hospital")}
+            onOpenRejectModal={(item) => openRejectModal(item, "hospital")}
           />
         </div>
       </div>
 
-      <RejectDoctorModal
+      <RejectModal
         isOpen={showRejectModal}
-        selectedDoctor={selectedDoctor}
+        selectedItem={selectedItem}
+        type={modalType}
         rejectionReason={rejectionReason}
         onRejectionReasonChange={(e) => setRejectionReason(e.target.value)}
-        onReject={() => handleReject(selectedDoctor.id)}
+        onReject={() => handleReject(selectedItem.id, modalType)}
         onCancel={() => {
           setShowRejectModal(false);
           setRejectionReason("");
-          setSelectedDoctor(null);
+          setSelectedItem(null);
+          setModalType("");
         }}
       />
     </div>

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import InputField from "../components/formItems/InputField";
 
 const DoctorLogin = () => {
-  const [activeTab, setActiveTab] = useState("email"); // "email" or "pmdc"
+  const [activeTab, setActiveTab] = useState("email");
 
   // Email login state
   const [email, setEmail] = useState("");
@@ -28,8 +28,8 @@ const DoctorLogin = () => {
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-emerald-50 py-12 px-4 sm:px-6 lg:px-8'>
-      <div className='max-w-md w-full bg-white p-8 rounded-xl shadow-md'>
+    <div className='min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
+      <div className='md:min-w-md w-full bg-white p-8 rounded-xl shadow-md'>
         <h2 className='mb-6 text-center text-3xl font-extrabold text-emerald-900'>
           Login as a Doctor
         </h2>

@@ -3,15 +3,15 @@
 import React, { useState } from "react";
 import InputField from "../components/formItems/InputField";
 import Dropdown from "../components/formItems/Dropdown";
-import { specialities } from "../assets/dummy";
-import { validate } from "../helpers/Validation";
+import {
+  DEGREE_OPTIONS,
+  GENDERS,
+  RELIGIONS,
+  specialities,
+} from "../assets/dummy";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { formatCNIC } from "../helpers/CNICFormat";
-
-const RELIGIONS = ["Islam", "Christianity", "Hinduism", "Sikhism", "Other"];
-const GENDERS = ["Male", "Female", "Other"];
-const DEGREE_OPTIONS = ["MBBS", "BDS"];
 
 const JoinAsDoctor = () => {
   const [form, setForm] = useState({
@@ -22,8 +22,10 @@ const JoinAsDoctor = () => {
     religion: "",
     gender: "",
     pmdcVerified: false,
+    pmdcNumber: "",
     mainDegree: "",
     fullAddress: "",
+    city: "",
     hospital: "",
     experience: "",
     cnic: "",
@@ -56,42 +58,7 @@ const JoinAsDoctor = () => {
   };
 
   // Handle form submit
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const validationResult = validate(form);
-    setErrors(validationResult.errors);
-
-    if (!validationResult.isValid) return;
-
-    // Send the form data as a single object to the AuthContext
-    const result = await DoctorSignUp(form);
-
-    if (result && result.success) {
-      // Handle successful signup
-      console.log("Doctor signup successful!");
-      setShowSuccess(true);
-      setForm({
-        fullName: "",
-        email: "",
-        speciality: "",
-        phone: "",
-        religion: "",
-        gender: "",
-        pmdcVerified: false,
-        mainDegree: "",
-        fullAddress: "",
-        hospital: "",
-        experience: "",
-        cnic: "",
-        password: "",
-        confirmPassword: "",
-        agreement: false,
-      });
-    } else if (result && result.error) {
-      // Handle error
-      console.error("Signup failed:", result.error);
-    }
-  };
+  const handleSubmit = async (e) => {};
 
   return (
     <div className='min-h-[60vh] flex items-center justify-center bg-emerald-50 py-16 px-4'>
@@ -160,7 +127,7 @@ const JoinAsDoctor = () => {
                   value={form.speciality}
                   onChange={(val) => handleDropdown("speciality", val)}
                   placeholder='Select Speciality'
-                  showUrdu={true}
+                  // showUrdu={true}
                   inputStyle='text-[11px]'
                   placeholderStyle='text-[16px]'
                   // urduTextStyle='text-[11px] font-bold'
@@ -253,6 +220,14 @@ const JoinAsDoctor = () => {
                 required
               />
               <InputField
+                label='City'
+                name='city'
+                value={form.city}
+                onChange={handleChange}
+                required
+                placeholder='Enter City Name'
+              />
+              <InputField
                 label='Experience (years)'
                 name='experience'
                 type='number'
@@ -313,6 +288,19 @@ const JoinAsDoctor = () => {
                   PMDC Verified
                 </label>
               </div>
+              {form.pmdcVerified && (
+                <div className='md:col-span-2'>
+                  <InputField
+                    label='PMDC Number'
+                    name='pmdcNumber'
+                    value={form.pmdcNumber}
+                    onChange={handleChange}
+                    required
+                    placeholder='Enter PMDC Number'
+                    // className='md:col-span-3'
+                  />
+                </div>
+              )}
               {/* Agreement radio/switch */}
               <div className='flex items-center  space-x-2 mt-4'>
                 <input
