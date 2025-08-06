@@ -23,3 +23,4 @@ export { default as BookAppointmentHospital } from "./BookAppointmentHospital.js
 // Admin Pages
 export { default as AdminLogin } from "./AdminLogin.jsx";
 export { default as AdminDashboard } from "./AdminDashboard.jsx";
+export { default as DoctorDocumentUpload } from "./DoctorDocumentUpload.jsx";

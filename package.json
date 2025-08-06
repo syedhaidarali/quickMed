@@ -13,18 +13,25 @@
   },
   "dependencies": {
     "@fontsource/noto-nastaliq-urdu": "^5.2.6",
+    "@hookform/resolvers": "^5.2.1",
+    "@radix-ui/react-dialog": "^1.1.14",
     "@react-google-maps/api": "^2.20.7",
     "@tailwindcss/vite": "^4.1.11",
+    "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.535.0",
+    "next-themes": "^0.4.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.62.0",
     "react-icons": "^5.5.0",
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.6.3",
-    "tailwind-merge": "^3.3.1"
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.3.1",
+    "zod": "^4.0.15"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

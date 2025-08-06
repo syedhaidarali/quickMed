@@ -24,6 +24,7 @@ import {
   BookNow,
   HospitalDoctors,
   BookAppointmentHospital,
+  DoctorDocumentUpload,
 } from "./pages/pages.js";
 
 const AppRoutes = () => (
@@ -104,6 +105,10 @@ const AppRoutes = () => (
       <Route
         path='/doctor/login'
         element={<DoctorLogin />}
+      />
+      <Route
+        path='/doctor/upload-documents'
+        element={<DoctorDocumentUpload />}
       />
       <Route
         path='/admin/login'

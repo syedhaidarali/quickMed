@@ -12,17 +12,15 @@ export const formatCNIC = (value) => {
   digits = digits.slice(0, 13);
 
   // Format as xxxxx-xxxxxxx-x
-  let formatted = digits;
-
-  if (digits.length > 5) {
-    formatted = digits.slice(0, 5) + "-" + digits.slice(5);
+  if (digits.length <= 5) {
+    return digits;
+  } else if (digits.length <= 12) {
+    return digits.slice(0, 5) + "-" + digits.slice(5);
+  } else {
+    return (
+      digits.slice(0, 5) + "-" + digits.slice(5, 12) + "-" + digits.slice(12)
+    );
   }
-
-  if (digits.length > 12) {
-    formatted = formatted.slice(0, 13) + "-" + formatted.slice(13);
-  }
-
-  return formatted;
 };
 
 /**

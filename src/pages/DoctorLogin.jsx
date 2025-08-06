@@ -1,32 +1,42 @@
 /** @format */
-
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputField from "../components/formItems/InputField";
+import { useAuth } from "../context/AuthContext";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { doctorLoginSchema } from "../schemas/doctorLoginSchema";
+import Modal from "../modals/Modal";
+import { useDoctor } from "../context/DoctorContext";
 
 const DoctorLogin = () => {
   const [activeTab, setActiveTab] = useState("email");
+  const { DoctorLogin, loading } = useDoctor();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [loginMessage, setLoginMessage] = useState("");
+  const navigate = useNavigate("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: zodResolver(doctorLoginSchema),
+    mode: "onChange",
+  });
 
-  // Email login state
-  const [email, setEmail] = useState("");
-  const [emailPassword, setEmailPassword] = useState("");
-
-  // PMDC login state
-  const [pmdc, setPmdc] = useState("");
-  const [pmdcPassword, setPmdcPassword] = useState("");
-
-  const handleEmailSubmit = (e) => {
-    e.preventDefault();
-    // Handle email login logic here
-    console.log("Email login:", { email, password: emailPassword });
+  const onSubmit = async (data) => {
+    const msg = await DoctorLogin({
+      identifier: data.identifier,
+      password: data.password,
+    });
+    if (msg) {
+      console.log(msg);
+      setModalOpen(true);
+      setLoginMessage(msg);
+    }
+    reset();
   };
-
-  const handlePmdcSubmit = (e) => {
-    e.preventDefault();
-    // Handle PMDC login logic here
-    console.log("PMDC login:", { pmdc, password: pmdcPassword });
-  };
-
   return (
     <div className='min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
       <div className='md:min-w-md w-full bg-white p-8 rounded-xl shadow-md'>
@@ -58,87 +68,63 @@ const DoctorLogin = () => {
           </div>
         </div>
 
-        {/* Email Login Form */}
-        {activeTab === "email" && (
-          <form
-            className='space-y-6'
-            onSubmit={handleEmailSubmit}>
-            <InputField
-              label='Email Address'
-              type='email'
-              name='email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete='email'
-            />
-            <InputField
-              label='Password'
-              type='password'
-              name='emailPassword'
-              value={emailPassword}
-              onChange={(e) => setEmailPassword(e.target.value)}
-              required
-              autoComplete='current-password'
-            />
-            <div>
-              <button
-                type='submit'
-                className='group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md bg-emerald-600 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-200'>
-                Sign In with Email
-              </button>
-            </div>
-          </form>
-        )}
-
-        {/* PMDC Login Form */}
-        {activeTab === "pmdc" && (
-          <form
-            className='space-y-6'
-            onSubmit={handlePmdcSubmit}>
-            <InputField
-              label='PMDC Number'
-              type='text'
-              name='pmdc'
-              value={pmdc}
-              onChange={(e) => setPmdc(e.target.value)}
-              required
-              autoComplete='off'
-              placeholder='Enter your PMDC number'
-            />
-            <InputField
-              label='Password'
-              type='password'
-              name='pmdcPassword'
-              value={pmdcPassword}
-              onChange={(e) => setPmdcPassword(e.target.value)}
-              required
-              autoComplete='current-password'
-            />
-            <div>
-              <button
-                type='submit'
-                className='group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md bg-emerald-600 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-200'>
-                Sign In with PMDC
-              </button>
-            </div>
-          </form>
-        )}
+        {/* Login Form */}
+        <form
+          className='space-y-6'
+          onSubmit={handleSubmit(onSubmit)}>
+          <InputField
+            label={activeTab === "email" ? "Email Address" : "PMDC Number"}
+            type='text'
+            name='identifier'
+            {...register("identifier")}
+            error={errors.identifier?.message}
+            placeholder={
+              activeTab === "email" ? "Enter email" : "Enter PMDC number"
+            }
+            autoComplete='username'
+          />
+          <InputField
+            label='Password'
+            type='password'
+            name='password'
+            {...register("password")}
+            error={errors.password?.message}
+            placeholder='Enter your password'
+            autoComplete='current-password'
+          />
+          <button
+            type='submit'
+            disabled={loading}
+            className='w-full py-2 px-4 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 transition duration-200 disabled:opacity-50'>
+            {loading
+              ? "Signing In..."
+              : `Sign In with ${activeTab === "email" ? "Email" : "PMDC"}`}
+          </button>
+        </form>
 
         <div className='mt-6 text-center'>
           <span className='text-sm text-emerald-700'>
             Don't have an account?
           </span>
           <Link
-            onClick={() => {
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
             to='/register/doctor'
-            className='ml-1 text-emerald-600 hover:underline font-medium'>
+            className='ml-1 text-emerald-600 hover:underline font-medium'
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
             Register
           </Link>
         </div>
       </div>
+      <Modal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        title='Login Status'
+        description={loginMessage}>
+        <button
+          className='mt-4 w-full rounded-lg bg-emerald-600 px-6 py-2 text-white font-semibold shadow-md hover:bg-emerald-700 transition duration-300 ease-in-out active:scale-95'
+          onClick={() => navigate("/doctor/upload-documents")}>
+          Upload Documents
+        </button>
+      </Modal>
     </div>
   );
 };

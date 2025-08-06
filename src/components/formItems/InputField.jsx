@@ -12,13 +12,12 @@ const InputField = ({
   label,
   type = "text",
   name,
-  value,
-  onChange,
-  required = false,
+  error,
   className = "",
   onlyNumbers = false,
-  allowDashes = false, // New prop for CNIC
-  checked, // For checkbox type
+  allowDashes = false,
+  checked,
+  required = false,
   ...rest
 }) => {
   const handleKeyDown = (e) => {
@@ -27,37 +26,12 @@ const InputField = ({
     }
   };
 
-  // Special handling for checkbox type
-  if (type === "checkbox") {
-    return (
-      <div className='flex items-center space-x-2'>
-        <input
-          id={name}
-          name={name}
-          type={type}
-          checked={checked}
-          onChange={onChange}
-          required={required}
-          className='h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500'
-          {...rest}
-        />
-        {label && (
-          <label
-            className='text-emerald-700 font-medium'
-            htmlFor={name}>
-            {label}
-          </label>
-        )}
-      </div>
-    );
-  }
-
   return (
     <div>
       {label && (
         <label
-          className='block text-emerald-700 font-medium mb-1'
-          htmlFor={name}>
+          htmlFor={name}
+          className='block text-emerald-700 font-medium mb-1'>
           {label}
         </label>
       )}
@@ -65,15 +39,16 @@ const InputField = ({
         id={name}
         name={name}
         type={type}
-        value={value}
-        onChange={onChange}
-        onKeyDown={handleKeyDown}
         required={required}
-        className={`w-full px-3 py-2 border border-emerald-200 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 ${className}`}
+        onKeyDown={handleKeyDown}
+        className={`w-full px-3 py-2 border ${
+          error ? "border-red-300" : "border-emerald-200"
+        } rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 ${className}`}
         inputMode={onlyNumbers ? "numeric" : undefined}
         pattern={onlyNumbers ? (allowDashes ? "[0-9-]*" : "[0-9]*") : undefined}
         {...rest}
       />
+      {error && <p className='text-red-500 text-xs mt-1'>{error}</p>}
     </div>
   );
 };

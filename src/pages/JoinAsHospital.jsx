@@ -138,7 +138,7 @@ const JoinAsHospital = () => {
                 </div>
                 <InputField
                   label='Phone'
-                  name='phone'
+                                   name='phone'
                   type='tel'
                   value={form.phone}
                   onChange={handleChange}

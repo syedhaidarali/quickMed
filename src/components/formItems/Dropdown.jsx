@@ -12,6 +12,7 @@ const Dropdown = ({
   placeholderStyle = "",
   urduTextStyle = "",
   englishTextStyle = "",
+  disabled = false,
 }) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef(null);
@@ -51,8 +52,13 @@ const Dropdown = ({
       ref={containerRef}>
       <button
         type='button'
-        className='w-full flex items-center h-11 border border-gray-300 rounded-md px-3 py-2 font-medium text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500'
-        onClick={() => setOpen((prev) => !prev)}>
+        className={`w-full flex items-center h-11 border border-gray-300 rounded-md px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+          disabled
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : "text-gray-700 bg-white hover:border-gray-400"
+        }`}
+        onClick={() => !disabled && setOpen((prev) => !prev)}
+        disabled={disabled}>
         <span
           className={`flex-1 text-left ${
             value ? inputStyle : placeholderStyle

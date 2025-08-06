@@ -398,6 +398,55 @@ export const specialities = [
   "Research Physicians - طبی تحقیق کرنے والے ڈاکٹر",
 ];
 
+// English-only specialties for the multi-select component
+export const specialitiesEnglish = [
+  "Allergy & Immunology",
+  "Anesthesiology & Critical Care",
+  "Cardiology",
+  "Cardiothoracic Surgery",
+  "Clinical Biochemical Genetics",
+  "Dermatology",
+  "Emergency Medicine",
+  "Endocrinology",
+  "Family Medicine",
+  "Forensic Pathology",
+  "Gastroenterology & Hepatology",
+  "Geriatric Medicine",
+  "Hematology / Medical Oncology",
+  "Infectious Diseases",
+  "Internal Medicine",
+  "Interventional Cardiology",
+  "Neonatology (Pediatric Subspecialty)",
+  "Nephrology",
+  "Neurology",
+  "Neurosurgery",
+  "Nuclear Medicine",
+  "Obstetrics & Gynecology (OB/GYN)",
+  "Ophthalmology",
+  "Oral & Maxillofacial Surgery",
+  "Otorhinolaryngology (ENT)",
+  "Orthopedic Surgery",
+  "Palliative Medicine",
+  "Pathology (Anatomical & Clinical)",
+  "Physical Medicine & Rehabilitation (PM&R)",
+  "Plastic, Reconstructive & Aesthetic Surgery",
+  "Preventive & Lifestyle Medicine",
+  "Psychiatry & Child-Adolescent Psychiatry",
+  "Public Health & Occupational Medicine",
+  "Pulmonology / Respiratory Medicine",
+  "Radiation Oncology",
+  "Radiology & Interventional Radiology",
+  "Rheumatology",
+  "Sleep Medicine",
+  "Sports Medicine",
+  "Thoracic Surgery",
+  "Toxicology",
+  "Transfusion Medicine",
+  "Urology",
+  "Vascular Surgery & Interventional Radiologists",
+  "Research Physicians",
+];
+
 export const hospitals = [
   {
     name: "Aga Khan Hospital",
@@ -706,4 +755,17 @@ export const citiesMap = [
   "Qalat",
   "Kharian",
   "Muree",
+];
+
+export const REGISTERED_HOSPITALS = [
+  "Aga Khan University Hospital",
+  "Shaukat Khanum Memorial Cancer Hospital",
+  "Lahore General Hospital",
+  "Services Hospital Lahore",
+  "Mayo Hospital Lahore",
+  "Jinnah Hospital Lahore",
+  "Combined Military Hospital (CMH)",
+  "National Institute of Cardiovascular Disease",
+  "Pakistan Institute of Medical Sciences (PIMS)",
+  "Ziauddin Hospital",
 ];

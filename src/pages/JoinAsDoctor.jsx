@@ -1,64 +1,33 @@
 /** @format */
-
-import React, { useState } from "react";
+import React from "react";
 import InputField from "../components/formItems/InputField";
 import Dropdown from "../components/formItems/Dropdown";
+import MultiSelectSpecialty from "../components/formItems/MultiSelectSpecialty";
+import SearchableDropdown from "../components/formItems/SearchableDropdown";
 import {
   DEGREE_OPTIONS,
   GENDERS,
+  REGISTERED_HOSPITALS,
   RELIGIONS,
-  specialities,
 } from "../assets/dummy";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { formatCNIC } from "../helpers/CNICFormat";
-
+import { useFormHandler } from "../hooks/useFormHandler";
 const JoinAsDoctor = () => {
-  const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    speciality: "",
-    phone: "",
-    religion: "",
-    gender: "",
-    pmdcVerified: false,
-    pmdcNumber: "",
-    mainDegree: "",
-    fullAddress: "",
-    city: "",
-    hospital: "",
-    experience: "",
-    cnic: "",
-    password: "",
-    confirmPassword: "",
-    agreement: false,
-  });
-  const [errors, setErrors] = useState({});
-  const [showSuccess, setShowSuccess] = useState(false);
-  const { DoctorSignUp, loading, error } = useAuth();
-
-  // Handle text, number, textarea, and dropdown changes
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" || type === "radio" ? checked : value,
-    }));
-  };
-
-  // Handle dropdowns (Dropdown component returns value directly)
-  const handleDropdown = (name, value) => {
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // CNIC formatting handler
-  const handleCnicChange = (e) => {
-    const formattedCNIC = formatCNIC(e.target.value);
-    setForm((prev) => ({ ...prev, cnic: formattedCNIC }));
-  };
-
-  // Handle form submit
-  const handleSubmit = async (e) => {};
+  const {
+    handleSubmit,
+    formState: { errors },
+    formValues,
+    handleCnicChange,
+    handleSpecialtyChange,
+    handleHospitalChange,
+    handleHospitalVerification,
+    handleDropdownChange,
+    handleInputChange,
+    resetForm,
+    showSuccess,
+    setShowSuccess,
+    loading,
+  } = useFormHandler();
 
   return (
     <div className='min-h-[60vh] flex items-center justify-center bg-emerald-50 py-16 px-4'>
@@ -86,7 +55,10 @@ const JoinAsDoctor = () => {
               </ul>
             </div>
             <button
-              onClick={() => setShowSuccess(false)}
+              onClick={() => {
+                setShowSuccess(false);
+                resetForm();
+              }}
               className='bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors'>
               Submit Another Application
             </button>
@@ -99,149 +71,196 @@ const JoinAsDoctor = () => {
                 Join as a Doctor
               </h1>
             </div>
+
             <form
               className='space-y-4 grid grid-cols-1 md:grid-cols-2 gap-2'
               onSubmit={handleSubmit}>
+              {/* Full Name */}
               <InputField
                 label='Full Name'
-                name='fullName'
-                value={form.fullName}
-                onChange={handleChange}
+                name='name'
+                value={formValues.name || ""}
+                onChange={handleInputChange("name")}
+                error={errors.name?.message}
                 required
               />
+
+              {/* Email */}
               <InputField
                 label='Email'
-                name='email'
                 type='email'
-                value={form.email}
-                onChange={handleChange}
+                name='email'
+                value={formValues.email || ""}
+                onChange={handleInputChange("email")}
+                error={errors.email?.message}
                 required
                 autoComplete='email'
               />
-              <div>
-                <label className='block text-emerald-700 font-medium mb-1'>
-                  Speciality
-                </label>
-                <Dropdown
-                  options={specialities}
-                  value={form.speciality}
-                  onChange={(val) => handleDropdown("speciality", val)}
-                  placeholder='Select Speciality'
-                  // showUrdu={true}
-                  inputStyle='text-[11px]'
-                  placeholderStyle='text-[16px]'
-                  // urduTextStyle='text-[11px] font-bold'
-                  // englishTextStyle='text-[12px] font-bold'
+
+              {/* Specialities */}
+              <div className='md:col-span-2'>
+                <MultiSelectSpecialty
+                  selectedSpecialties={formValues.speciality || []}
+                  onSpecialtiesChange={handleSpecialtyChange}
+                  placeholder='Search and select your specialties...'
+                  maxSelections={5}
                 />
                 {errors.speciality && (
                   <p className='text-red-500 text-xs mt-1'>
-                    {errors.speciality}
+                    {errors.speciality.message}
                   </p>
                 )}
               </div>
+
+              {/* Phone */}
               <InputField
                 label='Phone'
-                name='phone'
                 type='tel'
-                value={form.phone}
-                onChange={handleChange}
+                name='phone'
+                value={formValues.phone || ""}
+                onChange={handleInputChange("phone")}
+                error={errors.phone?.message}
                 required
                 placeholder='03XXXXXXXXX'
                 onlyNumbers
               />
+
+              {/* Religion */}
               <div>
                 <label className='block text-emerald-700 font-medium mb-1'>
                   Religion
                 </label>
                 <Dropdown
                   options={RELIGIONS}
-                  value={form.religion}
-                  onChange={(val) => handleDropdown("religion", val)}
+                  value={formValues.religion || ""}
+                  onChange={(val) => handleDropdownChange("religion", val)}
                   placeholder='Select Religion'
                 />
                 {errors.religion && (
-                  <p className='text-red-500 text-xs mt-1'>{errors.religion}</p>
+                  <p className='text-red-500 text-xs mt-1'>
+                    {errors.religion.message}
+                  </p>
                 )}
               </div>
+
+              {/* Gender */}
               <div>
                 <label className='block text-emerald-700 font-medium mb-1'>
                   Gender
                 </label>
                 <Dropdown
                   options={GENDERS}
-                  value={form.gender}
-                  onChange={(val) => handleDropdown("gender", val)}
+                  value={formValues.gender || ""}
+                  onChange={(val) => handleDropdownChange("gender", val)}
                   placeholder='Select Gender'
                 />
                 {errors.gender && (
-                  <p className='text-red-500 text-xs mt-1'>{errors.gender}</p>
+                  <p className='text-red-500 text-xs mt-1'>
+                    {errors.gender.message}
+                  </p>
                 )}
               </div>
 
+              {/* Main Degree */}
               <div>
                 <label className='block text-emerald-700 font-medium mb-1'>
                   Main Degree
                 </label>
                 <Dropdown
                   options={DEGREE_OPTIONS}
-                  value={form.mainDegree}
-                  onChange={(val) => handleDropdown("mainDegree", val)}
+                  value={formValues.mainDegree || ""}
+                  onChange={(val) => handleDropdownChange("mainDegree", val)}
                   placeholder='Select Main Degree'
                 />
                 {errors.mainDegree && (
                   <p className='text-red-500 text-xs mt-1'>
-                    {errors.mainDegree}
+                    {errors.mainDegree.message}
                   </p>
                 )}
               </div>
+
+              {/* Full Address */}
               <div>
                 <label className='block text-emerald-700 font-medium mb-1'>
                   Full Address
                 </label>
                 <textarea
                   name='fullAddress'
-                  value={form.fullAddress}
-                  onChange={handleChange}
+                  value={formValues.fullAddress || ""}
+                  onChange={handleInputChange("fullAddress")}
                   required
-                  className='w-full px-3 py-2 border border-emerald-200 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500'
                   rows={1}
+                  className={`w-full px-3 py-2 border ${
+                    errors.fullAddress ? "border-red-300" : "border-emerald-200"
+                  } rounded focus:outline-none focus:ring-2 focus:ring-emerald-500`}
                 />
                 {errors.fullAddress && (
                   <p className='text-red-500 text-xs mt-1'>
-                    {errors.fullAddress}
+                    {errors.fullAddress.message}
                   </p>
                 )}
               </div>
-              <InputField
-                label='Hospital'
-                name='hospital'
-                value={form.hospital}
-                onChange={handleChange}
-                required
-              />
+
+              {/* Hospital */}
+              <div>
+                <label className='block text-emerald-700 font-medium mb-1'>
+                  Hospital
+                  {formValues.hospitalVerified && (
+                    <span className='ml-2 text-xs text-emerald-600 bg-emerald-100 px-2 py-1 rounded'>
+                      ✓ Verified
+                    </span>
+                  )}
+                  {formValues.hospital && !formValues.hospitalVerified && (
+                    <span className='ml-2 text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded'>
+                      ⚠ New Hospital
+                    </span>
+                  )}
+                </label>
+                <SearchableDropdown
+                  options={REGISTERED_HOSPITALS}
+                  value={formValues.hospital || ""}
+                  onChange={handleHospitalChange}
+                  onVerificationChange={handleHospitalVerification}
+                  registeredOptions={REGISTERED_HOSPITALS}
+                  placeholder='Search hospitals or add new one...'
+                  allowAddNew
+                />
+                {errors.hospital && (
+                  <p className='text-red-500 text-xs mt-1'>
+                    {errors.hospital.message}
+                  </p>
+                )}
+              </div>
+
+              {/* City */}
               <InputField
                 label='City'
                 name='city'
-                value={form.city}
-                onChange={handleChange}
-                required
+                value={formValues.city || ""}
+                onChange={handleInputChange("city")}
+                error={errors.city?.message}
                 placeholder='Enter City Name'
               />
+
+              {/* Experience */}
               <InputField
                 label='Experience (years)'
-                name='experience'
                 type='number'
-                value={form.experience}
-                onChange={handleChange}
+                name='experience'
+                value={formValues.experience || ""}
+                onChange={handleInputChange("experience")}
+                error={errors.experience?.message}
                 required
                 min={0}
               />
 
+              {/* CNIC */}
               <InputField
                 label='CNIC'
                 name='cnic'
-                value={form.cnic}
+                value={formValues.cnic || ""}
                 onChange={handleCnicChange}
+                error={errors.cnic?.message}
                 required
                 placeholder='xxxxx-xxxxxxx-x'
                 maxLength={15}
@@ -249,103 +268,92 @@ const JoinAsDoctor = () => {
                 allowDashes
               />
 
+              {/* Fee */}
+              <InputField
+                label='Fee'
+                type='number'
+                name='fee'
+                value={formValues.fee || ""}
+                onChange={handleInputChange("fee")}
+                error={errors.fee?.message}
+                required
+                min={0}
+                onlyNumbers
+              />
+
+              {/* PMDC Number */}
+              <InputField
+                label='PMDC Number'
+                name='pmdcNumber'
+                value={formValues.pmdcNumber || ""}
+                onChange={handleInputChange("pmdcNumber")}
+                error={errors.pmdcNumber?.message}
+                required
+                placeholder='Enter PMDC Number'
+              />
+
+              {/* Password */}
               <InputField
                 label='Password'
-                name='password'
                 type='password'
-                value={form.password}
-                onChange={handleChange}
+                name='password'
+                value={formValues.password || ""}
+                onChange={handleInputChange("password")}
+                error={errors.password?.message}
                 required
               />
-              {errors.password && (
-                <p className='text-red-500 text-xs mt-1'>{errors.password}</p>
-              )}
+
+              {/* Confirm Password */}
               <InputField
                 label='Confirm Password'
-                name='confirmPassword'
                 type='password'
-                value={form.confirmPassword}
-                onChange={handleChange}
+                name='confirmPassword'
+                value={formValues.confirmPassword || ""}
+                onChange={handleInputChange("confirmPassword")}
+                error={errors.confirmPassword?.message}
                 required
               />
-              {errors.confirmPassword && (
-                <p className='text-red-500 text-xs mt-1'>
-                  {errors.confirmPassword}
-                </p>
-              )}
-              <div className='flex items-center space-x-2 md:col-span-2'>
+
+              {/* Agreement */}
+              <div className='flex items-center space-x-2 mt-4 md:col-span-2'>
                 <input
                   type='checkbox'
-                  name='pmdcVerified'
-                  checked={form.pmdcVerified}
-                  onChange={handleChange}
-                  id='pmdcVerified'
-                  className='h-4 w-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500'
-                />
-                <label
-                  htmlFor='pmdcVerified'
-                  className='text-emerald-700 font-medium'>
-                  PMDC Verified
-                </label>
-              </div>
-              {form.pmdcVerified && (
-                <div className='md:col-span-2'>
-                  <InputField
-                    label='PMDC Number'
-                    name='pmdcNumber'
-                    value={form.pmdcNumber}
-                    onChange={handleChange}
-                    required
-                    placeholder='Enter PMDC Number'
-                    // className='md:col-span-3'
-                  />
-                </div>
-              )}
-              {/* Agreement radio/switch */}
-              <div className='flex items-center  space-x-2 mt-4'>
-                <input
-                  type='radio'
                   id='agreement'
                   name='agreement'
-                  checked={form.agreement}
-                  onChange={handleChange}
+                  checked={formValues.agreement || false}
+                  onChange={handleInputChange("agreement")}
                   className='h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-gray-300'
-                  required
                 />
                 <label
                   htmlFor='agreement'
                   className='text-emerald-800 font-semibold text-base'>
-                  <span
-                    role='img'
-                    aria-label='lock'>
-                    🔒
-                  </span>{" "}
-                  Please make sure all fields are filled correctly before
+                  🔒 Please make sure all fields are filled correctly before
                   submitting.
                 </label>
               </div>
               {errors.agreement && (
-                <p className='text-red-500 text-xs mt-1'>{errors.agreement}</p>
+                <p className='text-red-500 text-xs mt-1'>
+                  {errors.agreement.message}
+                </p>
               )}
-              {error && (
-                <p className='text-red-500 text-sm mt-2 text-center'>{error}</p>
-              )}
+
+              {/* Submit Button */}
               <button
                 type='submit'
-                className='w-full md:col-span-2 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 font-medium transition-colors duration-200 mt-4 disabled:opacity-50 disabled:cursor-not-allowed'
-                disabled={
-                  !form.agreement || Object.keys(errors).length > 0 || loading
-                }>
+                disabled={loading}
+                className='w-full md:col-span-2 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 font-medium transition-colors duration-200 mt-4 disabled:opacity-50 disabled:cursor-not-allowed'>
                 {loading ? "Submitting..." : "Submit"}
               </button>
-              <div className='w-full text-center md:col-span-2 '>
+
+              {/* Login Link */}
+              <div className='w-full text-center md:col-span-2'>
                 <span className='text-sm font-semibold text-emerald-700'>
-                  Already have an account ?
+                  Already have an account?
                 </span>
                 <Link
-                  onClick={() => {
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
+                  onClick={() =>
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }
                   to='/doctor/login'
                   className='ml-1 text-emerald-600 hover:underline font-medium'>
                   Login
