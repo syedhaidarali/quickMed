@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { UploadCloud, UserCircle } from "lucide-react";
 import Modal from "../modals/Modal";
 import { useDoctor } from "../context/DoctorContext";
+import { useNavigate } from "react-router-dom";
 
 const DoctorDocumentUpload = () => {
   const [documents, setDocuments] = useState(null);
@@ -11,8 +12,9 @@ const DoctorDocumentUpload = () => {
   const [uploadMessage, setUploadMessage] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [status, setStatus] = useState("pending");
+  const navigate = useNavigate();
 
-  const { DoctorProfile, DoctorDocumentUpload } = useDoctor();
+  const { DoctorProfile, DoctorDocumentUpload, loading } = useDoctor();
 
   useEffect(() => {
     return () => {
@@ -54,7 +56,7 @@ const DoctorDocumentUpload = () => {
     Array.from(documents).forEach((doc) => {
       formData.append("documents", doc);
     });
-    DoctorDocumentUpload(formData);
+    DoctorDocumentUpload(formData, navigate);
   };
 
   return (
@@ -141,7 +143,7 @@ const DoctorDocumentUpload = () => {
           <button
             type='submit'
             className='w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-md shadow transition'>
-            Submit Documents
+            {loading ? "Submitting..." : "Submit Documents"}
           </button>
         </form>
       </div>

@@ -1,40 +1,37 @@
 /** @format */
 
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import InputField from "../components/formItems/InputField";
+import { useAdmin } from "../context/AdminContext";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 const AdminLogin = () => {
-  const [adminData, setAdminData] = useState({ email: "", password: "" });
-  const [errors, setErrors] = useState({});
-  const { AdminLogin, loading, error } = useAuth();
+  const { login, loading, error } = useAdmin();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setAdminData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
 
-  const validate = () => {
-    const newErrors = {};
-    if (!adminData.email) newErrors.email = "Email is required";
-    if (!adminData.password) newErrors.password = "Password is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
-    const res = await AdminLogin(adminData);
-    if (res?.success) navigate("/admin/dashboard");
+  const onSubmit = async (data) => {
+    await login(data, navigate);
   };
 
   return (
-    <div className='min-h-[60vh] flex items-center justify-center py-16 px-4'>
-      <div className='bg-white rounded-2xl shadow-xl p-8 max-w-md w-full'>
+    <div className='min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
+      <div className='md:min-w-md w-full bg-white p-8 rounded-xl shadow-md'>
         <div className='text-center mb-6'>
           <div className='text-4xl mb-2'>👨‍💼</div>
           <h1 className='text-3xl font-bold text-emerald-800'>Admin Login</h1>
@@ -42,15 +39,14 @@ const AdminLogin = () => {
         </div>
 
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           className='space-y-4'>
           <InputField
             label='Email'
             name='email'
             type='email'
-            value={adminData.email}
-            onChange={handleChange}
-            error={errors.email}
+            {...register("email")}
+            error={errors.email?.message}
             autoComplete='email'
             required
           />
@@ -59,9 +55,8 @@ const AdminLogin = () => {
             label='Password'
             name='password'
             type='password'
-            value={adminData.password}
-            onChange={handleChange}
-            error={errors.password}
+            {...register("password")}
+            error={errors.password?.message}
             autoComplete='current-password'
             required
           />
@@ -79,10 +74,6 @@ const AdminLogin = () => {
             {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
-
-        <p className='mt-6 text-sm text-center text-emerald-700'>
-          Demo Credentials: admin@quickmid.com / admin123
-        </p>
       </div>
     </div>
   );

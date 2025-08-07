@@ -67,47 +67,6 @@ export const HospitalProvider = ({ children }) => {
     }
   };
 
-  const approveHospital = async (hospitalId) => {
-    setLoading(true);
-    try {
-      const response = await hospitalService.approveHospital(hospitalId);
-      const hospitalToApprove = pendingHospitals.find(
-        (h) => h.id === hospitalId
-      );
-      if (hospitalToApprove) {
-        setApprovedHospitals([
-          ...approvedHospitals,
-          { ...hospitalToApprove, status: "approved" },
-        ]);
-        setPendingHospitals(
-          pendingHospitals.filter((h) => h.id !== hospitalId)
-        );
-      }
-      toast.success("Hospital approved successfully");
-      return response.data;
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to approve hospital");
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const rejectHospital = async (hospitalId, reason) => {
-    setLoading(true);
-    try {
-      const response = await hospitalService.rejectHospital(hospitalId, reason);
-      setPendingHospitals(pendingHospitals.filter((h) => h.id !== hospitalId));
-      toast.success("Hospital rejected successfully");
-      return response.data;
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to reject hospital");
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <HospitalContext.Provider
       value={{
@@ -119,8 +78,6 @@ export const HospitalProvider = ({ children }) => {
         HospitalLogin,
         HospitalSignUp,
         HospitalProfile,
-        approveHospital,
-        rejectHospital,
       }}>
       {children}
     </HospitalContext.Provider>

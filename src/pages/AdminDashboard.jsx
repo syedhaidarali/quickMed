@@ -7,6 +7,7 @@ import AdminStatsCards from "../components/admin/AdminStatsCards";
 import ReviewTable from "../components/admin/ReviewTable";
 import RejectModal from "../components/admin/RejectModal";
 import AdminHeader from "../components/admin/AdminHeader";
+import { useAdmin } from "../context/AdminContext";
 
 const AdminDashboard = () => {
   const {
@@ -20,45 +21,25 @@ const AdminDashboard = () => {
     approveHospital,
     rejectHospital,
     logout,
-  } = useAuth();
+  } = useAdmin();
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [showRejectModal, setShowRejectModal] = useState(false);
-  const [modalType, setModalType] = useState(""); // "doctor" or "hospital"
+  const [modalType, setModalType] = useState("");
 
   if (!admin) {
     navigate("/admin/login");
-    return null;
+    return (
+      <div>
+        <h1>this page is not show </h1>
+      </div>
+    );
   }
 
-  const handleApprove = async (itemId, type) => {
-    const approveFunction = type === "doctor" ? approveDoctor : approveHospital;
-    const result = await approveFunction(itemId);
-    if (result.success) {
-      alert(
-        `${type.charAt(0).toUpperCase() + type.slice(1)} approved successfully!`
-      );
-    }
-  };
+  const handleApprove = async (itemId, type) => {};
 
-  const handleReject = async (itemId, type) => {
-    if (!rejectionReason.trim()) {
-      alert("Please provide a reason for rejection");
-      return;
-    }
-    const rejectFunction = type === "doctor" ? rejectDoctor : rejectHospital;
-    const result = await rejectFunction(itemId, rejectionReason);
-    if (result.success) {
-      alert(
-        `${type.charAt(0).toUpperCase() + type.slice(1)} rejected successfully!`
-      );
-      setShowRejectModal(false);
-      setRejectionReason("");
-      setSelectedItem(null);
-      setModalType("");
-    }
-  };
+  const handleReject = async (itemId, type) => {};
 
   const openRejectModal = (item, type) => {
     setSelectedItem(item);

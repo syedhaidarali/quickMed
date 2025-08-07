@@ -47,7 +47,6 @@ export const DoctorProvider = ({ children }) => {
   };
 
   const DoctorProfile = async (data) => {
-    setLoading(true);
     try {
       const result = await doctorService.updateProfile(data);
       toast.success(result.data.data.message);
@@ -55,16 +54,15 @@ export const DoctorProvider = ({ children }) => {
     } catch (err) {
       console.log(err, "profile err");
       toast.error(err?.message || "Update failed");
-    } finally {
-      setLoading(false);
     }
   };
 
-  const DoctorDocumentUpload = async (formData) => {
+  const DoctorDocumentUpload = async (formData, navigate) => {
     setLoading(true);
     try {
       const result = await doctorService.uploadDocuments(formData);
-      console.log(result);
+      // console.log(result.data.data.documents[0].documentUrl);
+      navigate(``);
       toast.success("Documents Uploaded");
       return result;
     } catch (err) {

@@ -7,18 +7,21 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import AppRoutes from "./Routes.jsx";
 import { DoctorProvider } from "./context/context.js";
 import { HospitalProvider } from "./context/HospitalContext.jsx";
+import { AdminProvider } from "./context/AdminContext.jsx";
 
 function App() {
   return (
-    <HospitalProvider>
-      <DoctorProvider>
-        <AuthProvider>
-          <BrowserRouter basename='/quickMed'>
-            <AppRoutes />
-          </BrowserRouter>
-        </AuthProvider>
-      </DoctorProvider>
-    </HospitalProvider>
+    <AdminProvider>
+      <HospitalProvider>
+        <DoctorProvider>
+          <AuthProvider>
+            <BrowserRouter basename='/quickMed'>
+              <AppRoutes />
+            </BrowserRouter>
+          </AuthProvider>
+        </DoctorProvider>
+      </HospitalProvider>
+    </AdminProvider>
   );
 }
 
