@@ -3,6 +3,8 @@
 import request from "../helpers/request";
 
 export const adminApi = {
+  validateToken: () => request.get("/admin/me"),
+
   login: (credentials) => request.post("/admin/login", credentials),
 
   getPendingDoctors: () => request.get("/admin/pending-doctors"),

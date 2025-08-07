@@ -10,7 +10,7 @@ const DoctorDocumentUpload = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [uploadMessage, setUploadMessage] = useState("");
-  const [modalOpen, setModalOpen] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const { DoctorProfile, DoctorDocumentUpload, loading } = useDoctor();
@@ -72,7 +72,7 @@ const DoctorDocumentUpload = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center px-4 py-12'>
+    <div className='min-h-screen  flex items-center justify-center px-4 py-12'>
       <div className='w-full max-w-lg bg-white rounded-2xl shadow-lg p-8'>
         <h2 className='text-3xl font-bold text-center text-emerald-800 mb-6'>
           Upload Your Documents

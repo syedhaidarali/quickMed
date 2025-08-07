@@ -13,6 +13,8 @@ export const DoctorProvider = ({ children }) => {
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [doctorId, setDoctorId] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const DoctorLogin = async (credentials, navigate) => {
     console.log(credentials, navigate);
@@ -20,6 +22,7 @@ export const DoctorProvider = ({ children }) => {
     setError(null);
     try {
       const doctorData = await doctorService.login(credentials);
+      console.log("doctor login", doctorData);
       setHeaders(doctorData.data.data.token);
       navigate("/doctor/upload-documents");
       toast.success("Login Successfully");
@@ -61,7 +64,8 @@ export const DoctorProvider = ({ children }) => {
     setLoading(true);
     try {
       const result = await doctorService.uploadDocuments(formData);
-      console.log(result);
+      console.log("document", result);
+      console.log(result.data.data.documents[0].documentUrl);
       navigate(``);
       toast.success("Documents Uploaded");
       return result;

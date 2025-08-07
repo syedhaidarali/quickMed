@@ -12,6 +12,7 @@ export const HospitalProvider = ({ children }) => {
   const [approvedHospitals, setApprovedHospitals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const HospitalLogin = async (credentials, navigate) => {
     setLoading(true);

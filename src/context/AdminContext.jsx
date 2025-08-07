@@ -2,7 +2,7 @@
 
 import { toast } from "sonner";
 import { adminService } from "../services/adminService";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { setHeaders } from "../helpers/auth.helper";
 
 const AdminContext = createContext();
@@ -13,9 +13,27 @@ export const AdminProvider = ({ children }) => {
   const [pendingHospitals, setPendingHospitals] = useState([]);
   const [approvedDoctors, setApprovedDoctors] = useState([]);
   const [approvedHospitals, setApprovedHospitals] = useState([]);
-  console.log(admin, "admin");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const validateSession = async () => {
+    setLoading(true);
+    try {
+      const { data } = await adminService.validateToken();
+      console.log(data, "admin data");
+      setAdmin(data.data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    validateSession();
+  }, []);
 
   const login = async (credentials, navigate) => {
     console.log(credentials, "admin Login");

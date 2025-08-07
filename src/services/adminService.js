@@ -3,6 +3,7 @@
 import { adminApi } from "../api/admin.api";
 
 export const adminService = {
+  validateToken: () => adminApi.validateToken(),
   login: (credentials) => adminApi.login(credentials),
 
   getPendingDoctors: () => {
