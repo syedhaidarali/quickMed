@@ -1,8 +1,6 @@
 /** @format */
-
 import React, { useState, useEffect } from "react";
 import { UploadCloud, UserCircle } from "lucide-react";
-import { toast } from "sonner";
 import Modal from "../modals/Modal";
 import { useDoctor } from "../context/DoctorContext";
 
@@ -16,7 +14,6 @@ const DoctorDocumentUpload = () => {
 
   const { DoctorProfile, DoctorDocumentUpload } = useDoctor();
 
-  // Cleanup function to revoke object URL when component unmounts
   useEffect(() => {
     return () => {
       if (imagePreview) {
@@ -26,26 +23,38 @@ const DoctorDocumentUpload = () => {
   }, [imagePreview]);
 
   const handleFileChange = (event) => {
-    setDocuments(event.target.files);
+    const selectedFiles = event.target.files;
+    if (selectedFiles.length > 0) {
+      setDocuments(selectedFiles);
+    } else {
+      setDocuments(null);
+    }
   };
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     setProfileImage(file);
     if (file) {
-      // Create preview URL for the selected image
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
-
-      // Upload to backend
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("image", file); // profile image
       DoctorProfile(formData);
     }
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    DoctorDocumentUpload();
+
+    if (!documents) {
+      setUploadMessage("Please upload at least one image document.");
+      return;
+    }
+    const formData = new FormData();
+    Array.from(documents).forEach((doc) => {
+      formData.append("documents", doc);
+    });
+    DoctorDocumentUpload(formData);
   };
 
   return (
@@ -83,7 +92,7 @@ const DoctorDocumentUpload = () => {
                 className='hidden'
               />
               <p className='text-sm text-gray-500 mt-2 group-hover:text-emerald-700 transition'>
-                Click to upload profile image
+                Click to upload profile image (optional)
               </p>
             </label>
           </div>
@@ -91,7 +100,8 @@ const DoctorDocumentUpload = () => {
           {/* Documents Upload */}
           <div className='w-full'>
             <label className='block text-sm font-medium text-emerald-700 mb-1'>
-              Upload Supporting Documents
+              Upload Supporting Documents{" "}
+              <span className='text-red-500'>*</span>
             </label>
             <div className='flex items-center justify-center w-full'>
               <label className='flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-emerald-300 rounded-lg cursor-pointer bg-emerald-50 hover:bg-emerald-100 transition'>
@@ -99,18 +109,32 @@ const DoctorDocumentUpload = () => {
                   <UploadCloud className='w-8 h-8 mb-2 text-emerald-500' />
                   <p className='text-sm text-gray-500'>
                     <span className='font-semibold'>Click to upload</span> or
-                    drag & drop
+                    drag & drop image(s)
+                  </p>
+                  <p className='text-xs text-gray-400 mt-1'>
+                    Only image formats are allowed (JPG, PNG, etc.)
                   </p>
                 </div>
                 <input
                   type='file'
                   name='documents'
+                  accept='image/*'
                   onChange={handleFileChange}
                   className='hidden'
                   multiple
+                  required
                 />
               </label>
             </div>
+
+            {/* Display file names */}
+            {documents && (
+              <ul className='mt-2 text-sm text-gray-600 list-disc list-inside space-y-1'>
+                {Array.from(documents).map((file, index) => (
+                  <li key={index}>{file.name}</li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* Submit */}
