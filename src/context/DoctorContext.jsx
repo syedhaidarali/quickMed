@@ -1,8 +1,8 @@
 /** @format */
 
 // context/DoctorContext.jsx
+import { doctorService } from "../services/doctorService";
 import { setHeaders } from "../helpers/auth.helper";
-import { doctorApi } from "../api/doctor.api";
 import React, { createContext, useContext, useState } from "react";
 
 import { toast } from "sonner";
@@ -19,12 +19,13 @@ export const DoctorProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      const doctorData = await doctorApi.login(credentials);
+      const doctorData = await doctorService.login(credentials);
       setHeaders(doctorData.data.data.token);
       navigate("/doctor/upload-documents");
       toast.success("Login Successfully");
-      return doctorData.data.message;
+      return doctorData.response.data.message;
     } catch (err) {
+      console.log(err);
       toast.error(err.response.data.data);
     } finally {
       setLoading(false);
@@ -35,11 +36,11 @@ export const DoctorProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      await doctorApi.signUp(formData);
+      await doctorService.signUp(formData);
       toast.success("Form Submitted Successfully");
       navigate("/doctor/login");
     } catch (err) {
-      toast.error(err.response.data.data);
+      toast.error(err.data.response.data);
     } finally {
       setLoading(false);
     }
@@ -48,10 +49,11 @@ export const DoctorProvider = ({ children }) => {
   const DoctorProfile = async (data) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const result = await doctorApi.updateProfile(data);
+      const result = await doctorService.updateProfile(data);
+      toast.success(result.data.data.message);
       return result;
     } catch (err) {
+      console.log(err, "profile err");
       toast.error(err?.message || "Update failed");
     } finally {
       setLoading(false);
@@ -61,7 +63,7 @@ export const DoctorProvider = ({ children }) => {
   const DoctorDocumentUpload = async (formData) => {
     setLoading(true);
     try {
-      const result = await doctorApi.uploadDocuments(formData);
+      const result = await doctorService.uploadDocuments(formData);
       toast.success("Documents Uploaded");
       return result;
     } catch (err) {

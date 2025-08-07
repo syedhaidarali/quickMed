@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { UploadCloud, UserCircle } from "lucide-react";
 import { toast } from "sonner";
 import Modal from "../modals/Modal";
@@ -16,37 +16,36 @@ const DoctorDocumentUpload = () => {
 
   const { DoctorProfile, DoctorDocumentUpload } = useDoctor();
 
+  // Cleanup function to revoke object URL when component unmounts
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
+
   const handleFileChange = (event) => {
     setDocuments(event.target.files);
   };
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
-    console.log(file);
+    setProfileImage(file);
     if (file) {
+      // Create preview URL for the selected image
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+
+      // Upload to backend
       const formData = new FormData();
       formData.append("image", file);
       DoctorProfile(formData);
     }
   };
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!documents || documents.length === 0) {
-      toast.error("Please select at least one document");
-      return;
-    }
-
-    try {
-      await DoctorDocumentUpload({ documents });
-      setModalOpen(true);
-      setUploadMessage("Documents uploaded successfully!");
-      setStatus("success");
-    } catch (error) {
-      setModalOpen(true);
-      setUploadMessage("Failed to upload documents. Please try again.");
-      setStatus("error");
-    }
+    DoctorDocumentUpload();
   };
 
   return (

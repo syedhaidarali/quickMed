@@ -15,7 +15,7 @@ export const doctorApi = {
     });
   },
 
-  uploadDocuments: (formData) => {
+  uploadDocuments: (data) => {
     return request.post("/doctor/documents", data, {
       headers: {
         "Content-Type": "multipart/form-data",
