@@ -1,87 +1,156 @@
 /** @format */
 
-// context/AuthContext.jsx
-import React, { createContext, useContext, useState } from "react";
-import { UserLogin, UserSignUp, AdminLogin as AdminLoginAPI } from "../api/api";
+"use client";
+import React from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { authService } from "../services/authService";
+import { removeHeaders, setHeaders } from "../helpers/auth.helper";
 import { toast } from "sonner";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [admin, setAdmin] = useState(null);
+  const [singleUserData, setSingleUserData] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [allUsers, setAllUsers] = useState([]);
   const [error, setError] = useState(null);
 
-  const Login = async (credentials) => {
-    setLoading(true);
-    setError(null);
+  const validateSession = async () => {
     try {
-      const userData = await UserLogin(credentials);
-      setUser(userData.user);
-      localStorage.setItem("user", JSON.stringify(userData.user));
-      localStorage.setItem("token", userData.token);
-      return { success: true, data: userData };
+      const { data } = await authService.validateToken();
+      setUser(data.data);
+      setIsAuthenticated(true);
+    } catch {
+      setIsAuthenticated(false);
+    } finally {
+      setIsAuthLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    validateSession();
+  }, []);
+
+  const signIn = async (credentials, navigate) => {
+    setLoading(true);
+    try {
+      const { data } = await authService.signInRequest(credentials);
+      setHeaders(data.data.token);
+      setUser(data?.data?.user);
+      setIsAuthenticated(true);
+      toast.success("Login successful");
+      if (navigate) {
+        navigate("/");
+      }
     } catch (err) {
-      toast.error(err.message || "Login failed");
-      return { success: false, error: err.message };
+      toast.error(err.response?.data?.message || "Login failed");
+      setError(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const SignUp = async (formData) => {
+  const signUpFun = async (credentials, navigate) => {
     setLoading(true);
-    setError(null);
     try {
-      const userData = await UserSignUp(formData);
-      setUser(userData.user);
-      localStorage.setItem("user", JSON.stringify(userData.user));
-      localStorage.setItem("token", userData.token);
-      return { success: true, data: userData };
+      const { data } = await authService.signUpRequest(credentials);
+      setHeaders(data.data.token);
+      setUser(data.data.user);
+      setIsAuthenticated(true);
+      toast.success("Signup successful");
+      if (navigate) {
+        navigate("/edit");
+      }
     } catch (err) {
-      toast.error(err.message || "Signup failed");
-      return { success: false, error: err.message };
+      toast.error(err.response?.data?.message || "Signup failed");
+      setError(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const AdminLogin = async (credentials) => {
+  const ForgotPassword = async (credentials, navigate) => {
     setLoading(true);
     try {
-      const adminData = await AdminLoginAPI(credentials);
-      setAdmin(adminData.admin);
-      localStorage.setItem("admin", JSON.stringify(adminData.admin));
-      localStorage.setItem("token", adminData.token);
-      return { success: true, data: adminData };
+      const { data } = await authService.forgotPassword(credentials);
+      toast.success("Password reset email sent");
+      if (navigate) {
+        navigate("/reset-password");
+      }
     } catch (err) {
-      toast.error(err.message || "Admin login failed");
-      return { success: false, error: err.message };
+      toast.error(err.response?.data?.message || "Failed to send reset email");
+      setError(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setAdmin(null);
-    localStorage.removeItem("admin");
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+  const ResetPassword = async (credentials, navigate) => {
+    setLoading(true);
+    try {
+      const { data } = await authService.resetPassword(credentials);
+      toast.success("Password reset successful");
+      if (navigate) {
+        navigate("/login");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Password reset failed");
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signOut = async (navigate) => {
+    setLoading(true);
+    try {
+      removeHeaders();
+      setUser(null);
+      setIsAuthenticated(false);
+      toast.success("Logged out successfully");
+      if (navigate) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Sign Out Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const singleUser = async (userId) => {
+    setLoading(true);
+    try {
+      const { data } = await authService.singleUser(userId);
+      setSingleUserData(data.data.user);
+      return data.data.user;
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to fetch user");
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <AuthContext.Provider
       value={{
+        setUser,
         user,
-        admin,
+        isAuthenticated,
+        signIn,
+        signUpFun,
+        signOut,
         loading,
         error,
-        Login,
-        SignUp,
-        AdminLogin,
-        logout,
+        ForgotPassword,
+        ResetPassword,
+        isAuthLoading,
+        validateSession,
+        singleUser,
       }}>
       {children}
     </AuthContext.Provider>

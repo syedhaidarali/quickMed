@@ -1,35 +1,31 @@
 /** @format */
 
 // context/DoctorContext.jsx
+import { setHeaders } from "../helpers/auth.helper";
+import { doctorApi } from "../api/doctor.api";
 import React, { createContext, useContext, useState } from "react";
-import {
-  SignUpDoctor,
-  DoctorLogin as DoctorLoginAPI,
-  DoctorDocumentUploadApi,
-  UpdateDoctorProfile,
-  ApproveDoctor,
-  RejectDoctor,
-} from "../api/api";
+
 import { toast } from "sonner";
 
 const DoctorContext = createContext();
 
 export const DoctorProvider = ({ children }) => {
   const [doctor, setDoctor] = useState(null);
-  const [pendingDoctors, setPendingDoctors] = useState([]);
-  const [approvedDoctors, setApprovedDoctors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const DoctorLogin = async (credentials) => {
+  const DoctorLogin = async (credentials, navigate) => {
+    console.log(credentials, navigate);
     setLoading(true);
     setError(null);
     try {
-      const doctorData = await DoctorLoginAPI(credentials);
-      localStorage.setItem("token", doctorData.data.token);
+      const doctorData = await doctorApi.login(credentials);
+      setHeaders(doctorData.data.data.token);
+      navigate("/doctor/upload-documents");
+      toast.success("Login Successfully");
       return doctorData.data.message;
     } catch (err) {
-      toast.error(err.data);
+      toast.error(err.response.data.data);
     } finally {
       setLoading(false);
     }
@@ -39,11 +35,24 @@ export const DoctorProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      await SignUpDoctor(formData);
+      await doctorApi.signUp(formData);
       toast.success("Form Submitted Successfully");
       navigate("/doctor/login");
     } catch (err) {
-      toast.error(err.data);
+      toast.error(err.response.data.data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const DoctorProfile = async (data) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const result = await doctorApi.updateProfile(data);
+      return result;
+    } catch (err) {
+      toast.error(err?.message || "Update failed");
     } finally {
       setLoading(false);
     }
@@ -52,7 +61,7 @@ export const DoctorProvider = ({ children }) => {
   const DoctorDocumentUpload = async (formData) => {
     setLoading(true);
     try {
-      const result = await DoctorDocumentUploadApi(formData);
+      const result = await doctorApi.uploadDocuments(formData);
       toast.success("Documents Uploaded");
       return result;
     } catch (err) {
@@ -62,71 +71,16 @@ export const DoctorProvider = ({ children }) => {
     }
   };
 
-  const approveDoctor = async (doctorId) => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem("token");
-      const result = await ApproveDoctor(doctorId, token);
-      const doctorToApprove = pendingDoctors.find((d) => d.id === doctorId);
-      if (doctorToApprove) {
-        setApprovedDoctors([
-          ...approvedDoctors,
-          { ...doctorToApprove, status: "approved" },
-        ]);
-        setPendingDoctors(pendingDoctors.filter((d) => d.id !== doctorId));
-      }
-      return result;
-    } catch (err) {
-      toast.error(err?.message || "Failed to approve doctor");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const rejectDoctor = async (doctorId, reason) => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem("token");
-      const result = await RejectDoctor(doctorId, reason, token);
-      setPendingDoctors(pendingDoctors.filter((d) => d.id !== doctorId));
-      return result;
-    } catch (err) {
-      toast.error(err?.message || "Failed to reject doctor");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateDoctorProfile = async (doctorId, data) => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem("token");
-      const result = await UpdateDoctorProfile(doctorId, data, token);
-      setApprovedDoctors((prev) =>
-        prev.map((d) => (d.id === doctorId ? { ...d, ...data } : d))
-      );
-      return result;
-    } catch (err) {
-      toast.error(err?.message || "Update failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <DoctorContext.Provider
       value={{
         doctor,
-        pendingDoctors,
-        approvedDoctors,
         loading,
         error,
         DoctorLogin,
         DoctorSignUp,
+        DoctorProfile,
         DoctorDocumentUpload,
-        approveDoctor,
-        rejectDoctor,
-        updateDoctorProfile,
       }}>
       {children}
     </DoctorContext.Provider>

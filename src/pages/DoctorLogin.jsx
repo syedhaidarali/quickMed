@@ -14,7 +14,7 @@ const DoctorLogin = () => {
   const { DoctorLogin, loading } = useDoctor();
   const [modalOpen, setModalOpen] = useState(false);
   const [loginMessage, setLoginMessage] = useState("");
-  const navigate = useNavigate("");
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -26,10 +26,13 @@ const DoctorLogin = () => {
   });
 
   const onSubmit = async (data) => {
-    const msg = await DoctorLogin({
-      identifier: data.identifier,
-      password: data.password,
-    });
+    const msg = await DoctorLogin(
+      {
+        identifier: data.identifier,
+        password: data.password,
+      },
+      navigate
+    );
     if (msg) {
       console.log(msg);
       setModalOpen(true);

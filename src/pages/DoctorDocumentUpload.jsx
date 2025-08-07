@@ -1,11 +1,10 @@
 /** @format */
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import InputField from "../components/formItems/InputField";
-import { useAuth } from "../context/AuthContext";
-import Modal from "../modals/Modal";
 import { UploadCloud, UserCircle } from "lucide-react";
+import { toast } from "sonner";
+import Modal from "../modals/Modal";
+import { useDoctor } from "../context/DoctorContext";
 
 const DoctorDocumentUpload = () => {
   const [documents, setDocuments] = useState(null);
@@ -14,8 +13,8 @@ const DoctorDocumentUpload = () => {
   const [uploadMessage, setUploadMessage] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [status, setStatus] = useState("pending");
-  const navigate = useNavigate();
-  const { uploadDocuments } = useAuth();
+
+  const { DoctorProfile, DoctorDocumentUpload } = useDoctor();
 
   const handleFileChange = (event) => {
     setDocuments(event.target.files);
@@ -23,38 +22,31 @@ const DoctorDocumentUpload = () => {
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
-    setProfileImage(file);
+    console.log(file);
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setImagePreview(null);
+      const formData = new FormData();
+      formData.append("image", file);
+      DoctorProfile(formData);
     }
   };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!documents || !profileImage) {
-      setUploadMessage(
-        "Please select documents and a profile image to upload."
-      );
-      setModalOpen(true);
+    if (!documents || documents.length === 0) {
+      toast.error("Please select at least one document");
       return;
     }
 
-    const formData = new FormData();
-    for (let i = 0; i < documents.length; i++) {
-      formData.append("documents", documents[i]);
+    try {
+      await DoctorDocumentUpload({ documents });
+      setModalOpen(true);
+      setUploadMessage("Documents uploaded successfully!");
+      setStatus("success");
+    } catch (error) {
+      setModalOpen(true);
+      setUploadMessage("Failed to upload documents. Please try again.");
+      setStatus("error");
     }
-    formData.append("profileImage", profileImage);
-
-    const msg = await uploadDocuments(formData);
-    setUploadMessage(msg);
-    setStatus("pending");
-    setModalOpen(true);
   };
 
   return (
@@ -67,7 +59,7 @@ const DoctorDocumentUpload = () => {
         <form
           onSubmit={handleSubmit}
           className='space-y-6'>
-          {/* Profile image preview + input */}
+          {/* Profile Image Upload */}
           <div className='flex flex-col items-center gap-2'>
             <label
               htmlFor='profileImage'
@@ -97,7 +89,7 @@ const DoctorDocumentUpload = () => {
             </label>
           </div>
 
-          {/* Document Upload */}
+          {/* Documents Upload */}
           <div className='w-full'>
             <label className='block text-sm font-medium text-emerald-700 mb-1'>
               Upload Supporting Documents
@@ -122,7 +114,7 @@ const DoctorDocumentUpload = () => {
             </div>
           </div>
 
-          {/* Submit button */}
+          {/* Submit */}
           <button
             type='submit'
             className='w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-md shadow transition'>
@@ -131,6 +123,7 @@ const DoctorDocumentUpload = () => {
         </form>
       </div>
 
+      {/* Modal */}
       {modalOpen && (
         <Modal
           isOpen={modalOpen}

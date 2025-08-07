@@ -23,7 +23,6 @@ const MultiSelectSpecialty = ({
   const handleRemove = (item) => {
     onSpecialtiesChange(selectedSpecialties.filter((s) => s !== item));
   };
-  console.log(selectedSpecialties);
 
   return (
     <div className={`relative ${className}`}>

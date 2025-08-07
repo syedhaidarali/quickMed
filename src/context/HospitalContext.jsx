@@ -1,39 +1,67 @@
 /** @format */
 
-// context/HospitalContext.jsx
 import React, { createContext, useContext, useState } from "react";
-import {
-  SignUpHospital,
-  ApproveHospital,
-  RejectHospital,
-  UpdateHospitalProfile,
-} from "../api/api";
+import { hospitalService } from "../services/hospitalService";
 import { toast } from "sonner";
 
 const HospitalContext = createContext();
 
 export const HospitalProvider = ({ children }) => {
+  const [hospital, setHospital] = useState(null);
   const [pendingHospitals, setPendingHospitals] = useState([]);
   const [approvedHospitals, setApprovedHospitals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const HospitalSignUp = async (formData) => {
+  const HospitalLogin = async (credentials, navigate) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await hospitalService.login(credentials);
+      localStorage.setItem("token", data.data.token);
+      setHospital(data.data.hospital);
+      toast.success(data.data.message);
+      if (navigate) {
+        navigate("/");
+      }
+      return data.data.message;
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Login failed");
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const HospitalSignUp = async (formData, navigate) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await hospitalService.signUp(formData);
+      toast.success("Form Submitted Successfully");
+      if (navigate) {
+        navigate("/hospital/login");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Signup failed");
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const HospitalProfile = async (hospitalId, profileData) => {
     setLoading(true);
     try {
-      const response = await SignUpHospital(formData);
-      const newHospital = {
-        id: Date.now(),
-        ...formData,
-        status: "pending",
-        submittedAt: new Date().toISOString().split("T")[0],
-      };
-      setPendingHospitals((prev) => [...prev, newHospital]);
-      toast.success("Hospital registered successfully");
-      return { success: true, data: response };
+      const response = await hospitalService.updateProfile(
+        hospitalId,
+        profileData
+      );
+      toast.success("Profile updated successfully");
+      return response.data;
     } catch (err) {
-      toast.error(err.message || "Signup failed");
-      return { success: false, error: err.message };
+      toast.error(err.response?.data?.message || "Update failed");
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -42,8 +70,7 @@ export const HospitalProvider = ({ children }) => {
   const approveHospital = async (hospitalId) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const result = await ApproveHospital(hospitalId, token);
+      const response = await hospitalService.approveHospital(hospitalId);
       const hospitalToApprove = pendingHospitals.find(
         (h) => h.id === hospitalId
       );
@@ -56,9 +83,11 @@ export const HospitalProvider = ({ children }) => {
           pendingHospitals.filter((h) => h.id !== hospitalId)
         );
       }
-      return result;
+      toast.success("Hospital approved successfully");
+      return response.data;
     } catch (err) {
-      toast.error(err.message || "Approval failed");
+      toast.error(err.response?.data?.message || "Failed to approve hospital");
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -67,32 +96,13 @@ export const HospitalProvider = ({ children }) => {
   const rejectHospital = async (hospitalId, reason) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const result = await RejectHospital(hospitalId, reason, token);
-      setPendingHospitals((prev) => prev.filter((h) => h.id !== hospitalId));
-      return result;
+      const response = await hospitalService.rejectHospital(hospitalId, reason);
+      setPendingHospitals(pendingHospitals.filter((h) => h.id !== hospitalId));
+      toast.success("Hospital rejected successfully");
+      return response.data;
     } catch (err) {
-      toast.error(err.message || "Rejection failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateHospitalProfile = async (hospitalId, profileData) => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem("token");
-      const result = await UpdateHospitalProfile(
-        hospitalId,
-        profileData,
-        token
-      );
-      setApprovedHospitals((prev) =>
-        prev.map((h) => (h.id === hospitalId ? { ...h, ...profileData } : h))
-      );
-      return result;
-    } catch (err) {
-      toast.error(err.message || "Update failed");
+      toast.error(err.response?.data?.message || "Failed to reject hospital");
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -101,14 +111,16 @@ export const HospitalProvider = ({ children }) => {
   return (
     <HospitalContext.Provider
       value={{
+        hospital,
         pendingHospitals,
         approvedHospitals,
         loading,
         error,
+        HospitalLogin,
         HospitalSignUp,
+        HospitalProfile,
         approveHospital,
         rejectHospital,
-        updateHospitalProfile,
       }}>
       {children}
     </HospitalContext.Provider>
