@@ -22,6 +22,25 @@ const ReviewTable = ({
     );
   }
 
+  const renderInitials = (name) => {
+    const initials = name
+      .split(" ")
+      .map((n) => n[0])
+      .join("");
+    const textSize =
+      initials.length <= 2
+        ? "text-base"
+        : initials.length === 3
+        ? "text-sm"
+        : "text-xs";
+
+    return (
+      <span className={`text-emerald-600 font-medium ${textSize}`}>
+        {initials}
+      </span>
+    );
+  };
+
   const getColumns = () => {
     if (type === "doctor") {
       return [
@@ -32,17 +51,12 @@ const ReviewTable = ({
             <div className='flex items-center'>
               <div className='flex-shrink-0 h-10 w-10'>
                 <div className='h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center'>
-                  <span className='text-emerald-600 font-medium'>
-                    {item.fullName
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </span>
+                  {renderInitials(item.name)}
                 </div>
               </div>
               <div className='ml-4'>
                 <div className='text-sm font-medium text-gray-900'>
-                  {item.fullName}
+                  {item.name}
                 </div>
                 <div className='text-sm text-gray-500'>{item.email}</div>
               </div>
@@ -99,18 +113,13 @@ const ReviewTable = ({
           render: (item) => (
             <div className='flex items-center'>
               <div className='flex-shrink-0 h-10 w-10'>
-                <div className='h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center'>
-                  <span className='text-blue-600 font-medium'>
-                    {item.hospitalName
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </span>
+                <div className='h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center overflow-hidden'>
+                  {renderInitials(item.name)}
                 </div>
               </div>
               <div className='ml-4'>
                 <div className='text-sm font-medium text-gray-900'>
-                  {item.hospitalName}
+                  {item.name}
                 </div>
                 <div className='text-sm text-gray-500'>{item.email}</div>
               </div>
@@ -205,7 +214,7 @@ const ReviewTable = ({
               <td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
                 <div className='flex space-x-2'>
                   <button
-                    onClick={() => onApprove(item.id)}
+                    onClick={() => onApprove(item._id)}
                     className='bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition-colors'>
                     Approve
                   </button>

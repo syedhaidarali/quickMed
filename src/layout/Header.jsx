@@ -81,24 +81,33 @@ const Header = () => {
           />
         )
       )}
-      {!admin && (
-        <div className='flex justify-end space-x-3 w-fit ms-auto'>
-          <LoginButton className='ml-2' />
+
+      <div className='flex justify-end space-x-3 w-fit ms-auto'>
+        {!admin && (
+          <>
+            <LoginButton className='ml-2' />
+            <NavLink
+              href='/doctor/login'
+              label='Doctor'
+            />
+            <NavLink
+              href='/register/hospital'
+              className={``}
+              label='Register Hospital'
+            />
+            <NavLink
+              href='/admin/login'
+              label='Admin'
+            />
+          </>
+        )}
+        {admin && (
           <NavLink
-            href='/doctor/login'
-            label='Doctor'
+            href='/admin/dashboard'
+            label='Admin Dashboard'
           />
-          <NavLink
-            href='/register/hospital'
-            className={``}
-            label='Register Hospital'
-          />
-          <NavLink
-            href='/admin/login'
-            label='Admin'
-          />
-        </div>
-      )}
+        )}
+      </div>
     </nav>
   );
 

@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import AdminStatsCards from "../components/admin/AdminStatsCards";
@@ -14,13 +14,21 @@ const AdminDashboard = () => {
     admin,
     pendingDoctors,
     approvedDoctors,
+    rejectedDoctors,
     pendingHospitals,
     approvedHospitals,
+    rejectedHospitals,
     approveDoctor,
     rejectDoctor,
     approveHospital,
     rejectHospital,
     logout,
+    fetchPendingDoctors,
+    fetchApprovedDoctors,
+    fetchRejectedDoctors,
+    fetchPendingHospitals,
+    fetchApprovedHospitals,
+    fetchRejectedHospitals,
   } = useAdmin();
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState(null);
@@ -28,7 +36,17 @@ const AdminDashboard = () => {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [modalType, setModalType] = useState("");
 
-  const handleApprove = async (itemId, type) => {};
+  useEffect(() => {
+    fetchPendingDoctors();
+    fetchApprovedDoctors();
+    fetchRejectedDoctors();
+    // fetchPendingHospitals();
+    // fetchApprovedHospitals();
+    // fetchRejectedHospitals();
+  }, []);
+  const handleApprove = async (itemId, type) => {
+    approveDoctor(itemId);
+  };
 
   const handleReject = async (itemId, type) => {};
 
@@ -49,11 +67,19 @@ const AdminDashboard = () => {
         <AdminStatsCards
           pendingDoctorsCount={pendingDoctors.length}
           approvedDoctorsCount={approvedDoctors.length}
-          totalDoctorsCount={pendingDoctors.length + approvedDoctors.length}
+          rejectedDoctorsCount={rejectedDoctors.length}
+          totalDoctorsCount={
+            pendingDoctors.length +
+            approvedDoctors.length +
+            rejectedDoctors.length
+          }
           pendingHospitalsCount={pendingHospitals.length}
           approvedHospitalsCount={approvedHospitals.length}
+          rejectedHospitalsCount={rejectedHospitals.length}
           totalHospitalsCount={
-            pendingHospitals.length + approvedHospitals.length
+            pendingHospitals.length +
+            approvedHospitals.length +
+            rejectedHospitals.length
           }
         />
 
@@ -94,6 +120,39 @@ const AdminDashboard = () => {
             onApprove={(id) => handleApprove(id, "hospital")}
             onReject={(id) => handleReject(id, "hospital")}
             onOpenRejectModal={(item) => openRejectModal(item, "hospital")}
+          />
+        </div>
+
+        {/* Rejected Doctor Applications Section */}
+        <div className='bg-white rounded-lg shadow mb-8'>
+          <div className='px-6 py-4 border-b border-gray-200'>
+            <h2 className='text-xl font-semibold text-gray-900'>
+              Rejected Doctor Applications
+            </h2>
+            <p className='text-sm text-gray-600 mt-1'>
+              List of rejected doctor applications
+            </p>
+          </div>
+          <ReviewTable
+            pendingItems={rejectedDoctors}
+            type='doctor'
+            isRejected={true}
+          />
+        </div>
+        {/* Rejected Hospital Applications Section */}
+        <div className='bg-white rounded-lg shadow'>
+          <div className='px-6 py-4 border-b border-gray-200'>
+            <h2 className='text-xl font-semibold text-gray-900'>
+              Rejected Hospital Applications
+            </h2>
+            <p className='text-sm text-gray-600 mt-1'>
+              List of rejected hospital applications
+            </p>
+          </div>
+          <ReviewTable
+            pendingItems={rejectedHospitals}
+            type='hospital'
+            isRejected={true}
           />
         </div>
       </div>

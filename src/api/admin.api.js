@@ -7,16 +7,24 @@ export const adminApi = {
 
   login: (credentials) => request.post("/admin/login", credentials),
 
-  getPendingDoctors: () => request.get("/admin/pending-doctors"),
+  getAllDoctor: () => request.get("/admin/doctors"),
+
+  getPendingDoctors: () => request.get("/admin/doctors/pending"),
 
   getPendingHospitals: () => request.get("/admin/pending-hospitals"),
 
-  getApprovedDoctors: () => request.get("/admin/approved-doctors"),
+  getApprovedDoctors: () => request.get("/admin/doctors/verified"),
 
   getApprovedHospitals: () => request.get("/admin/approved-hospitals"),
 
+  getRejectedDoctors: () => request.get("/admin/doctors/rejected"),
+
+  getRejectedHospitals: () => request.get("/admin/rejected-hospitals"),
+
   approveDoctor: (doctorId) =>
-    request.post(`/admin/approve-doctor/${doctorId}`),
+    request.post(`/admin/doctors/verification/${doctorId}`, {
+      status: "verified",
+    }),
 
   rejectDoctor: (doctorId, reason) =>
     request.post(`/admin/reject-doctor/${doctorId}`, { reason }),

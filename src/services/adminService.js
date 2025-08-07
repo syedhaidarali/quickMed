@@ -4,7 +4,10 @@ import { adminApi } from "../api/admin.api";
 
 export const adminService = {
   validateToken: () => adminApi.validateToken(),
+
   login: (credentials) => adminApi.login(credentials),
+
+  getAllDoctor: () => adminApi.getAllDoctor(),
 
   getPendingDoctors: () => {
     return adminApi.getPendingDoctors();
@@ -14,13 +17,15 @@ export const adminService = {
     return adminApi.getPendingHospitals();
   },
 
-  getApprovedDoctors: () => {
-    return adminApi.getApprovedDoctors();
-  },
+  getApprovedDoctors: () => adminApi.getApprovedDoctors(),
 
   getApprovedHospitals: () => {
     return adminApi.getApprovedHospitals();
   },
+
+  getRejectedDoctors: () => adminApi.getRejectedDoctors(),
+
+  getRejectedHospitals: () => adminApi.getRejectedHospitals(),
 
   approveDoctor: (doctorId) => {
     return adminApi.approveDoctor(doctorId);

@@ -52,6 +52,7 @@ export const DoctorProvider = ({ children }) => {
   const DoctorProfile = async (data) => {
     try {
       const result = await doctorService.updateProfile(data);
+      a;
       toast.success(result.data.data.message);
       return result;
     } catch (err) {

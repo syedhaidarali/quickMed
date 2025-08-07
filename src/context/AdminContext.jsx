@@ -13,9 +13,11 @@ export const AdminProvider = ({ children }) => {
   const [pendingHospitals, setPendingHospitals] = useState([]);
   const [approvedDoctors, setApprovedDoctors] = useState([]);
   const [approvedHospitals, setApprovedHospitals] = useState([]);
-
+  const [getAllDoctors, setAllDoctors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [rejectedDoctors, setRejectedDoctors] = useState([]);
+  const [rejectedHospitals, setRejectedHospitals] = useState([]);
 
   const validateSession = async () => {
     setLoading(true);
@@ -31,6 +33,7 @@ export const AdminProvider = ({ children }) => {
 
   useEffect(() => {
     validateSession();
+    getAllDoctor();
   }, []);
 
   const login = async (credentials, navigate) => {
@@ -57,11 +60,22 @@ export const AdminProvider = ({ children }) => {
     setAdmin(null);
   };
 
+  const getAllDoctor = async () => {
+    try {
+      const response = await adminService.getAllDoctor();
+      setAllDoctors(response.data.data.doctors);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchPendingDoctors = async () => {
     try {
-      setLoading(true);
       const res = await adminService.getPendingDoctors();
-      setPendingDoctors(res.data);
+      console.log(res.data.data.doctors);
+      setPendingDoctors(res.data.data.doctors);
     } catch (err) {
       setError(err);
     } finally {
@@ -83,9 +97,8 @@ export const AdminProvider = ({ children }) => {
 
   const fetchApprovedDoctors = async () => {
     try {
-      setLoading(true);
       const res = await adminService.getApprovedDoctors();
-      setApprovedDoctors(res.data);
+      setApprovedDoctors(res.data.data.doctors);
     } catch (err) {
       setError(err);
     } finally {
@@ -95,9 +108,21 @@ export const AdminProvider = ({ children }) => {
 
   const fetchApprovedHospitals = async () => {
     try {
-      setLoading(true);
       const res = await adminService.getApprovedHospitals();
       setApprovedHospitals(res.data);
+      console.log(res);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRejectedDoctors = async () => {
+    try {
+      const res = await adminService.getRejectedDoctors();
+      console.log("rejectd", res);
+      setRejectedDoctors(res.data.data.doctors);
     } catch (err) {
       setError(err);
     } finally {
@@ -106,8 +131,8 @@ export const AdminProvider = ({ children }) => {
   };
 
   const approveDoctor = async (doctorId) => {
+    console.log(doctorId, "approveDoctor");
     try {
-      setLoading(true);
       return await adminService.approveDoctor(doctorId);
     } catch (err) {
       setError(err);
@@ -119,7 +144,6 @@ export const AdminProvider = ({ children }) => {
 
   const rejectDoctor = async (doctorId, reason) => {
     try {
-      setLoading(true);
       return await adminService.rejectDoctor(doctorId, reason);
     } catch (err) {
       setError(err);
@@ -131,7 +155,6 @@ export const AdminProvider = ({ children }) => {
 
   const approveHospital = async (hospitalId) => {
     try {
-      setLoading(true);
       return await adminService.approveHospital(hospitalId);
     } catch (err) {
       setError(err);
@@ -143,11 +166,21 @@ export const AdminProvider = ({ children }) => {
 
   const rejectHospital = async (hospitalId, reason) => {
     try {
-      setLoading(true);
       return await adminService.rejectHospital(hospitalId, reason);
     } catch (err) {
       setError(err);
       throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRejectedHospitals = async () => {
+    try {
+      const res = await adminService.getRejectedHospitals();
+      setRejectedHospitals(res.data);
+    } catch (err) {
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -173,6 +206,10 @@ export const AdminProvider = ({ children }) => {
         approveHospital,
         rejectHospital,
         admin,
+        rejectedDoctors,
+        rejectedHospitals,
+        fetchRejectedDoctors,
+        fetchRejectedHospitals,
       }}>
       {children}
     </AdminContext.Provider>
