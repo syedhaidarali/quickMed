@@ -61,7 +61,7 @@ export const DoctorProvider = ({ children }) => {
     setLoading(true);
     try {
       const result = await doctorService.uploadDocuments(formData);
-      // console.log(result.data.data.documents[0].documentUrl);
+      console.log(result);
       navigate(``);
       toast.success("Documents Uploaded");
       return result;

@@ -10,8 +10,7 @@ const DoctorDocumentUpload = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [uploadMessage, setUploadMessage] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
-  const [status, setStatus] = useState("pending");
+  const [modalOpen, setModalOpen] = useState(true);
   const navigate = useNavigate();
 
   const { DoctorProfile, DoctorDocumentUpload, loading } = useDoctor();
@@ -23,6 +22,12 @@ const DoctorDocumentUpload = () => {
       }
     };
   }, [imagePreview]);
+
+  useEffect(() => {
+    if (uploadMessage) {
+      setModalOpen(true);
+    }
+  }, [uploadMessage]);
 
   const handleFileChange = (event) => {
     const selectedFiles = event.target.files;
@@ -52,11 +57,18 @@ const DoctorDocumentUpload = () => {
       setUploadMessage("Please upload at least one image document.");
       return;
     }
+
     const formData = new FormData();
     Array.from(documents).forEach((doc) => {
       formData.append("documents", doc);
     });
+
     DoctorDocumentUpload(formData, navigate);
+
+    // Show verification modal after submission
+    setUploadMessage(
+      "Login successful but account is still in pending verification. We are reviewing your profile and will contact you via email."
+    );
   };
 
   return (
@@ -151,11 +163,16 @@ const DoctorDocumentUpload = () => {
       {/* Modal */}
       {modalOpen && (
         <Modal
-          isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
-          message={uploadMessage}
-          status={status}
-        />
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+          title='Verification Pending'
+          description='Login successful but account is still in pending verification. We are reviewing your profile and will contact you via email.'>
+          <button
+            className='w-fit mx-auto px-5 py-2 rounded-lg bg-emerald-600 text-white font-semibold shadow-md hover:bg-emerald-700 transition-all duration-300'
+            onClick={() => navigate("/")}>
+            Home
+          </button>
+        </Modal>
       )}
     </div>
   );
