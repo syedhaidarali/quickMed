@@ -3,7 +3,7 @@
 import { toast } from "sonner";
 import { adminService } from "../services/adminService";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { setHeaders } from "../helpers/auth.helper";
+import { removeHeaders, setHeaders } from "../helpers/auth.helper";
 
 const AdminContext = createContext();
 
@@ -13,7 +13,6 @@ export const AdminProvider = ({ children }) => {
   const [pendingHospitals, setPendingHospitals] = useState([]);
   const [approvedDoctors, setApprovedDoctors] = useState([]);
   const [approvedHospitals, setApprovedHospitals] = useState([]);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -22,7 +21,6 @@ export const AdminProvider = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await adminService.validateToken();
-      console.log(data, "admin data");
       setAdmin(data.data);
     } catch (err) {
       console.log(err);
@@ -52,6 +50,11 @@ export const AdminProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const logout = () => {
+    removeHeaders();
+    setAdmin(null);
   };
 
   const fetchPendingDoctors = async () => {
@@ -154,6 +157,7 @@ export const AdminProvider = ({ children }) => {
     <AdminContext.Provider
       value={{
         login,
+        logout,
         pendingDoctors,
         pendingHospitals,
         approvedDoctors,

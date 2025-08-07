@@ -6,6 +6,7 @@ import { MenuIcon } from "../assets/svg";
 import DropdownMenu from "../components/formItems/DropdownMenu";
 import NavLink from "../components/formItems/NavLink";
 import { Link } from "react-router-dom";
+import { useAdmin } from "../context/AdminContext";
 
 // ==========================
 // Call Button Component
@@ -29,6 +30,7 @@ const LoginButton = ({ onClick, className = "" }) => (
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const { admin } = useAdmin();
   const menuRef = useRef(null);
 
   const handleRoute = () => window.scrollTo({ top: 0, behavior: "smooth" });
@@ -79,23 +81,24 @@ const Header = () => {
           />
         )
       )}
-      <div className='flex justify-end space-x-3 w-fit ms-auto'>
-        <LoginButton className='ml-2' />
-        <NavLink
-          href='/doctor/login'
-          label='Doctor'
-        />
-        <NavLink
-          href='/register/hospital'
-          className={``}
-          label='Register Hospital'
-        />
-
-        <NavLink
-          href='/admin/login'
-          label='Admin'
-        />
-      </div>
+      {!admin && (
+        <div className='flex justify-end space-x-3 w-fit ms-auto'>
+          <LoginButton className='ml-2' />
+          <NavLink
+            href='/doctor/login'
+            label='Doctor'
+          />
+          <NavLink
+            href='/register/hospital'
+            className={``}
+            label='Register Hospital'
+          />
+          <NavLink
+            href='/admin/login'
+            label='Admin'
+          />
+        </div>
+      )}
     </nav>
   );
 
@@ -127,26 +130,29 @@ const Header = () => {
             />
           )
         )}
-
-        <LoginButton
-          onClick={handleCloseMenu}
-          className='mt-2'
-        />
-        <NavLink
-          href='/doctor/login'
-          label='Doctor'
-          onClick={handleCloseMenu}
-        />
-        <NavLink
-          href='/register/hospital'
-          className={`flex items-center gap-2 px-4 py-2 bg-[#004d71] text-white rounded border border-[#004d71] font-medium hover:bg-[#014e78] transition-colors duration-150 `}
-          label='Register Hospital'
-        />
-        <NavLink
-          href='/admin/login'
-          label='Admin'
-          onClick={handleCloseMenu}
-        />
+        {!admin && (
+          <>
+            <LoginButton
+              onClick={handleCloseMenu}
+              className='mt-2'
+            />
+            <NavLink
+              href='/doctor/login'
+              label='Doctor'
+              onClick={handleCloseMenu}
+            />
+            <NavLink
+              href='/register/hospital'
+              className={`flex items-center gap-2 px-4 py-2 bg-[#004d71] text-white rounded border border-[#004d71] font-medium hover:bg-[#014e78] transition-colors duration-150 `}
+              label='Register Hospital'
+            />
+            <NavLink
+              href='/admin/login'
+              label='Admin'
+              onClick={handleCloseMenu}
+            />
+          </>
+        )}
       </nav>
     );
 

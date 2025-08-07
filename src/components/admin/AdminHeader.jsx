@@ -2,7 +2,11 @@
 
 import React from "react";
 
-const AdminHeader = ({ admin, onLogout }) => {
+const AdminHeader = ({ logout, navigate }) => {
+  const handleLogout = () => {
+    logout();
+    navigate("/admin/login");
+  };
   return (
     <div className='bg-white shadow-sm border-b'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
@@ -14,9 +18,8 @@ const AdminHeader = ({ admin, onLogout }) => {
             </h1>
           </div>
           <div className='flex items-center space-x-4'>
-            <span className='text-emerald-700'>Welcome, {admin.name}</span>
             <button
-              onClick={onLogout}
+              onClick={handleLogout}
               className='bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors'>
               Logout
             </button>

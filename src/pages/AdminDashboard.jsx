@@ -28,15 +28,6 @@ const AdminDashboard = () => {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [modalType, setModalType] = useState("");
 
-  if (!admin) {
-    navigate("/admin/login");
-    return (
-      <div>
-        <h1>this page is not show </h1>
-      </div>
-    );
-  }
-
   const handleApprove = async (itemId, type) => {};
 
   const handleReject = async (itemId, type) => {};
@@ -50,8 +41,8 @@ const AdminDashboard = () => {
   return (
     <div className='min-h-screen bg-emerald-50'>
       <AdminHeader
-        admin={admin}
-        onLogout={logout}
+        logout={logout}
+        navigate={navigate}
       />
 
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>

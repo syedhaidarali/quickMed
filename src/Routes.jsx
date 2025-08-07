@@ -1,6 +1,6 @@
 /** @format */
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./layout/AppLayout.jsx";
 import AuthLayout from "./layout/AuthLayout.jsx"; // Create this if not present
 import {
@@ -26,6 +26,20 @@ import {
   BookAppointmentHospital,
   DoctorDocumentUpload,
 } from "./pages/pages.js";
+import { useAdmin } from "./context/AdminContext";
+
+const ProtectedAdminRoute = ({ children }) => {
+  const { admin } = useAdmin();
+  if (!admin) {
+    return (
+      <Navigate
+        to='/admin/login'
+        replace
+      />
+    );
+  }
+  return children;
+};
 
 const AppRoutes = () => (
   <Routes>
@@ -93,7 +107,11 @@ const AppRoutes = () => (
       />
       <Route
         path='/admin/dashboard'
-        element={<AdminDashboard />}
+        element={
+          <ProtectedAdminRoute>
+            <AdminDashboard />
+          </ProtectedAdminRoute>
+        }
       />
     </Route>
     {/* Auth layout for login/register */}
