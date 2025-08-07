@@ -45,10 +45,16 @@ const AdminDashboard = () => {
     // fetchRejectedHospitals();
   }, []);
   const handleApprove = async (itemId, type) => {
-    approveDoctor(itemId);
+    if (type === "doctor") {
+      await approveDoctor(itemId);
+    } else if (type === "hospital") {
+      await approveHospital(itemId);
+    }
   };
 
-  const handleReject = async (itemId, type) => {};
+  const handleReject = async (itemId) => {
+    rejectDoctor(itemId, rejectionReason);
+  };
 
   const openRejectModal = (item, type) => {
     setSelectedItem(item);
@@ -124,7 +130,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Rejected Doctor Applications Section */}
-        <div className='bg-white rounded-lg shadow mb-8'>
+        <div className='bg-white rounded-lg shadow my-8'>
           <div className='px-6 py-4 border-b border-gray-200'>
             <h2 className='text-xl font-semibold text-gray-900'>
               Rejected Doctor Applications
@@ -163,7 +169,7 @@ const AdminDashboard = () => {
         type={modalType}
         rejectionReason={rejectionReason}
         onRejectionReasonChange={(e) => setRejectionReason(e.target.value)}
-        onReject={() => handleReject(selectedItem.id, modalType)}
+        onReject={() => handleReject(selectedItem._id, modalType)}
         onCancel={() => {
           setShowRejectModal(false);
           setRejectionReason("");

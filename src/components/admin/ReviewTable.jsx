@@ -1,6 +1,7 @@
 /** @format */
 
-import React from "react";
+import React, { useState } from "react";
+import DoctorReviewModal from "./DoctorReviewModal";
 
 const ReviewTable = ({
   pendingItems,
@@ -9,6 +10,9 @@ const ReviewTable = ({
   onReject,
   onOpenRejectModal,
 }) => {
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [showDoctorModal, setShowDoctorModal] = useState(false);
+
   if (pendingItems.length === 0) {
     return (
       <div className='p-8 text-center'>
@@ -21,6 +25,28 @@ const ReviewTable = ({
       </div>
     );
   }
+
+  const handleViewDetails = (item) => {
+    if (type === "doctor") {
+      setSelectedDoctor(item);
+      setShowDoctorModal(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowDoctorModal(false);
+    setSelectedDoctor(null);
+  };
+
+  const handleApproveFromModal = (doctorId) => {
+    onApprove(doctorId);
+    handleCloseModal();
+  };
+
+  const handleRejectFromModal = (doctor) => {
+    onOpenRejectModal(doctor);
+    handleCloseModal();
+  };
 
   const renderInitials = (name) => {
     const initials = name
@@ -223,12 +249,28 @@ const ReviewTable = ({
                     className='bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition-colors'>
                     Reject
                   </button>
+                  {type === "doctor" && (
+                    <button
+                      onClick={() => handleViewDetails(item)}
+                      className='bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors'>
+                      View Details
+                    </button>
+                  )}
                 </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      {showDoctorModal && selectedDoctor && (
+        <DoctorReviewModal
+          isOpen={showDoctorModal}
+          onClose={handleCloseModal}
+          onApprove={handleApproveFromModal}
+          onReject={handleRejectFromModal}
+          doctor={selectedDoctor}
+        />
+      )}
     </div>
   );
 };

@@ -19,6 +19,8 @@ export const AdminProvider = ({ children }) => {
   const [rejectedDoctors, setRejectedDoctors] = useState([]);
   const [rejectedHospitals, setRejectedHospitals] = useState([]);
 
+  console.log("approve", approvedDoctors);
+
   const validateSession = async () => {
     setLoading(true);
     try {
@@ -133,7 +135,10 @@ export const AdminProvider = ({ children }) => {
   const approveDoctor = async (doctorId) => {
     console.log(doctorId, "approveDoctor");
     try {
-      return await adminService.approveDoctor(doctorId);
+      const response = await adminService.approveDoctor(doctorId);
+      setPendingDoctors((prev) => prev.filter((doc) => doc._id !== doctorId));
+      toast.success("Doctor approved successfully!");
+      return response;
     } catch (err) {
       setError(err);
       throw err;
@@ -143,6 +148,7 @@ export const AdminProvider = ({ children }) => {
   };
 
   const rejectDoctor = async (doctorId, reason) => {
+    console.log(doctorId, reason);
     try {
       return await adminService.rejectDoctor(doctorId, reason);
     } catch (err) {

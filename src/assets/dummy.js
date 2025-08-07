@@ -769,3 +769,57 @@ export const REGISTERED_HOSPITALS = [
   "Pakistan Institute of Medical Sciences (PIMS)",
   "Ziauddin Hospital",
 ];
+
+const personalFields = (doctor) => [
+  { key: "name", label: "Name", value: doctor.name },
+  { key: "email", label: "Email", value: doctor.email },
+  { key: "phone", label: "Phone", value: doctor.phone },
+  { key: "cnic", label: "CNIC", value: doctor.cnic },
+  { key: "gender", label: "Gender", value: doctor.gender },
+  { key: "religion", label: "Religion", value: doctor.religion },
+  { key: "address", label: "Address", value: doctor.fullAddress },
+];
+
+const professionalFields = (doctor) => [
+  { key: "degree", label: "Main Degree", value: doctor.mainDegree },
+  {
+    key: "speciality",
+    label: "Speciality",
+    value: doctor.speciality?.join(", "),
+  },
+  {
+    key: "experience",
+    label: "Experience",
+    value: `${doctor.experience} years`,
+  },
+  { key: "fee", label: "Fee", value: `Rs. ${doctor.fee}` },
+  { key: "hospital", label: "Hospital", value: doctor.hospital },
+  { key: "pmdc", label: "PMDC Number", value: doctor.pmdcNumber },
+];
+
+const timestampFields = (doctor) => [
+  { key: "created", label: "Created", value: formatDate(doctor.createdAt) },
+  { key: "updated", label: "Updated", value: formatDate(doctor.updatedAt) },
+  ...(doctor.PaymentCompleted
+    ? [
+        {
+          key: "payment",
+          label: "Payment Completed",
+          value: formatDate(doctor.PaymentCompleted),
+        },
+      ]
+    : []),
+];
+
+const ratingFields = (doctor) => [
+  {
+    key: "avg",
+    label: "Average Rating",
+    value: `${doctor.rating?.average || 0}/5`,
+  },
+  {
+    key: "reviews",
+    label: "Total Reviews",
+    value: doctor.rating?.count || 0,
+  },
+];
