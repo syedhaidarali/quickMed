@@ -512,28 +512,19 @@ export const labs = [
 ];
 
 export const HOSPITAL_TYPES = [
-  "General Hospital",
-  "Specialized Hospital",
-  "Teaching Hospital",
-  "Private Hospital",
-  "Government Hospital",
-  "Military Hospital",
-  "Children's Hospital",
-  "Maternity Hospital",
-  "Cardiac Hospital",
-  "Orthopedic Hospital",
-  "Cancer Hospital",
-  "Eye Hospital",
-  "Dental Hospital",
-  "Psychiatric Hospital",
-  "Rehabilitation Hospital",
+  "Public",
+  "Private",
+  "Semi-Private",
+  "Military",
+  "Charity",
 ];
 
 export const HOSPITAL_CATEGORIES = [
-  "Primary Care",
-  "Secondary Care",
-  "Tertiary Care",
-  "Quaternary Care",
+  "General",
+  "Specialized",
+  "Teaching",
+  "Research",
+  "Emergency",
 ];
 
 export const RELIGIONS = [

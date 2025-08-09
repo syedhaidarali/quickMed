@@ -25,6 +25,8 @@ export const adminService = {
 
   getRejectedDoctors: () => adminApi.getRejectedDoctors(),
 
+  getDoctorsStatistics: () => adminApi.getDoctorsStatistics(),
+
   getRejectedHospitals: () => adminApi.getRejectedHospitals(),
 
   approveDoctor: (doctorId) => {

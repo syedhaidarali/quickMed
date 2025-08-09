@@ -18,6 +18,7 @@ const InputField = ({
   allowDashes = false,
   checked,
   required = false,
+  onBlur,
   ...rest
 }) => {
   const handleKeyDown = (e) => {

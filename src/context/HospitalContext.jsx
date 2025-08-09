@@ -13,9 +13,9 @@ export const HospitalProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  // image.png;
   const HospitalLogin = async (credentials, navigate) => {
-    setLoading(true);
+    // setLoading(true);
     setError(null);
     try {
       const { data } = await hospitalService.login(credentials);
@@ -35,24 +35,22 @@ export const HospitalProvider = ({ children }) => {
   };
 
   const HospitalSignUp = async (formData, navigate) => {
+    console.log("formData", formData);
     setLoading(true);
     setError(null);
     try {
-      const { data } = await hospitalService.signUp(formData);
+      const result = await hospitalService.signUp(formData);
       toast.success("Form Submitted Successfully");
-      if (navigate) {
-        navigate("/hospital/login");
-      }
+      navigate("/doctor/login");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Signup failed");
-      setError(err);
+      toast.error(err.data.response.data);
     } finally {
       setLoading(false);
     }
   };
 
   const HospitalProfile = async (hospitalId, profileData) => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const response = await hospitalService.updateProfile(
         hospitalId,

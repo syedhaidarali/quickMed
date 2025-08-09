@@ -52,7 +52,7 @@ const Dropdown = ({
       ref={containerRef}>
       <button
         type='button'
-        className={`w-full flex items-center h-11 border border-gray-300 rounded-md px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+        className={`w-full flex items-center h-11 border border-gray-300 rounded-md px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
           disabled
             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
             : "text-gray-700 bg-white hover:border-gray-400"
@@ -78,7 +78,7 @@ const Dropdown = ({
             return (
               <div
                 key={item}
-                className='px-4 py-2 hover:bg-blue-100 text-gray-700 cursor-pointer font-medium flex items-center gap-2'
+                className='px-4 py-2 hover:bg-emerald-100 text-gray-700 cursor-pointer font-medium flex items-center gap-2'
                 onClick={() => handleSelect(item)}>
                 <span className={englishTextStyle}>{en}</span>
                 {isUrdu && (
