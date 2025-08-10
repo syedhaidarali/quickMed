@@ -8,6 +8,7 @@ import {
   Login,
   DoctorLogin,
   AdminLogin,
+  HospitalLogin,
   AdminDashboard,
   Register,
   AllDoctors,
@@ -90,7 +91,7 @@ const AppRoutes = () => (
         element={<JoinAsHospital />}
       />
       <Route
-        path='/doctor/profile/:slug'
+        path='/doctor/profile/'
         element={<DoctorProfile />}
       />
       <Route
@@ -119,6 +120,10 @@ const AppRoutes = () => (
       <Route
         path='/login'
         element={<Login />}
+      />
+      <Route
+        path='/hospital/login'
+        element={<HospitalLogin />}
       />
       <Route
         path='/doctor/login'

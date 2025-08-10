@@ -1,6 +1,6 @@
 /** @format */
 import React, { useState, useEffect } from "react";
-import { UploadCloud, UserCircle } from "lucide-react";
+import { UploadCloud, UserCircle, CheckCircle } from "lucide-react";
 import Modal from "../modals/Modal";
 import { useDoctor } from "../context/DoctorContext";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,8 @@ const DoctorDocumentUpload = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  const { DoctorProfile, DoctorDocumentUpload, loading } = useDoctor();
+  const { UpdateProfilePic, DoctorDocumentUpload, loading, doctor } =
+    useDoctor();
 
   useEffect(() => {
     return () => {
@@ -46,7 +47,7 @@ const DoctorDocumentUpload = () => {
       setImagePreview(previewUrl);
       const formData = new FormData();
       formData.append("image", file); // profile image
-      DoctorProfile(formData);
+      UpdateProfilePic(formData);
     }
   };
 
@@ -70,6 +71,31 @@ const DoctorDocumentUpload = () => {
       "Login successful but account is still in pending verification. We are reviewing your profile and will contact you via email."
     );
   };
+
+  // If documents are already uploaded, show success message
+  if (doctor?.hasDocuments) {
+    return (
+      <div className='min-h-screen flex items-center justify-center px-4 py-12'>
+        <div className='w-full max-w-lg bg-white rounded-2xl shadow-lg p-8 text-center'>
+          <div className='flex justify-center mb-6'>
+            <CheckCircle className='w-20 h-20 text-emerald-500' />
+          </div>
+          <h2 className='text-3xl font-bold text-emerald-800 mb-4'>
+            Documents Already Uploaded
+          </h2>
+          <p className='text-gray-600 mb-6'>
+            Your documents have been successfully uploaded and are currently
+            under review. You cannot upload additional documents at this time.
+          </p>
+          <button
+            onClick={() => navigate("/")}
+            className='w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-6 rounded-md shadow transition'>
+            Go to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='min-h-screen  flex items-center justify-center px-4 py-12'>

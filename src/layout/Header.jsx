@@ -7,6 +7,7 @@ import DropdownMenu from "../components/formItems/DropdownMenu";
 import NavLink from "../components/formItems/NavLink";
 import { Link } from "react-router-dom";
 import { useAdmin } from "../context/AdminContext";
+import { useDoctor } from "../context/context";
 
 // ==========================
 // Call Button Component
@@ -32,6 +33,7 @@ const Header = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const { admin } = useAdmin();
   const menuRef = useRef(null);
+  const { doctor } = useDoctor();
 
   const handleRoute = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -83,7 +85,7 @@ const Header = () => {
       )}
 
       <div className='flex justify-end space-x-3 w-fit ms-auto'>
-        {!admin && (
+        {!admin && !doctor && (
           <>
             <LoginButton className='ml-2' />
             <NavLink
@@ -105,6 +107,12 @@ const Header = () => {
           <NavLink
             href='/admin/dashboard'
             label='Admin Dashboard'
+          />
+        )}
+        {doctor && (
+          <NavLink
+            href='/doctor/profile'
+            label='Doctor Profile'
           />
         )}
       </div>
@@ -139,7 +147,7 @@ const Header = () => {
             />
           )
         )}
-        {!admin && (
+        {!admin && !doctor && (
           <>
             <LoginButton
               onClick={handleCloseMenu}
@@ -161,6 +169,18 @@ const Header = () => {
               onClick={handleCloseMenu}
             />
           </>
+        )}
+        {admin && (
+          <NavLink
+            href='/admin/dashboard'
+            label='Admin Dashboard'
+          />
+        )}
+        {doctor && (
+          <NavLink
+            href='/doctor/profile'
+            label='Doctor Profile'
+          />
         )}
       </nav>
     );

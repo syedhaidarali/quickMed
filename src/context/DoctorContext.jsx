@@ -2,8 +2,8 @@
 
 // context/DoctorContext.jsx
 import { doctorService } from "../services/doctorService";
-import { setHeaders } from "../helpers/auth.helper";
-import React, { createContext, useContext, useState } from "react";
+import { removeHeaders, setHeaders } from "../helpers/auth.helper";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 import { toast } from "sonner";
 
@@ -11,25 +11,45 @@ const DoctorContext = createContext();
 
 export const DoctorProvider = ({ children }) => {
   const [doctor, setDoctor] = useState(null);
+  console.log(doctor);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [doctorId, setDoctorId] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const validateSession = async () => {
+    setLoading(true);
+    try {
+      const { data } = await doctorService.validateToken();
+      setDoctor(data.data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    validateSession();
+  }, []);
 
   const DoctorLogin = async (credentials, navigate) => {
-    console.log(credentials, navigate);
     setLoading(true);
     setError(null);
     try {
       const doctorData = await doctorService.login(credentials);
-      console.log("doctor login", doctorData);
+      console.log(doctorData.data.data.user.hasDocuments);
+      setDoctor(doctorData.data.data.user);
       setHeaders(doctorData.data.data.token);
-      navigate("/doctor/upload-documents");
+      if (doctorData?.data?.data?.user?.hasDocuments) {
+        navigate("/");
+      } else {
+        navigate("/doctor/upload-documents");
+      }
       toast.success("Login Successfully");
       return doctorData.response.data.message;
     } catch (err) {
       console.log(err);
-      toast.error(err.response.data.data);
+      // toast.error(err);
     } finally {
       setLoading(false);
     }
@@ -43,16 +63,16 @@ export const DoctorProvider = ({ children }) => {
       toast.success("Form Submitted Successfully");
       navigate("/doctor/login");
     } catch (err) {
-      toast.error(err.data.response.data);
+      console.log(err);
+      toast.error(err.response.data.data);
     } finally {
       setLoading(false);
     }
   };
 
-  const DoctorProfile = async (data) => {
+  const UpdateProfilePic = async (data) => {
     try {
       const result = await doctorService.updateProfile(data);
-      a;
       toast.success(result.data.data.message);
       return result;
     } catch (err) {
@@ -62,6 +82,7 @@ export const DoctorProvider = ({ children }) => {
   };
 
   const DoctorDocumentUpload = async (formData, navigate) => {
+    console.log("formdata", formData);
     setLoading(true);
     try {
       const result = await doctorService.uploadDocuments(formData);
@@ -77,6 +98,25 @@ export const DoctorProvider = ({ children }) => {
     }
   };
 
+  const DoctorProfileUpdate = async (data) => {
+    console.log(data);
+    try {
+      const result = await doctorService.updateDoctorProfile(data);
+      console.log(result);
+      toast.success(result.data.data.message);
+      return result;
+    } catch (err) {
+      console.log(err, "profile err");
+      toast.error(err?.message || "Update failed");
+    }
+  };
+
+  const logout = (navigate) => {
+    navigate("/doctor/login");
+    removeHeaders();
+    setDoctor(null);
+  };
+
   return (
     <DoctorContext.Provider
       value={{
@@ -85,8 +125,10 @@ export const DoctorProvider = ({ children }) => {
         error,
         DoctorLogin,
         DoctorSignUp,
-        DoctorProfile,
+        UpdateProfilePic,
+        DoctorProfileUpdate,
         DoctorDocumentUpload,
+        logout,
       }}>
       {children}
     </DoctorContext.Provider>

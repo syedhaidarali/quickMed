@@ -202,11 +202,11 @@ export const defaultValues = {
   cnic: "",
   password: "",
   confirmPassword: "",
-  services: {
-    emergencyServices: false,
-    ambulanceServices: false,
-    icuServices: false,
-  },
+  // services: {
+  //   emergencyServices: false,
+  //   ambulanceServices: false,
+  //   icuServices: false,
+  // },
   image: null,
-  documents: [],
+  documents: null,
 };

@@ -12,10 +12,9 @@ import { useHospital } from "../context/HospitalContext";
 
 export const useHospitalFormHandler = () => {
   const [showSuccess, setShowSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { HospitalSignUp } = useHospital();
+  const { HospitalSignUp, loading } = useHospital();
 
   // Initialize React Hook Form with Zod resolver
   const form = useForm({
@@ -120,7 +119,10 @@ export const useHospitalFormHandler = () => {
 
   // Form submission handler
   const onSubmit = async (formData) => {
-    await HospitalSignUp(formData, navigate);
+    // Remove confirmPassword before sending to backend
+    const { confirmPassword, documents, agreement, ...dataForBackend } =
+      formData;
+    await HospitalSignUp(dataForBackend, navigate);
   };
   // Reset form and success state
   const resetForm = () => {

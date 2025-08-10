@@ -7,6 +7,7 @@ export { default as Register } from "./Register.jsx";
 export { default as DoctorLogin } from "./DoctorLogin.jsx";
 export { default as JoinAsDoctor } from "./JoinAsDoctor.jsx";
 export { default as JoinAsHospital } from "./JoinAsHospital.jsx";
+export { default as HospitalLogin } from "./HospitalLogin.jsx";
 export { default as DoctorProfile } from "./DoctorProfile.jsx";
 export { default as DoctorDetail } from "./DoctorDetail.jsx";
 export { default as AllDoctors } from "./AllDoctors.jsx";

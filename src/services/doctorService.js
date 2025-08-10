@@ -3,6 +3,8 @@
 import { doctorApi } from "../api/doctor.api";
 
 export const doctorService = {
+  validateToken: () => doctorApi.validateToken(),
+
   signUp: (formData) => doctorApi.signUp(formData),
 
   login: (credentials) => doctorApi.login(credentials),
@@ -10,4 +12,6 @@ export const doctorService = {
   updateProfile: (formData) => doctorApi.updateProfile(formData),
 
   uploadDocuments: (formData) => doctorApi.uploadDocuments(formData),
+
+  updateDoctorProfile: (formData) => doctorApi.updateDoctorProfile(formData),
 };

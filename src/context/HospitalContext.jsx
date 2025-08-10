@@ -15,19 +15,16 @@ export const HospitalProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   // image.png;
   const HospitalLogin = async (credentials, navigate) => {
-    // setLoading(true);
-    setError(null);
+    setLoading(true);
     try {
       const { data } = await hospitalService.login(credentials);
       localStorage.setItem("token", data.data.token);
       setHospital(data.data.hospital);
-      toast.success(data.data.message);
-      if (navigate) {
-        navigate("/");
-      }
+      toast.success("Login Successfully");
+      navigate("/");
       return data.data.message;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed");
+      toast.error(err.response.data.data || "Login failed");
       setError(err);
     } finally {
       setLoading(false);
@@ -35,15 +32,15 @@ export const HospitalProvider = ({ children }) => {
   };
 
   const HospitalSignUp = async (formData, navigate) => {
-    console.log("formData", formData);
     setLoading(true);
     setError(null);
     try {
-      const result = await hospitalService.signUp(formData);
+      await hospitalService.signUp(formData);
       toast.success("Form Submitted Successfully");
-      navigate("/doctor/login");
+      navigate("/hospital/login");
     } catch (err) {
-      toast.error(err.data.response.data);
+      console.log("err", err.response.data.data);
+      toast.error(err.response.data.data);
     } finally {
       setLoading(false);
     }

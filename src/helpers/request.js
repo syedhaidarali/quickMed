@@ -11,8 +11,6 @@ const request = axios.create({
 
 if (typeof window !== "undefined") {
   const token = localStorage.getItem("token");
-  console.log(token);
-
   if (token) {
     request.defaults.headers["Authorization"] = `${token}`;
   }

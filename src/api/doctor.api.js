@@ -3,6 +3,8 @@
 import request from "../helpers/request";
 
 export const doctorApi = {
+  validateToken: () => request.get("/doctor/me"),
+
   signUp: (formData) => request.post("/doctor/signup", formData),
 
   login: (credentials) => request.post("/doctor/login", credentials),
@@ -22,4 +24,6 @@ export const doctorApi = {
       },
     });
   },
+
+  updateDoctorProfile: (credentials) => request.post("/doctor", credentials),
 };

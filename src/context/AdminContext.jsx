@@ -20,14 +20,13 @@ export const AdminProvider = ({ children }) => {
   const [rejectedHospitals, setRejectedHospitals] = useState([]);
   // const [statistics, setStatistics] = useState(null);
 
-  console.log(getAllDoctors, "all");
   const validateSession = async () => {
-    // setLoading(true);
+    setLoading(true);
     try {
       const { data } = await adminService.validateToken();
       setAdmin(data.data);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setLoading(false);
     }
@@ -36,7 +35,7 @@ export const AdminProvider = ({ children }) => {
   useEffect(() => {
     validateSession();
     getAllDoctor();
-    // DoctorsStatistics();
+    DoctorsStatistics();
   }, []);
 
   const login = async (credentials, navigate) => {
@@ -68,7 +67,7 @@ export const AdminProvider = ({ children }) => {
       const response = await adminService.getAllDoctor();
       setAllDoctors(response.data.data.doctors);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setLoading(false);
     }
@@ -139,7 +138,7 @@ export const AdminProvider = ({ children }) => {
       // console.log("doctors statistics", result);
       return result;
     } catch (err) {
-      console.log(err, "doctor statistics error");
+      // console.log(err, "doctor statistics error");
     } finally {
       setLoading(false);
     }
