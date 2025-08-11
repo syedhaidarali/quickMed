@@ -3,6 +3,7 @@ import { useAdmin } from "../../context/AdminContext";
 import { toast } from "sonner";
 
 import React, { useState } from "react";
+import DoctorFormFields from "../forms/DoctorFormFields";
 
 // Reusable InfoRow
 const InfoRow = ({ label, value }) => (
@@ -56,7 +57,12 @@ const DoctorReviewModal = ({
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
   const [error, setError] = useState("");
   const [documents, setDocuments] = useState(doctor.documents || []);
-  const { DoctorDocumentUpload, loading, doctorProfilePicture } = useAdmin();
+  const {
+    DoctorDocumentUpload,
+    loading,
+    doctorProfilePicture,
+    updateDoctorDetails,
+  } = useAdmin();
   const fileInputRef = React.useRef();
   // Add ref for profile image upload
   const profileImageInputRef = React.useRef();
@@ -80,6 +86,7 @@ const DoctorReviewModal = ({
       mainDegree: doctor.mainDegree || "",
       fullAddress: doctor.fullAddress || "",
       hospital: doctor.hospital || "",
+      // hospitalVerified: !!doctor.hospitalVerified,
       experience: doctor.experience || "",
       fee: doctor.fee || "",
       availability: doctor.availability || false,
@@ -128,31 +135,19 @@ const DoctorReviewModal = ({
   const handleSaveChanges = async () => {
     setSaveLoading(true);
     try {
-      // Filter out empty speciality fields
       const cleanSpeciality = editedDoctor.speciality.filter(
         (s) => s.trim() !== ""
       );
-
       const updatedData = {
         ...editedDoctor,
         speciality: cleanSpeciality,
         experience: parseInt(editedDoctor.experience) || 0,
         fee: parseInt(editedDoctor.fee) || 0,
       };
-
-      // TODO: Add API call to update doctor data
-      // const response = await adminService.updateDoctorData(doctor._id, updatedData);
-      console.log("Saving doctor data:", updatedData);
-
-      // For now, just show success and exit edit mode
-      toast.success("Doctor data updated successfully!");
+      updateDoctorDetails(doctor._id, updatedData);
       setIsEditMode(false);
-
-      // TODO: Update the doctor object in context/state
-      // setDoctor(prev => ({ ...prev, ...updatedData }));
     } catch (error) {
-      console.error("Error updating doctor:", error);
-      toast.error("Failed to update doctor data");
+      console.log(error);
     } finally {
       setSaveLoading(false);
     }
@@ -171,6 +166,7 @@ const DoctorReviewModal = ({
       mainDegree: doctor.mainDegree || "",
       fullAddress: doctor.fullAddress || "",
       hospital: doctor.hospital || "",
+      hospitalVerified: !!doctor.hospitalVerified,
       experience: doctor.experience || "",
       fee: doctor.fee || "",
       availability: doctor.availability || false,
@@ -571,12 +567,69 @@ const DoctorReviewModal = ({
 
         {/* Body */}
         <div className='px-6 py-4 grid grid-cols-1 lg:grid-cols-2 gap-6'>
-          {isEditMode
-            ? renderEditablePersonalInfo()
-            : renderInfoSection("Personal Information", personalFields)}
-          {isEditMode
-            ? renderEditableProfessionalInfo()
-            : renderInfoSection("Professional Information", professionalFields)}
+          {isEditMode ? (
+            <div className='lg:col-span-2'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <DoctorFormFields
+                  values={editedDoctor}
+                  errors={{}}
+                  include={{
+                    password: false,
+                    confirmPassword: false,
+                    agreement: false,
+                    city: false,
+                    hospital: false,
+                    hospitalVerified: false,
+                  }}
+                  onInputChange={(field) => (e) => {
+                    const value =
+                      e?.target?.type === "checkbox"
+                        ? e.target.checked
+                        : e?.target?.value;
+                    handleInputChange(field, value);
+                  }}
+                  onDropdownChange={(field, val) =>
+                    handleInputChange(field, val)
+                  }
+                  onSpecialtyChange={(list) =>
+                    handleInputChange("speciality", list)
+                  }
+                  // onHospitalChange={(val) => handleInputChange("hospital", val)}
+                  // onHospitalVerification={(v) =>
+                  //   handleInputChange("hospitalVerified", v)
+                  // }
+                  onCnicChange={(e) => {
+                    const value = e?.target?.value || "";
+                    handleInputChange("cnic", value);
+                  }}
+                />
+                <div className='flex items-center space-x-2'>
+                  <input
+                    type='checkbox'
+                    id='availability'
+                    checked={editedDoctor.availability || false}
+                    onChange={(e) =>
+                      handleInputChange("availability", e.target.checked)
+                    }
+                    className='h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded'
+                  />
+                  <label
+                    htmlFor='availability'
+                    className='text-sm text-gray-700'>
+                    Available for appointments
+                  </label>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              {renderInfoSection("Personal Information", personalFields)}
+              {renderInfoSection(
+                "Professional Information",
+                professionalFields
+              )}
+            </>
+          )}
 
           {/* Verification Section */}
           <div className='space-y-4'>

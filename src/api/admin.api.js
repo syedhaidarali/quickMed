@@ -56,4 +56,6 @@ export const adminApi = {
       },
     });
   },
+  updateDoctorDetails: (doctorId, data) =>
+    request.put(`/admin/doctor/${doctorId}`, data),
 };

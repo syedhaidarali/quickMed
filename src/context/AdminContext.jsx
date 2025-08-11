@@ -249,6 +249,20 @@ export const AdminProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
+  const updateDoctorDetails = async (doctorId, data) => {
+    console.log(doctorId, "doctorId");
+    console.log(data, "data");
+    try {
+      const res = await adminService.updateDoctorDetails(doctorId, data);
+      console.log(res);
+      toast.success("Details Updated Successfully");
+      return res;
+    } catch (err) {
+      console.log(err);
+    } finally {
+    }
+  };
   return (
     <AdminContext.Provider
       value={{
@@ -277,6 +291,7 @@ export const AdminProvider = ({ children }) => {
         doctorAction,
         DoctorDocumentUpload,
         doctorProfilePicture,
+        updateDoctorDetails,
       }}>
       {children}
     </AdminContext.Provider>
