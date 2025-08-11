@@ -29,8 +29,8 @@ export const adminApi = {
     }),
 
   rejectDoctor: (doctorId) =>
-    request.post(`/admin/doctors/action/${doctorId}`, {
-      action: false,
+    request.post(`/admin/doctors/verification/${doctorId}`, {
+      status: "rejected",
     }),
 
   approveHospital: (hospitalId) =>
@@ -38,4 +38,22 @@ export const adminApi = {
 
   rejectHospital: (hospitalId, reason) =>
     request.post(`/admin/reject-hospital/${hospitalId}`, { reason }),
+
+  doctorAction: (doctorId, action) =>
+    request.post(`/admin/doctors/action/${doctorId}`, { action }),
+
+  uploadDocuments: (data, doctorId) => {
+    return request.post(`/admin/doctor/documents/${doctorId}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+  doctorProfilePicture: (doctorId, data) => {
+    return request.post(`/admin/doctor/picture/${doctorId}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
 };

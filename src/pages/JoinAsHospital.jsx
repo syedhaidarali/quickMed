@@ -17,7 +17,6 @@ const JoinAsHospital = () => {
     handleDropdownChange,
     handleImageChange,
     handleDocumentChange,
-    addDocument,
     removeDocument,
     onSubmit,
     showSuccess,
@@ -317,15 +316,16 @@ const JoinAsHospital = () => {
 
               {/* Documents */}
               <div className='md:col-span-2'>
-                <DocumentUpload
-                  documents={formValues.documents || []}
-                  onDocumentChange={handleDocumentChange}
-                  onAddDocument={addDocument}
-                  onRemoveDocument={removeDocument}
-                  errors={errors}
+                <FileUpload
+                  label='Hospital Documents'
+                  name='documents'
+                  onChange={handleDocumentChange}
+                  error={errors.documents?.message}
+                  accept='image/jpeg,image/png,image/jpg'
+                  maxSize={5000000}
+                  required
                 />
               </div>
-
               {/* Password */}
               <InputField
                 label='Password'

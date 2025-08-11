@@ -44,6 +44,9 @@ export const AdminProvider = ({ children }) => {
       setLoading(true);
       const res = await adminService.login(credentials);
       setAdmin(res.data.data.user);
+      DoctorsStatistics();
+      fetchApprovedDoctors();
+      fetchRejectedDoctors();
       toast.success("Admin login Successfully");
       setHeaders(res.data.data.token);
       navigate("/admin/dashboard");
@@ -162,7 +165,6 @@ export const AdminProvider = ({ children }) => {
   const rejectDoctor = async (doctorId) => {
     try {
       const response = await adminService.rejectDoctor(doctorId);
-      console.log(response, "response");
       setPendingDoctors((prev) => prev.filter((doc) => doc._id !== doctorId));
       toast.success("Doctor rejected successfully!");
       return response;
@@ -207,6 +209,46 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
+  const doctorAction = async (doctorId, action) => {
+    setLoading(true);
+    try {
+      const response = await adminService.doctorAction(doctorId, action);
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const DoctorDocumentUpload = async (formData, doctorId) => {
+    // setLoading(true);
+    try {
+      const result = await adminService.uploadDocuments(formData, doctorId);
+      console.log("document", result);
+      console.log(result.data.data.documents[0].documentUrl);
+      navigate(``);
+      toast.success("Documents Uploaded");
+      return result;
+    } catch (err) {
+      toast.error(err?.data || "Upload failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const doctorProfilePicture = async (doctorId, formData) => {
+    // setLoading(true);
+    try {
+      const res = await adminService.doctorProfilePicture(doctorId, formData);
+      toast.success("Profile Picture Change Successfully");
+      console.log(res);
+      return res;
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <AdminContext.Provider
       value={{
@@ -232,6 +274,9 @@ export const AdminProvider = ({ children }) => {
         fetchRejectedDoctors,
         fetchRejectedHospitals,
         statistics,
+        doctorAction,
+        DoctorDocumentUpload,
+        doctorProfilePicture,
       }}>
       {children}
     </AdminContext.Provider>

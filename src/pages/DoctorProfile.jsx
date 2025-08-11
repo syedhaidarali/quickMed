@@ -23,7 +23,6 @@ const DoctorProfile = () => {
     experience: doctor?.experience || "",
   });
   const navigate = useNavigate();
-
   // Handle form submission
   const handleUpdate = async (e) => {
     e.preventDefault();

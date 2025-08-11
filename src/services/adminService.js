@@ -44,4 +44,11 @@ export const adminService = {
   rejectHospital: (hospitalId, reason) => {
     return adminApi.rejectHospital(hospitalId, reason);
   },
+
+  doctorAction: (doctorId, action) => adminApi.doctorAction(doctorId, action),
+  uploadDocuments: (doctorDocuments, doctorId) =>
+    adminApi.uploadDocuments(doctorDocuments, doctorId),
+
+  doctorProfilePicture: (doctorId, data) =>
+    adminApi.doctorProfilePicture(doctorId, data),
 };

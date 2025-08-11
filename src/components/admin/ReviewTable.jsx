@@ -8,6 +8,7 @@ const ReviewTable = ({
   type, // "doctor" or "hospital"
   onApprove,
   onReject,
+  isRejected,
   onOpenRejectModal,
   onActivatePayment, // Add this prop for payment activation
 }) => {
@@ -72,8 +73,27 @@ const ReviewTable = ({
           render: (item) => (
             <div className='flex items-center'>
               <div className='flex-shrink-0 h-10 w-10'>
-                <div className='h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center'>
-                  {renderInitials(item.name)}
+                <div className='h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center overflow-hidden'>
+                  {item.profilePicture || item.profileImageUrl ? (
+                    <img
+                      src={item.profilePicture || item.profileImageUrl}
+                      alt='Profile'
+                      className='h-10 w-10 object-cover rounded-full'
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                        e.currentTarget.nextElementSibling.style.display =
+                          "flex";
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className={`h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center ${
+                      item.profilePicture || item.profileImageUrl
+                        ? "hidden"
+                        : ""
+                    }`}>
+                    {renderInitials(item.name)}
+                  </div>
                 </div>
               </div>
               <div className='ml-4'>
@@ -240,11 +260,13 @@ const ReviewTable = ({
                     className='bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition-colors'>
                     Approve
                   </button>
-                  <button
-                    onClick={() => onReject(item._id)}
-                    className='bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition-colors'>
-                    Reject
-                  </button>
+                  {!isRejected && (
+                    <button
+                      onClick={() => onReject(item._id)}
+                      className='bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition-colors'>
+                      Reject
+                    </button>
+                  )}
                   {type === "doctor" && (
                     <button
                       onClick={() => handleViewDetails(item)}
@@ -265,6 +287,7 @@ const ReviewTable = ({
           onApprove={handleApproveFromModal}
           doctor={selectedDoctor}
           handleDoctorReject={onReject}
+          isRejected={isRejected}
         />
       )}
     </div>

@@ -70,37 +70,11 @@ export const useHospitalFormHandler = () => {
     }
   };
 
-  const handleDocumentChange = (index, field, value) => {
-    const currentDocuments = getValues("documents") || [];
-    const updatedDocuments = [...currentDocuments];
-
-    if (field === "file") {
-      updatedDocuments[index] = {
-        ...updatedDocuments[index],
-        file: value,
-      };
-    } else {
-      updatedDocuments[index] = {
-        ...updatedDocuments[index],
-        [field]: value,
-      };
-    }
-
-    setValue("documents", updatedDocuments, { shouldValidate: true });
-    clearErrors([`documents.${index}.${field}`, "documents"]);
-  };
-
-  const addDocument = () => {
-    const currentDocuments = getValues("documents") || [];
-    if (currentDocuments.length < 5) {
-      setValue(
-        "documents",
-        [
-          ...currentDocuments,
-          { file: null, documentType: "", documentName: "" },
-        ],
-        { shouldValidate: true }
-      );
+  const handleDocumentChange = (input) => {
+    const file = input?.target?.files ? input.target.files[0] : input;
+    if (file instanceof File) {
+      setValue("document", file, { shouldValidate: true });
+      clearErrors("image");
     }
   };
 
@@ -159,7 +133,6 @@ export const useHospitalFormHandler = () => {
     handleServiceChange,
     handleImageChange,
     handleDocumentChange,
-    addDocument,
     removeDocument,
     handleInputChange,
 

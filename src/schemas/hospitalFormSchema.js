@@ -147,33 +147,18 @@ export const hospitalFormSchema = z
         "Only JPEG, PNG and JPG images are allowed"
       ),
 
-    documents: z
-      .array(
-        z.object({
-          file: z
-            .any()
-            .refine((file) => file instanceof File, "Document file is required")
-            .refine(
-              (file) => file && file.size <= 10000000,
-              "Document size should be less than 10MB"
-            )
-            .refine(
-              (file) =>
-                file &&
-                [
-                  "application/pdf",
-                  "image/jpeg",
-                  "image/png",
-                  "image/jpg",
-                ].includes(file.type),
-              "Only PDF, JPEG, PNG and JPG files are allowed"
-            ),
-          documentType: z.string().min(1, "Document type is required"),
-          documentName: z.string().min(1, "Document name is required"),
-        })
+    image: z
+      .any()
+      .refine((file) => file instanceof File, "Hospital documents is required")
+      .refine(
+        (file) => file && file.size <= 5000000,
+        "Image size should be less than 5MB"
       )
-      .min(1, "At least one document is required")
-      .max(5, "Maximum 5 documents allowed"),
+      .refine(
+        (file) =>
+          file && ["image/jpeg", "image/png", "image/jpg"].includes(file.type),
+        "Only JPEG, PNG and JPG images are allowed"
+      ),
 
     // Agreement
     agreement: z
