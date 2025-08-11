@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import DoctorReviewModal from "./DoctorReviewModal";
+import HospitalReviewModal from "./HospitalReviewModal";
 
 const ReviewTable = ({
   pendingItems,
@@ -14,7 +15,8 @@ const ReviewTable = ({
 }) => {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showDoctorModal, setShowDoctorModal] = useState(false);
-  console.log(pendingItems, "");
+  const [selectedHospital, setSelectedHospital] = useState(null);
+  const [showHospitalModal, setShowHospitalModal] = useState(false);
   if (pendingItems.length === 0) {
     return (
       <div className='p-8 text-center'>
@@ -32,16 +34,21 @@ const ReviewTable = ({
     if (type === "doctor") {
       setSelectedDoctor(item);
       setShowDoctorModal(true);
+    } else if (type === "hospital") {
+      setSelectedHospital(item);
+      setShowHospitalModal(true);
     }
   };
 
   const handleCloseModal = () => {
     setShowDoctorModal(false);
     setSelectedDoctor(null);
+    setShowHospitalModal(false);
+    setSelectedHospital(null);
   };
 
-  const handleApproveFromModal = (doctorId) => {
-    onApprove(doctorId);
+  const handleApproveFromModal = (itemId) => {
+    onApprove(itemId);
     handleCloseModal();
   };
 
@@ -163,7 +170,30 @@ const ReviewTable = ({
             <div className='flex items-center'>
               <div className='flex-shrink-0 h-10 w-10'>
                 <div className='h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center overflow-hidden'>
-                  {renderInitials(item.name)}
+                  {item.profilePicture || item.profileImageUrl || item.image ? (
+                    <img
+                      src={
+                        item.profilePicture ||
+                        item.profileImageUrl ||
+                        item.image
+                      }
+                      alt='Profile'
+                      className='h-10 w-10 object-cover rounded-full'
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                        e.currentTarget.nextElementSibling.style.display =
+                          "flex";
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className={`h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center ${
+                      item.profilePicture || item.profileImageUrl || item.image
+                        ? "hidden"
+                        : ""
+                    }`}>
+                    {renderInitials(item.name)}
+                  </div>
                 </div>
               </div>
               <div className='ml-4'>
@@ -244,7 +274,7 @@ const ReviewTable = ({
         <tbody className='bg-white divide-y divide-gray-200'>
           {pendingItems.map((item) => (
             <tr
-              key={item.id}
+              key={item._id}
               className='hover:bg-gray-50'>
               {columns.map((column) => (
                 <td
@@ -267,13 +297,11 @@ const ReviewTable = ({
                       Reject
                     </button>
                   )}
-                  {type === "doctor" && (
-                    <button
-                      onClick={() => handleViewDetails(item)}
-                      className='bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors'>
-                      View Details
-                    </button>
-                  )}
+                  <button
+                    onClick={() => handleViewDetails(item)}
+                    className='bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors'>
+                    View Details
+                  </button>
                 </div>
               </td>
             </tr>
@@ -287,6 +315,16 @@ const ReviewTable = ({
           onApprove={handleApproveFromModal}
           doctor={selectedDoctor}
           handleDoctorReject={onReject}
+          isRejected={isRejected}
+        />
+      )}
+      {showHospitalModal && selectedHospital && (
+        <HospitalReviewModal
+          isOpen={showHospitalModal}
+          onClose={handleCloseModal}
+          onApprove={handleApproveFromModal}
+          hospital={selectedHospital}
+          handleHospitalReject={onReject}
           isRejected={isRejected}
         />
       )}

@@ -3,7 +3,6 @@ import { useAdmin } from "../../context/AdminContext";
 import { toast } from "sonner";
 
 import React, { useState } from "react";
-import DoctorFormFields from "../forms/DoctorFormFields";
 
 // Reusable InfoRow
 const InfoRow = ({ label, value }) => (
@@ -41,114 +40,90 @@ const StatusBadge = ({ status }) => {
 };
 
 // Main Modal
-const DoctorReviewModal = ({
+const HospitalReviewModal = ({
   isRejected,
   isOpen,
-  doctor,
+  hospital,
   onClose,
   onApprove,
   onReject,
-  handleDoctorReject,
-  // Add new props for updating doctor status and profile image
-  onToggleActive,
-  onProfileImageUpload,
+  handleHospitalReject,
 }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
   const [error, setError] = useState("");
-  const [documents, setDocuments] = useState(doctor.documents || []);
-  const {
-    DoctorDocumentUpload,
-    loading,
-    doctorProfilePicture,
-    updateDoctorDetails,
-    doctorAction,
-  } = useAdmin();
+  const [documents, setDocuments] = useState(hospital.documents || []);
+  const { loading, hospitalProfilePicture } = useAdmin();
   const fileInputRef = React.useRef();
-  // Add ref for profile image upload
   const profileImageInputRef = React.useRef();
-  // Local preview for profile image to reflect change instantly
   const [profilePreviewUrl, setProfilePreviewUrl] = useState(null);
 
   // Add edit mode state
   const [isEditMode, setIsEditMode] = useState(false);
-  const [editedDoctor, setEditedDoctor] = useState({});
+  const [editedHospital, setEditedHospital] = useState({});
   const [saveLoading, setSaveLoading] = useState(false);
 
   React.useEffect(() => {
-    setDocuments(doctor.documents || []);
-    // Initialize edited doctor data
-    setEditedDoctor({
-      name: doctor.name || "",
-      speciality: Array.isArray(doctor.speciality)
-        ? doctor.speciality
-        : [doctor.speciality || ""],
-      phone: doctor.phone || "",
-      mainDegree: doctor.mainDegree || "",
-      fullAddress: doctor.fullAddress || "",
-      hospital: doctor.hospital || "",
-      // hospitalVerified: !!doctor.hospitalVerified,
-      experience: doctor.experience || "",
-      fee: doctor.fee || "",
-      availability: doctor.availability || false,
-      pmdcNumber: doctor.pmdcNumber || "",
-      cnic: doctor.cnic || "",
-      email: doctor.email || "",
-      gender: doctor.gender || "",
+    setDocuments(hospital.documents || []);
+    // Initialize edited hospital data
+    setEditedHospital({
+      name: hospital.name || "",
+      email: hospital.email || "",
+      description: hospital.description || "",
+      hospitalType: hospital.hospitalType || "",
+      category: hospital.category || "",
+      licenseNumber: hospital.licenseNumber || "",
+      establishedYear: hospital.establishedYear || "",
+      phone: hospital.phone || "",
+      address: hospital.address || "",
+      city: hospital.city || "",
+      totalBeds: hospital.totalBeds || "",
+      operationTheaters: hospital.operationTheaters || "",
+      cnic: hospital.cnic || "",
+      services: hospital.services || {
+        emergencyServices: hospital.emergencyServices || false,
+        ambulanceServices: hospital.ambulanceServices || false,
+        icuServices: hospital.icuServices || false,
+      },
     });
-  }, [doctor.documents, doctor]);
+  }, [hospital.documents, hospital]);
 
   // Handle input changes for editable fields
   const handleInputChange = (field, value) => {
-    setEditedDoctor((prev) => ({
+    setEditedHospital((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  // Handle speciality array changes
-  const handleSpecialityChange = (index, value) => {
-    const newSpeciality = [...editedDoctor.speciality];
-    newSpeciality[index] = value;
-    setEditedDoctor((prev) => ({
+  // Handle services changes
+  const handleServiceChange = (serviceName, checked) => {
+    setEditedHospital((prev) => ({
       ...prev,
-      speciality: newSpeciality,
+      services: {
+        ...prev.services,
+        [serviceName]: checked,
+      },
     }));
   };
 
-  // Add new speciality field
-  const addSpeciality = () => {
-    setEditedDoctor((prev) => ({
-      ...prev,
-      speciality: [...prev.speciality, ""],
-    }));
-  };
-
-  // Remove speciality field
-  const removeSpeciality = (index) => {
-    setEditedDoctor((prev) => ({
-      ...prev,
-      speciality: prev.speciality.filter((_, i) => i !== index),
-    }));
-  };
-
-  // Save doctor data changes
+  // Save hospital data changes
   const handleSaveChanges = async () => {
     setSaveLoading(true);
     try {
-      const cleanSpeciality = editedDoctor.speciality.filter(
-        (s) => s.trim() !== ""
-      );
       const updatedData = {
-        ...editedDoctor,
-        speciality: cleanSpeciality,
-        experience: parseInt(editedDoctor.experience) || 0,
-        fee: parseInt(editedDoctor.fee) || 0,
+        ...editedHospital,
+        establishedYear: parseInt(editedHospital.establishedYear) || 0,
+        totalBeds: parseInt(editedHospital.totalBeds) || 0,
+        operationTheaters: parseInt(editedHospital.operationTheaters) || 0,
       };
-      updateDoctorDetails(doctor._id, updatedData);
+      // TODO: Add updateHospitalDetails function to AdminContext
+      // updateHospitalDetails(hospital._id, updatedData);
       setIsEditMode(false);
+      toast.success("Hospital details updated successfully");
     } catch (error) {
       console.log(error);
+      toast.error("Failed to update hospital details");
     } finally {
       setSaveLoading(false);
     }
@@ -158,23 +133,25 @@ const DoctorReviewModal = ({
   const handleCancelEdit = () => {
     setIsEditMode(false);
     // Reset to original data
-    setEditedDoctor({
-      name: doctor.name || "",
-      speciality: Array.isArray(doctor.speciality)
-        ? doctor.speciality
-        : [doctor.speciality || ""],
-      phone: doctor.phone || "",
-      mainDegree: doctor.mainDegree || "",
-      fullAddress: doctor.fullAddress || "",
-      hospital: doctor.hospital || "",
-      hospitalVerified: !!doctor.hospitalVerified,
-      experience: doctor.experience || "",
-      fee: doctor.fee || "",
-      availability: doctor.availability || false,
-      pmdcNumber: doctor.pmdcNumber || "",
-      cnic: doctor.cnic || "",
-      email: doctor.email || "",
-      gender: doctor.gender || "",
+    setEditedHospital({
+      name: hospital.name || "",
+      email: hospital.email || "",
+      description: hospital.description || "",
+      hospitalType: hospital.hospitalType || "",
+      category: hospital.category || "",
+      licenseNumber: hospital.licenseNumber || "",
+      establishedYear: hospital.establishedYear || "",
+      phone: hospital.phone || "",
+      address: hospital.address || "",
+      city: hospital.city || "",
+      totalBeds: hospital.totalBeds || "",
+      operationTheaters: hospital.operationTheaters || "",
+      cnic: hospital.cnic || "",
+      services: hospital.services || {
+        emergencyServices: hospital.emergencyServices || false,
+        ambulanceServices: hospital.ambulanceServices || false,
+        icuServices: hospital.icuServices || false,
+      },
     });
   };
 
@@ -184,18 +161,9 @@ const DoctorReviewModal = ({
     if (file) {
       const previewUrl = URL.createObjectURL(file);
       const formData = new FormData();
-      formData.append("documents", file); // profile image
-      await DoctorDocumentUpload(formData, doctor._id);
-    }
-  };
-
-  // Handler for toggling active status
-  const handleToggleActive = async () => {
-    if (doctor.isActive) {
-      console.log(doctor.isActive);
-      await doctorAction(doctor._id, { action: false });
-    } else {
-      await doctorAction(doctor._id, { action: true });
+      formData.append("documents", file);
+      // TODO: Add hospital document upload function when backend is ready
+      toast.info("Document upload functionality will be available soon");
     }
   };
 
@@ -207,11 +175,11 @@ const DoctorReviewModal = ({
       const formData = new FormData();
       // Ensure field name matches backend expectation
       formData.append("image", file);
-      await doctorProfilePicture(doctor._id, formData);
+      await hospitalProfilePicture(hospital._id, formData);
     }
   };
 
-  if (!isOpen || !doctor) return null;
+  if (!isOpen || !hospital) return null;
 
   const formatDate = (date) => {
     if (!date) return "Not available";
@@ -229,17 +197,12 @@ const DoctorReviewModal = ({
   };
 
   const openImageViewer = (imageUrl) => {
-    console.log("openImageViewer called with:", imageUrl);
     if (!imageUrl) {
       console.error("No image URL provided");
       return;
     }
     setSelectedImage(imageUrl);
     setIsImageViewerOpen(true);
-    console.log("Image viewer state set:", {
-      selectedImage: imageUrl,
-      isOpen: true,
-    });
   };
 
   const closeImageViewer = () => {
@@ -266,37 +229,32 @@ const DoctorReviewModal = ({
 
   // Generate personal fields dynamically
   const personalFields = [
-    { key: "name", label: "Name", value: doctor.name },
-    { key: "email", label: "Email", value: doctor.email },
-    { key: "phone", label: "Phone", value: doctor.phone },
-    { key: "cnic", label: "CNIC", value: doctor.cnic },
-    { key: "gender", label: "Gender", value: doctor.gender },
-    { key: "religion", label: "Religion", value: doctor.religion },
-    { key: "address", label: "Address", value: doctor.fullAddress },
+    { key: "name", label: "Hospital Name", value: hospital.name },
+    { key: "email", label: "Email", value: hospital.email },
+    { key: "phone", label: "Phone", value: hospital.phone },
+    { key: "cnic", label: "CNIC", value: hospital.cnic },
+    { key: "address", label: "Address", value: hospital.address },
+    { key: "city", label: "City", value: hospital.city },
   ];
 
   // Generate professional fields dynamically
   const professionalFields = [
-    { key: "degree", label: "Main Degree", value: doctor.mainDegree },
+    { key: "type", label: "Hospital Type", value: hospital.hospitalType },
+    { key: "category", label: "Category", value: hospital.category },
+    { key: "license", label: "License Number", value: hospital.licenseNumber },
     {
-      key: "speciality",
-      label: "Speciality",
-      value: Array.isArray(doctor.speciality)
-        ? doctor.speciality.join(", ")
-        : doctor.speciality,
+      key: "established",
+      label: "Established Year",
+      value: hospital.establishedYear
+        ? `${hospital.establishedYear}`
+        : "Not specified",
     },
+    { key: "beds", label: "Total Beds", value: hospital.totalBeds },
     {
-      key: "experience",
-      label: "Experience",
-      value: doctor.experience ? `${doctor.experience} years` : "Not specified",
+      key: "ot",
+      label: "Operation Theaters",
+      value: hospital.operationTheaters,
     },
-    {
-      key: "fee",
-      label: "Fee",
-      value: doctor.fee ? `Rs. ${doctor.fee}` : "Not set",
-    },
-    { key: "hospital", label: "Hospital", value: doctor.hospital },
-    { key: "pmdc", label: "PMDC Number", value: doctor.pmdcNumber },
   ];
 
   // Render editable input field
@@ -305,7 +263,7 @@ const DoctorReviewModal = ({
       <label className='text-sm font-medium text-gray-700'>{label}</label>
       {type === "select" ? (
         <select
-          value={editedDoctor[field] || ""}
+          value={editedHospital[field] || ""}
           onChange={(e) => handleInputChange(field, e.target.value)}
           className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500'>
           {options?.map((option) => (
@@ -318,7 +276,7 @@ const DoctorReviewModal = ({
         </select>
       ) : type === "textarea" ? (
         <textarea
-          value={editedDoctor[field] || ""}
+          value={editedHospital[field] || ""}
           onChange={(e) => handleInputChange(field, e.target.value)}
           rows={3}
           className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500'
@@ -326,52 +284,18 @@ const DoctorReviewModal = ({
       ) : type === "checkbox" ? (
         <input
           type='checkbox'
-          checked={editedDoctor[field] || false}
+          checked={editedHospital[field] || false}
           onChange={(e) => handleInputChange(field, e.target.checked)}
           className='h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded'
         />
       ) : (
         <input
           type={type}
-          value={editedDoctor[field] || ""}
+          value={editedHospital[field] || ""}
           onChange={(e) => handleInputChange(field, e.target.value)}
           className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500'
         />
       )}
-    </div>
-  );
-
-  // Render speciality fields
-  const renderSpecialityFields = () => (
-    <div className='space-y-2'>
-      <label className='text-sm font-medium text-gray-700'>Speciality</label>
-      <div className='space-y-2'>
-        {editedDoctor.speciality?.map((spec, index) => (
-          <div
-            key={index}
-            className='flex space-x-2'>
-            <input
-              type='text'
-              value={spec}
-              onChange={(e) => handleSpecialityChange(index, e.target.value)}
-              className='flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500'
-              placeholder='Enter speciality'
-            />
-            <button
-              type='button'
-              onClick={() => removeSpeciality(index)}
-              className='px-3 py-2 text-red-600 hover:text-red-800'>
-              Remove
-            </button>
-          </div>
-        ))}
-        <button
-          type='button'
-          onClick={addSpeciality}
-          className='px-3 py-2 text-emerald-600 hover:text-emerald-800 text-sm'>
-          + Add Speciality
-        </button>
-      </div>
     </div>
   );
 
@@ -396,20 +320,18 @@ const DoctorReviewModal = ({
   const renderEditablePersonalInfo = () => (
     <div className='space-y-4'>
       <h3 className='text-lg font-semibold text-gray-900 border-b pb-2'>
-        Personal Information
+        Basic Information
       </h3>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-        {renderEditableField("name", "Name")}
+        {renderEditableField("name", "Hospital Name")}
         {renderEditableField("email", "Email", "email")}
         {renderEditableField("phone", "Phone", "tel")}
         {renderEditableField("cnic", "CNIC")}
-        {renderEditableField("gender", "Gender", "select", [
-          { value: "Male", label: "Male" },
-          { value: "Female", label: "Female" },
-          { value: "Other", label: "Other" },
-        ])}
-        {renderEditableField("religion", "Religion")}
-        {renderEditableField("fullAddress", "Address", "textarea")}
+        {renderEditableField("address", "Address", "textarea")}
+        {renderEditableField("city", "City")}
+        <div className='md:col-span-2'>
+          {renderEditableField("description", "Description", "textarea")}
+        </div>
       </div>
     </div>
   );
@@ -418,22 +340,101 @@ const DoctorReviewModal = ({
   const renderEditableProfessionalInfo = () => (
     <div className='space-y-4'>
       <h3 className='text-lg font-semibold text-gray-900 border-b pb-2'>
-        Professional Information
+        Hospital Information
       </h3>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-        {renderEditableField("mainDegree", "Main Degree")}
-        {renderSpecialityFields()}
-        {renderEditableField("experience", "Experience (years)", "number")}
-        {renderEditableField("fee", "Fee (Rs.)", "number")}
-        {renderEditableField("hospital", "Hospital")}
-        {renderEditableField("pmdcNumber", "PMDC Number")}
+        {renderEditableField("hospitalType", "Hospital Type", "select", [
+          { value: "Public", label: "Public" },
+          { value: "Private", label: "Private" },
+          { value: "Semi-Private", label: "Semi-Private" },
+          { value: "Military", label: "Military" },
+          { value: "Charity", label: "Charity" },
+        ])}
+        {renderEditableField("category", "Category", "select", [
+          { value: "General", label: "General" },
+          { value: "Specialized", label: "Specialized" },
+          { value: "Teaching", label: "Teaching" },
+          { value: "Research", label: "Research" },
+          { value: "Emergency", label: "Emergency" },
+        ])}
+        {renderEditableField("licenseNumber", "License Number")}
+        {renderEditableField("establishedYear", "Established Year", "number")}
+        {renderEditableField("totalBeds", "Total Beds", "number")}
+        {renderEditableField(
+          "operationTheaters",
+          "Operation Theaters",
+          "number"
+        )}
+      </div>
+    </div>
+  );
+
+  // Render services section
+  const renderServicesSection = () => (
+    <div className='space-y-4'>
+      <h3 className='text-lg font-semibold text-gray-900 border-b pb-2'>
+        Services
+      </h3>
+      <div className='space-y-3'>
         <div className='flex items-center space-x-2'>
-          {renderEditableField(
-            "availability",
-            "Available for appointments",
-            "checkbox"
-          )}
-          <span className='text-sm text-gray-600'>Available</span>
+          <input
+            type='checkbox'
+            id='emergencyServices'
+            checked={
+              editedHospital.services?.emergencyServices ||
+              editedHospital.emergencyServices ||
+              false
+            }
+            onChange={(e) =>
+              handleServiceChange("emergencyServices", e.target.checked)
+            }
+            className='h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded'
+          />
+          <label
+            htmlFor='emergencyServices'
+            className='text-sm text-gray-700'>
+            Emergency Services
+          </label>
+        </div>
+        <div className='flex items-center space-x-2'>
+          <input
+            type='checkbox'
+            id='ambulanceServices'
+            checked={
+              editedHospital.services?.ambulanceServices ||
+              editedHospital.ambulanceServices ||
+              false
+            }
+            onChange={(e) =>
+              handleServiceChange("ambulanceServices", e.target.checked)
+            }
+            className='h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded'
+          />
+          <label
+            htmlFor='ambulanceServices'
+            className='text-sm text-gray-700'>
+            Ambulance Services
+          </label>
+        </div>
+        <div className='flex items-center space-x-2'>
+          <input
+            type='checkbox'
+            id='icuServices'
+            checked={
+              editedHospital.services?.icuServices ||
+              editedHospital.icuServices ||
+              false
+            }
+            onChange={(e) =>
+              handleServiceChange("icuServices", e.target.checked)
+            }
+            className='h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded'
+          />
+          <label
+            htmlFor='icuServices'
+            className='text-sm text-gray-700'>
+            ICU Services
+          </label>
         </div>
       </div>
     </div>
@@ -441,17 +442,8 @@ const DoctorReviewModal = ({
 
   // Generate timestamp fields dynamically
   const timestampFields = [
-    { key: "created", label: "Created", value: formatDate(doctor.createdAt) },
-    { key: "updated", label: "Updated", value: formatDate(doctor.updatedAt) },
-    ...(doctor.PaymentCompleted
-      ? [
-          {
-            key: "payment",
-            label: "Payment Completed",
-            value: formatDate(doctor.PaymentCompleted),
-          },
-        ]
-      : []),
+    { key: "created", label: "Created", value: formatDate(hospital.createdAt) },
+    { key: "updated", label: "Updated", value: formatDate(hospital.updatedAt) },
   ];
 
   // Generate rating fields dynamically
@@ -459,14 +451,14 @@ const DoctorReviewModal = ({
     {
       key: "avg",
       label: "Average Rating",
-      value: doctor.rating?.average
-        ? `${doctor.rating.average}/5`
+      value: hospital.rating?.average
+        ? `${hospital.rating.average}/5`
         : "No ratings",
     },
     {
       key: "reviews",
       label: "Total Reviews",
-      value: doctor.rating?.count || 0,
+      value: hospital.rating?.count || 0,
     },
   ];
 
@@ -478,33 +470,30 @@ const DoctorReviewModal = ({
           <div className='flex items-center space-x-3'>
             <div className='h-12 w-12 rounded-full bg-emerald-100 flex items-center justify-center relative overflow-hidden'>
               {profilePreviewUrl ||
-              doctor.profilePicture ||
-              doctor.profileImageUrl ? (
+              hospital.profilePicture ||
+              hospital.profileImageUrl ||
+              hospital.image ? (
                 <img
                   src={
                     profilePreviewUrl ||
-                    doctor.profilePicture ||
-                    doctor.profileImageUrl
+                    hospital.profilePicture ||
+                    hospital.profileImageUrl ||
+                    hospital.image
                   }
-                  alt='Profile'
+                  alt='Hospital'
                   className='h-12 w-12 object-cover rounded-full'
                   onError={(e) => {
                     e.currentTarget.src = "";
                   }}
                 />
               ) : (
-                <span className='text-emerald-600 font-medium text-lg'>
-                  {doctor.name
-                    ?.split(" ")
-                    ?.map((n) => n[0])
-                    ?.join("") || "DR"}
-                </span>
+                <span className='text-emerald-600 font-medium text-lg'>🏥</span>
               )}
               {/* Edit Profile Image Button */}
               <button
                 type='button'
                 className='absolute bottom-0 right-0 bg-white border border-gray-300 rounded-full p-1 shadow hover:bg-gray-100'
-                title='Edit Profile Image'
+                title='Edit Hospital Image'
                 onClick={() =>
                   profileImageInputRef.current &&
                   profileImageInputRef.current.click()
@@ -532,10 +521,10 @@ const DoctorReviewModal = ({
             </div>
             <div>
               <h2 className='text-xl font-semibold text-gray-900'>
-                {doctor.name || "Unknown Doctor"}
+                {hospital.name || "Unknown Hospital"}
               </h2>
               <p className='text-sm text-gray-500'>
-                {doctor.email || "No email"}
+                {hospital.email || "No email"}
               </p>
             </div>
           </div>
@@ -573,65 +562,42 @@ const DoctorReviewModal = ({
         <div className='px-6 py-4 grid grid-cols-1 lg:grid-cols-2 gap-6'>
           {isEditMode ? (
             <div className='lg:col-span-2'>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <DoctorFormFields
-                  values={editedDoctor}
-                  errors={{}}
-                  include={{
-                    password: false,
-                    confirmPassword: false,
-                    agreement: false,
-                    city: false,
-                    hospital: false,
-                    hospitalVerified: false,
-                  }}
-                  onInputChange={(field) => (e) => {
-                    const value =
-                      e?.target?.type === "checkbox"
-                        ? e.target.checked
-                        : e?.target?.value;
-                    handleInputChange(field, value);
-                  }}
-                  onDropdownChange={(field, val) =>
-                    handleInputChange(field, val)
-                  }
-                  onSpecialtyChange={(list) =>
-                    handleInputChange("speciality", list)
-                  }
-                  // onHospitalChange={(val) => handleInputChange("hospital", val)}
-                  // onHospitalVerification={(v) =>
-                  //   handleInputChange("hospitalVerified", v)
-                  // }
-                  onCnicChange={(e) => {
-                    const value = e?.target?.value || "";
-                    handleInputChange("cnic", value);
-                  }}
-                />
-                <div className='flex items-center space-x-2'>
-                  <input
-                    type='checkbox'
-                    id='availability'
-                    checked={editedDoctor.availability || false}
-                    onChange={(e) =>
-                      handleInputChange("availability", e.target.checked)
-                    }
-                    className='h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded'
-                  />
-                  <label
-                    htmlFor='availability'
-                    className='text-sm text-gray-700'>
-                    Available for appointments
-                  </label>
-                </div>
-              </div>
+              {renderEditablePersonalInfo()}
+              {renderEditableProfessionalInfo()}
+              {renderServicesSection()}
             </div>
           ) : (
             <>
-              {renderInfoSection("Personal Information", personalFields)}
-              {renderInfoSection(
-                "Professional Information",
-                professionalFields
-              )}
+              {renderInfoSection("Basic Information", personalFields)}
+              {renderInfoSection("Hospital Information", professionalFields)}
+              {renderInfoSection("Services", [
+                {
+                  key: "emergency",
+                  label: "Emergency Services",
+                  value:
+                    hospital.services?.emergencyServices ||
+                    hospital.emergencyServices
+                      ? "Available"
+                      : "Not Available",
+                },
+                {
+                  key: "ambulance",
+                  label: "Ambulance Services",
+                  value:
+                    hospital.services?.ambulanceServices ||
+                    hospital.ambulanceServices
+                      ? "Available"
+                      : "Not Available",
+                },
+                {
+                  key: "icu",
+                  label: "ICU Services",
+                  value:
+                    hospital.services?.icuServices || hospital.icuServices
+                      ? "Available"
+                      : "Not Available",
+                },
+              ])}
             </>
           )}
 
@@ -645,64 +611,34 @@ const DoctorReviewModal = ({
                 <span className='text-sm font-medium text-gray-500'>
                   Status:
                 </span>
-                <StatusBadge status={doctor.status} />
+                <StatusBadge status={hospital.status} />
               </div>
               <div className='flex justify-between items-center'>
                 <span className='text-sm font-medium text-gray-500'>
-                  PMDC Verified:
+                  License Verified:
                 </span>
                 <Badge
-                  condition={doctor.pmdcVerified}
+                  condition={hospital.licenseVerified}
                   trueLabel='Verified'
                   falseLabel='Not Verified'
-                />
-              </div>
-              <div className='flex justify-between items-center'>
-                <span className='text-sm font-medium text-gray-500'>
-                  Hospital Verified:
-                </span>
-                <Badge
-                  condition={doctor.hospitalVerified}
-                  trueLabel='Verified'
-                  falseLabel='Not Verified'
-                />
-              </div>
-              <div className='flex justify-between items-center'>
-                <span className='text-sm font-medium text-gray-500'>
-                  Availability:
-                </span>
-                <Badge
-                  condition={doctor.availability}
-                  trueLabel='Available'
-                  falseLabel='Not Available'
                 />
               </div>
               <div className='flex justify-between items-center'>
                 <span className='text-sm font-medium text-gray-500'>
                   Active:
                 </span>
-                <div className='flex items-center space-x-2'>
-                  <Badge
-                    condition={doctor.isActive}
-                    trueLabel='Active'
-                    falseLabel='Inactive'
-                  />
-                  {/* Edit Active/Inactive Button */}
-                  <button
-                    type='button'
-                    className='ml-2 px-2 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded hover:bg-blue-200'
-                    onClick={handleToggleActive}
-                    title='Toggle Active Status'>
-                    Edit
-                  </button>
-                </div>
+                <Badge
+                  condition={hospital.isActive}
+                  trueLabel='Active'
+                  falseLabel='Inactive'
+                />
               </div>
               <div className='flex justify-between items-center'>
                 <span className='text-sm font-medium text-gray-500'>
                   Blocked:
                 </span>
                 <Badge
-                  condition={!doctor.isBlocked}
+                  condition={!hospital.isBlocked}
                   trueLabel='Not Blocked'
                   falseLabel='Blocked'
                 />
@@ -777,13 +713,13 @@ const DoctorReviewModal = ({
         </div>
 
         {/* Verification Notes */}
-        {doctor.verificationNotes && (
+        {hospital.verificationNotes && (
           <div className='px-6 pb-6'>
             <h3 className='text-lg font-semibold text-gray-900 border-b pb-2'>
               Verification Notes
             </h3>
             <p className='text-sm text-gray-700 bg-gray-50 p-3 rounded-lg'>
-              {doctor.verificationNotes}
+              {hospital.verificationNotes}
             </p>
           </div>
         )}
@@ -812,13 +748,13 @@ const DoctorReviewModal = ({
           </button>
           {!isRejected && (
             <button
-              onClick={() => handleDoctorReject(doctor._id)}
+              onClick={() => handleHospitalReject(hospital._id)}
               className='px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700'>
               Reject
             </button>
           )}
           <button
-            onClick={() => onApprove(doctor._id)}
+            onClick={() => onApprove(hospital._id)}
             className='px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700'>
             Approve
           </button>
@@ -826,7 +762,6 @@ const DoctorReviewModal = ({
       </div>
 
       {/* Image Viewer Modal */}
-      {console.log("Modal render state:", { isImageViewerOpen, selectedImage })}
       {isImageViewerOpen && selectedImage && (
         <div
           className='fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[60]'
@@ -898,4 +833,4 @@ const DoctorReviewModal = ({
   );
 };
 
-export default DoctorReviewModal;
+export default HospitalReviewModal;

@@ -11,7 +11,7 @@ export const adminApi = {
 
   getPendingDoctors: () => request.get("/admin/doctors/pending"),
 
-  getPendingHospitals: () => request.get("/admin/pending-hospitals"),
+  getPendingHospitals: () => request.get("/admin/hospitals/pending"),
 
   getApprovedDoctors: () => request.get("/admin/doctors/verified"),
 
@@ -19,7 +19,7 @@ export const adminApi = {
 
   getRejectedDoctors: () => request.get("/admin/doctors/rejected"),
 
-  getRejectedHospitals: () => request.get("/admin/rejected-hospitals"),
+  getRejectedHospitals: () => request.get("/admin/hospitals/rejected"),
 
   getDoctorsStatistics: () => request.get("/admin/doctors/stats"),
 
@@ -34,10 +34,15 @@ export const adminApi = {
     }),
 
   approveHospital: (hospitalId) =>
-    request.post(`/admin/approve-hospital/${hospitalId}`),
+    request.post(`/admin/hospitals/verification/${hospitalId}`, {
+      status: "verified",
+    }),
 
   rejectHospital: (hospitalId, reason) =>
-    request.post(`/admin/reject-hospital/${hospitalId}`, { reason }),
+    request.post(`/admin/hospitals/verification/${hospitalId}`, {
+      status: "rejected",
+      reason,
+    }),
 
   doctorAction: (doctorId, action) =>
     request.post(`/admin/doctors/action/${doctorId}`, { action }),
@@ -51,6 +56,13 @@ export const adminApi = {
   },
   doctorProfilePicture: (doctorId, data) => {
     return request.post(`/admin/doctor/picture/${doctorId}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+  hospitalProfilePicture: (hospitalId, data) => {
+    return request.post(`/admin/hospital/picture/${hospitalId}`, data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

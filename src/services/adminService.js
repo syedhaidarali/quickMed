@@ -51,6 +51,8 @@ export const adminService = {
 
   doctorProfilePicture: (doctorId, data) =>
     adminApi.doctorProfilePicture(doctorId, data),
+  hospitalProfilePicture: (hospitalId, data) =>
+    adminApi.hospitalProfilePicture(hospitalId, data),
   updateDoctorDetails: (doctorId, data) =>
     adminApi.updateDoctorDetails(doctorId, data),
 };

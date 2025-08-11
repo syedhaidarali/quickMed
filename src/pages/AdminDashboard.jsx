@@ -27,7 +27,6 @@ const AdminDashboard = () => {
     fetchApprovedDoctors,
     fetchRejectedDoctors,
     fetchPendingHospitals,
-    fetchApprovedHospitals,
     fetchRejectedHospitals,
     statistics,
   } = useAdmin();
@@ -41,10 +40,9 @@ const AdminDashboard = () => {
     fetchApprovedDoctors();
     fetchRejectedDoctors();
     // fetchPendingHospitals();
-    // fetchApprovedHospitals();
-    // fetchRejectedHospitals();
+    fetchRejectedHospitals();
   }, []);
-  const handleApprove = async (itemId, type) => {
+  const handleApproveDoctor = async (itemId, type) => {
     if (type === "doctor") {
       await approveDoctor(itemId);
     } else if (type === "hospital") {
@@ -52,9 +50,16 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleReject = async (itemId) => {
-    console.log(itemId, "id");
-    rejectDoctor(itemId);
+  const handleApproveHospital = async (itemId) => {
+    await approveHospital(itemId);
+  };
+
+  const handleRejectDoctor = async (itemId) => {
+    await rejectDoctor(itemId);
+  };
+
+  const handleRejectHospital = async (itemId) => {
+    rejectHospital(itemId);
   };
 
   const openRejectModal = (item, type) => {
@@ -87,9 +92,10 @@ const AdminDashboard = () => {
           <ReviewTable
             pendingItems={pendingDoctors}
             type='doctor'
-            onApprove={(id) => handleApprove(id, "doctor")}
-            onReject={(id) => handleReject(id, "doctor")}
+            onApprove={(id) => handleApproveDoctor(id, "doctor")}
+            onReject={(id) => handleRejectDoctor(id, "doctor")}
             onOpenRejectModal={(item) => openRejectModal(item, "doctor")}
+            // onToggleActive={onToggleActive}
           />
         </div>
 
@@ -107,8 +113,8 @@ const AdminDashboard = () => {
           <ReviewTable
             pendingItems={pendingHospitals}
             type='hospital'
-            onApprove={(id) => handleApprove(id, "hospital")}
-            onReject={(id) => handleReject(id, "hospital")}
+            onApprove={(id) => handleApproveHospital(id, "hospital")}
+            onReject={(id) => handleRejectHospital(id, "hospital")}
             onOpenRejectModal={(item) => openRejectModal(item, "hospital")}
           />
         </div>

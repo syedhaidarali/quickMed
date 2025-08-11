@@ -21,7 +21,7 @@ export const DoctorProvider = ({ children }) => {
       const { data } = await doctorService.validateToken();
       setDoctor(data.data);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setLoading(false);
     }

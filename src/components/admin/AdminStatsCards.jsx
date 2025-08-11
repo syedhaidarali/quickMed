@@ -3,7 +3,6 @@
 import React from "react";
 
 const AdminStatsCards = ({ statistics }) => {
-  console.log(statistics, "sssssssssssssssssssssssss");
   const stats = [
     {
       title: "Total Doctors",
