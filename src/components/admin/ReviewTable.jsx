@@ -9,10 +9,11 @@ const ReviewTable = ({
   onApprove,
   onReject,
   onOpenRejectModal,
+  onActivatePayment, // Add this prop for payment activation
 }) => {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showDoctorModal, setShowDoctorModal] = useState(false);
-
+  console.log(pendingItems, "");
   if (pendingItems.length === 0) {
     return (
       <div className='p-8 text-center'>
@@ -40,11 +41,6 @@ const ReviewTable = ({
 
   const handleApproveFromModal = (doctorId) => {
     onApprove(doctorId);
-    handleCloseModal();
-  };
-
-  const handleRejectFromModal = (doctor) => {
-    onOpenRejectModal(doctor);
     handleCloseModal();
   };
 
@@ -124,10 +120,17 @@ const ReviewTable = ({
           ),
         },
         {
-          key: "submitted",
-          label: "Submitted",
+          key: "paymentStatus",
+          label: "Payment Status",
           render: (item) => (
-            <span className='text-sm text-gray-500'>{item.submittedAt}</span>
+            <span
+              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                item.isActive
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}>
+              {item.isActive ? "Active" : "Inactive"}
+            </span>
           ),
         },
       ];
@@ -195,13 +198,6 @@ const ReviewTable = ({
             </div>
           ),
         },
-        {
-          key: "submitted",
-          label: "Submitted",
-          render: (item) => (
-            <span className='text-sm text-gray-500'>{item.submittedAt}</span>
-          ),
-        },
       ];
     }
   };
@@ -245,7 +241,7 @@ const ReviewTable = ({
                     Approve
                   </button>
                   <button
-                    onClick={() => onOpenRejectModal(item)}
+                    onClick={() => onReject(item._id)}
                     className='bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition-colors'>
                     Reject
                   </button>
@@ -267,8 +263,8 @@ const ReviewTable = ({
           isOpen={showDoctorModal}
           onClose={handleCloseModal}
           onApprove={handleApproveFromModal}
-          onReject={handleRejectFromModal}
           doctor={selectedDoctor}
+          handleDoctorReject={onReject}
         />
       )}
     </div>

@@ -29,10 +29,10 @@ const AdminDashboard = () => {
     fetchPendingHospitals,
     fetchApprovedHospitals,
     fetchRejectedHospitals,
+    statistics,
   } = useAdmin();
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState(null);
-  const [rejectionReason, setRejectionReason] = useState("");
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [modalType, setModalType] = useState("");
 
@@ -53,7 +53,8 @@ const AdminDashboard = () => {
   };
 
   const handleReject = async (itemId) => {
-    rejectDoctor(itemId, rejectionReason);
+    console.log(itemId, "id");
+    rejectDoctor(itemId);
   };
 
   const openRejectModal = (item, type) => {
@@ -70,24 +71,7 @@ const AdminDashboard = () => {
       />
 
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-        <AdminStatsCards
-          pendingDoctorsCount={pendingDoctors.length}
-          approvedDoctorsCount={approvedDoctors.length}
-          rejectedDoctorsCount={rejectedDoctors.length}
-          totalDoctorsCount={
-            pendingDoctors.length +
-            approvedDoctors.length +
-            rejectedDoctors.length
-          }
-          pendingHospitalsCount={pendingHospitals.length}
-          approvedHospitalsCount={approvedHospitals.length}
-          rejectedHospitalsCount={rejectedHospitals.length}
-          totalHospitalsCount={
-            pendingHospitals.length +
-            approvedHospitals.length +
-            rejectedHospitals.length
-          }
-        />
+        <AdminStatsCards statistics={statistics} />
 
         {/* Doctor Applications Section */}
         <div className='bg-white rounded-lg shadow mb-8'>
@@ -162,21 +146,6 @@ const AdminDashboard = () => {
           />
         </div>
       </div>
-
-      <RejectModal
-        isOpen={showRejectModal}
-        selectedItem={selectedItem}
-        type={modalType}
-        rejectionReason={rejectionReason}
-        onRejectionReasonChange={(e) => setRejectionReason(e.target.value)}
-        onReject={() => handleReject(selectedItem._id, modalType)}
-        onCancel={() => {
-          setShowRejectModal(false);
-          setRejectionReason("");
-          setSelectedItem(null);
-          setModalType("");
-        }}
-      />
     </div>
   );
 };

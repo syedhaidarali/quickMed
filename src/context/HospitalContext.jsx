@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { hospitalService } from "../services/hospitalService";
 import { toast } from "sonner";
 
@@ -13,7 +13,23 @@ export const HospitalProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // image.png;
+
+  const validateSession = async () => {
+    setLoading(true);
+    try {
+      const { data } = await hospitalService.validateToken();
+      setDoctor(data.data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    validateSession();
+  }, []);
+
   const HospitalLogin = async (credentials, navigate) => {
     setLoading(true);
     try {

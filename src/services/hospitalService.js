@@ -3,6 +3,8 @@
 import { hospitalApi } from "../api/hospital.api";
 
 export const hospitalService = {
+  validateToken: () => hospitalApi.validateToken(),
+
   signUp: (formData) => hospitalApi.signUp(formData),
 
   login: (credentials) => hospitalApi.login(credentials),

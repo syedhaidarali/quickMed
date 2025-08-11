@@ -3,7 +3,8 @@
 import request from "../helpers/request";
 
 export const hospitalApi = {
-  // signUp: (formData) => request.post("/hospital/signup", formData),
+  validateToken: () => request.post("/hospital/me", formData),
+
   signUp: (formData) => {
     return request.post("/hospital/signup", formData, {
       headers: {

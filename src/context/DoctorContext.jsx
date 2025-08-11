@@ -11,7 +11,6 @@ const DoctorContext = createContext();
 
 export const DoctorProvider = ({ children }) => {
   const [doctor, setDoctor] = useState(null);
-  console.log(doctor);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [doctorId, setDoctorId] = useState(null);

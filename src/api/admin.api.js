@@ -28,8 +28,10 @@ export const adminApi = {
       status: "verified",
     }),
 
-  rejectDoctor: (doctorId, reason) =>
-    request.post(`/admin/reject-doctor/${doctorId}`, { reason }),
+  rejectDoctor: (doctorId) =>
+    request.post(`/admin/doctors/action/${doctorId}`, {
+      action: false,
+    }),
 
   approveHospital: (hospitalId) =>
     request.post(`/admin/approve-hospital/${hospitalId}`),

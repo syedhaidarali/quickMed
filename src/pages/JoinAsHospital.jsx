@@ -7,7 +7,6 @@ import Dropdown from "../components/formItems/Dropdown";
 import FileUpload from "../components/formItems/FileUpload";
 import DocumentUpload from "../components/formItems/DocumentUpload";
 import { HOSPITAL_CATEGORIES, HOSPITAL_TYPES } from "../assets/dummy";
-import { formatCNIC } from "../helpers/CNICFormat";
 
 const JoinAsHospital = () => {
   const {
@@ -25,6 +24,7 @@ const JoinAsHospital = () => {
     setShowSuccess,
     loading,
     error,
+    handleCnicChange,
   } = useHospitalFormHandler();
 
   return (
@@ -211,14 +211,10 @@ const JoinAsHospital = () => {
 
               {/* CNIC */}
               <InputField
-                label='CNIC (Owner/Manager)'
+                label='CNIC'
                 name='cnic'
-                {...register("cnic", {
-                  onChange: (e) => {
-                    const formatted = formatCNIC(e.target.value);
-                    e.target.value = formatted;
-                  },
-                })}
+                value={formValues.cnic || ""}
+                onChange={handleCnicChange}
                 error={errors.cnic?.message}
                 required
                 placeholder='xxxxx-xxxxxxx-x'

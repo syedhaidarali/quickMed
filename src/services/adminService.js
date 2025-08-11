@@ -33,8 +33,8 @@ export const adminService = {
     return adminApi.approveDoctor(doctorId);
   },
 
-  rejectDoctor: (doctorId, reason) => {
-    return adminApi.rejectDoctor(doctorId, reason);
+  rejectDoctor: (doctorId) => {
+    return adminApi.rejectDoctor(doctorId);
   },
 
   approveHospital: (hospitalId) => {

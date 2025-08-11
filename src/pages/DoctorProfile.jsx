@@ -4,11 +4,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InputField from "../components/formItems/InputField";
 import { useDoctor } from "../context/context";
+import Modal from "../modals/Modal";
 
 const DoctorProfile = () => {
   const { doctor, logout, DoctorProfileUpdate, UpdateProfilePic } = useDoctor();
   const [isEditing, setIsEditing] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
+  const [isMoreModalVisible, setIsMoreModalVisible] = useState(false);
   const [profileData, setProfileData] = useState({
     phone: doctor?.phone || "",
     availability: Array.isArray(doctor?.availability)
@@ -240,7 +242,13 @@ const DoctorProfile = () => {
               </div>
             </div>
 
-            <div className='flex justify-end'>
+            <div className='flex justify-between'>
+              <button
+                type='button'
+                className='bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700'
+                onClick={() => setIsMoreModalVisible(true)}>
+                Update More Details
+              </button>
               <button
                 type='submit'
                 className='bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700'>
@@ -379,6 +387,12 @@ const DoctorProfile = () => {
           </div>
         )}
       </div>
+      <Modal
+        open={isMoreModalVisible}
+        onOpenChange={setIsMoreModalVisible}
+        title='Need to Update More Details?'
+        description="We're here to help! For additional profile updates, please reach out to our support team. You can contact us directly at +92 348 8597922 or connect with our admin team for personalized assistance."
+      />
     </div>
   );
 };

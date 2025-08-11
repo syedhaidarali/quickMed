@@ -25,5 +25,5 @@ export const doctorApi = {
     });
   },
 
-  updateDoctorProfile: (credentials) => request.post("/doctor", credentials),
+  updateDoctorProfile: (credentials) => request.put("/doctor", credentials),
 };

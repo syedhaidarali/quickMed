@@ -18,7 +18,7 @@ export const AdminProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [rejectedDoctors, setRejectedDoctors] = useState([]);
   const [rejectedHospitals, setRejectedHospitals] = useState([]);
-  // const [statistics, setStatistics] = useState(null);
+  const [statistics, setStatistics] = useState(null);
 
   const validateSession = async () => {
     setLoading(true);
@@ -135,8 +135,8 @@ export const AdminProvider = ({ children }) => {
   const DoctorsStatistics = async () => {
     try {
       const result = await adminService.getDoctorsStatistics();
-      // console.log("doctors statistics", result);
-      return result;
+      setStatistics(result.data.data.statistics);
+      console.log("doctors statistics", result.data.data.statistics);
     } catch (err) {
       // console.log(err, "doctor statistics error");
     } finally {
@@ -159,10 +159,13 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
-  const rejectDoctor = async (doctorId, reason) => {
-    console.log(doctorId, reason);
+  const rejectDoctor = async (doctorId) => {
     try {
-      return await adminService.rejectDoctor(doctorId, reason);
+      const response = await adminService.rejectDoctor(doctorId);
+      console.log(response, "response");
+      setPendingDoctors((prev) => prev.filter((doc) => doc._id !== doctorId));
+      toast.success("Doctor rejected successfully!");
+      return response;
     } catch (err) {
       setError(err);
       throw err;
@@ -228,6 +231,7 @@ export const AdminProvider = ({ children }) => {
         rejectedHospitals,
         fetchRejectedDoctors,
         fetchRejectedHospitals,
+        statistics,
       }}>
       {children}
     </AdminContext.Provider>

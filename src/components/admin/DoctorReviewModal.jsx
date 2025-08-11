@@ -43,6 +43,7 @@ const DoctorReviewModal = ({
   onClose,
   onApprove,
   onReject,
+  handleDoctorReject,
 }) => {
   if (!isOpen || !doctor) return null;
 
@@ -322,7 +323,7 @@ const DoctorReviewModal = ({
             Close
           </button>
           <button
-            onClick={() => onReject(doctor)}
+            onClick={() => handleDoctorReject(doctor._id)}
             className='px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700'>
             Reject
           </button>
