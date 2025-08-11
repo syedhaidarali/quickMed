@@ -1,8 +1,11 @@
 /** @format */
 
+import { useAdmin } from "../../context/AdminContext";
 import React from "react";
 
 const AdminStatsCards = ({ statistics }) => {
+  const { hospitalStatistics } = useAdmin();
+
   const stats = [
     {
       title: "Total Doctors",
@@ -12,7 +15,7 @@ const AdminStatsCards = ({ statistics }) => {
       textColor: "text-blue-600",
     },
     {
-      title: "Pending Doctor Reviews",
+      title: "Pending Doctors Reviews",
       count: statistics?.pending,
       icon: "⏳",
       bgColor: "bg-yellow-100",
@@ -32,20 +35,34 @@ const AdminStatsCards = ({ statistics }) => {
       bgColor: "bg-red-100",
       textColor: "text-red-600",
     },
-    // {
-    //   title: "Active Payments",
-    //   count: statistics?.active,
-    //   icon: "💰",
-    //   bgColor: "bg-emerald-100",
-    //   textColor: "text-emerald-600",
-    // },
-    // {
-    //   title: "Inactive Payments",
-    //   count: statistics?.inactive,
-    //   icon: "⚠️",
-    //   bgColor: "bg-orange-100",
-    //   textColor: "text-orange-600",
-    // },
+    {
+      title: "Total Hospitals",
+      count: hospitalStatistics?.total,
+      icon: "👨‍⚕️",
+      bgColor: "bg-blue-100",
+      textColor: "text-blue-600",
+    },
+    {
+      title: "Pending Hospitals Reviews",
+      count: hospitalStatistics?.pending,
+      icon: "⏳",
+      bgColor: "bg-yellow-100",
+      textColor: "text-yellow-600",
+    },
+    {
+      title: "Approved Hospitals",
+      count: hospitalStatistics?.verified,
+      icon: "✅",
+      bgColor: "bg-green-100",
+      textColor: "text-green-600",
+    },
+    {
+      title: "Rejected Hospitals",
+      count: hospitalStatistics?.rejected,
+      icon: "❌",
+      bgColor: "bg-red-100",
+      textColor: "text-red-600",
+    },
   ];
 
   return (

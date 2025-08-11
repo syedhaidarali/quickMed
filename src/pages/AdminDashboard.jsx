@@ -39,7 +39,7 @@ const AdminDashboard = () => {
     fetchPendingDoctors();
     fetchApprovedDoctors();
     fetchRejectedDoctors();
-    // fetchPendingHospitals();
+    fetchPendingHospitals();
     fetchRejectedHospitals();
   }, []);
   const handleApproveDoctor = async (itemId, type) => {

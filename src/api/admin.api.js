@@ -23,6 +23,8 @@ export const adminApi = {
 
   getDoctorsStatistics: () => request.get("/admin/doctors/stats"),
 
+  getHospitalStatistics: () => request.get("/admin/hospitals/stats"),
+
   approveDoctor: (doctorId) =>
     request.post(`/admin/doctors/verification/${doctorId}`, {
       status: "verified",

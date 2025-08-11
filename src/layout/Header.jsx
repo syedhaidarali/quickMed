@@ -93,9 +93,9 @@ const Header = () => {
               label='Doctor'
             />
             <NavLink
-              href='/register/hospital'
+              href='/hospital/login'
               className={``}
-              label='Register Hospital'
+              label='Hospital'
             />
             <NavLink
               href='/admin/login'

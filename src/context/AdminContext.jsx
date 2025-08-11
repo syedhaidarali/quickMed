@@ -19,6 +19,7 @@ export const AdminProvider = ({ children }) => {
   const [rejectedDoctors, setRejectedDoctors] = useState([]);
   const [rejectedHospitals, setRejectedHospitals] = useState([]);
   const [statistics, setStatistics] = useState(null);
+  const [hospitalStatistics, setHospitalStatistics] = useState(null);
 
   const validateSession = async () => {
     setLoading(true);
@@ -35,6 +36,7 @@ export const AdminProvider = ({ children }) => {
   useEffect(() => {
     validateSession();
     DoctorsStatistics();
+    HospitalStatistics();
     // getAllDoctor();
   }, []);
 
@@ -79,7 +81,6 @@ export const AdminProvider = ({ children }) => {
 
   const fetchPendingHospitals = async () => {
     try {
-      setLoading(true);
       const res = await adminService.getPendingHospitals();
       // console.log(res.data.data.hospitals);
       setPendingHospitals(res.data.data.hospitals);
@@ -132,6 +133,18 @@ export const AdminProvider = ({ children }) => {
       // console.log("doctors statistics", result.data.data.statistics);
     } catch (err) {
       // console.log(err, "doctor statistics error");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const HospitalStatistics = async () => {
+    try {
+      const result = await adminService.getHospitalStatistics();
+      setHospitalStatistics(result.data.data.statistics);
+      console.log(result.data.data.statistics);
+      console.log("doctors statistics", result.data.data.statistics);
+    } catch (err) {
+      console.log(err, "doctor statistics error");
     } finally {
       setLoading(false);
     }
@@ -334,6 +347,7 @@ export const AdminProvider = ({ children }) => {
         doctorProfilePicture,
         updateDoctorDetails,
         hospitalProfilePicture,
+        hospitalStatistics,
       }}>
       {children}
     </AdminContext.Provider>

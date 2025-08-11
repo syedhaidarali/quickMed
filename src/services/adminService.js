@@ -13,9 +13,7 @@ export const adminService = {
     return adminApi.getPendingDoctors();
   },
 
-  getPendingHospitals: () => {
-    return adminApi.getPendingHospitals();
-  },
+  getPendingHospitals: () => adminApi.getPendingHospitals(),
 
   getApprovedDoctors: () => adminApi.getApprovedDoctors(),
 
@@ -26,6 +24,8 @@ export const adminService = {
   getRejectedDoctors: () => adminApi.getRejectedDoctors(),
 
   getDoctorsStatistics: () => adminApi.getDoctorsStatistics(),
+
+  getHospitalStatistics: () => adminApi.getHospitalStatistics(),
 
   getRejectedHospitals: () => adminApi.getRejectedHospitals(),
 
