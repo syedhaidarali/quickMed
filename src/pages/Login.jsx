@@ -1,47 +1,50 @@
 /** @format */
-
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputField from "../components/formItems/InputField";
-import { formatCNIC, validateCNIC } from "../helpers/CNICFormat";
+import { useAuth } from "../context/AuthContext";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { doctorLoginSchema } from "../schemas/doctorLoginSchema";
+import Modal from "../modals/Modal";
+import { useDoctor } from "../context/DoctorContext";
 
 const Login = () => {
-  const [activeTab, setActiveTab] = useState("email"); // "email" or "cnic"
+  const [activeTab, setActiveTab] = useState("email");
+  const { signIn, loading } = useAuth();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [loginMessage, setLoginMessage] = useState("");
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: zodResolver(doctorLoginSchema),
+    mode: "onChange",
+  });
 
-  // Email login state
-  const [email, setEmail] = useState("");
-  const [emailPassword, setEmailPassword] = useState("");
-
-  // CNIC login state
-  const [cnic, setCnic] = useState("");
-  const [cnicPassword, setCnicPassword] = useState("");
-
-  const handleEmailSubmit = (e) => {
-    e.preventDefault();
-    // Handle email login logic here
-    console.log("Email login:", { email, password: emailPassword });
-  };
-
-  const handleCnicSubmit = (e) => {
-    e.preventDefault();
-    // Handle CNIC login logic here
-    if (validateCNIC(cnic)) {
-      console.log("CNIC login:", { cnic, password: cnicPassword });
-    } else {
-      alert("Please enter a valid CNIC format (xxxxx-xxxxxxx-x)");
+  const onSubmit = async (data) => {
+    const msg = await signIn(
+      {
+        identifier: data.identifier,
+        password: data.password,
+      },
+      navigate
+    );
+    if (msg) {
+      console.log(msg);
+      setModalOpen(true);
+      setLoginMessage(msg);
     }
+    reset();
   };
-
-  const handleCnicChange = (e) => {
-    const formattedCnic = formatCNIC(e.target.value);
-    setCnic(formattedCnic);
-  };
-
   return (
-    <div className='min-h-screen flex items-center justify-center  py-12 px-4 sm:px-6 lg:px-8'>
+    <div className='min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
       <div className='md:min-w-md w-full bg-white p-8 rounded-xl shadow-md'>
         <h2 className='mb-6 text-center text-3xl font-extrabold text-emerald-900'>
-          Sign in to your account
+          Sign In to your account
         </h2>
 
         {/* Tabs */}
@@ -57,99 +60,74 @@ const Login = () => {
               Email Login
             </button>
             <button
-              onClick={() => setActiveTab("cnic")}
+              onClick={() => setActiveTab("pmdc")}
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors duration-200 ${
-                activeTab === "cnic"
+                activeTab === "pmdc"
                   ? "bg-white text-emerald-600 shadow-sm"
                   : "text-gray-600 hover:text-gray-900"
               }`}>
-              CNIC Login
+              PMDC Login
             </button>
           </div>
         </div>
 
-        {/* Email Login Form */}
-        {activeTab === "email" && (
-          <form
-            className='space-y-6'
-            onSubmit={handleEmailSubmit}>
-            <InputField
-              label='Email Address'
-              type='email'
-              name='email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete='email'
-            />
-            <InputField
-              label='Password'
-              type='password'
-              name='emailPassword'
-              value={emailPassword}
-              onChange={(e) => setEmailPassword(e.target.value)}
-              required
-              autoComplete='current-password'
-            />
-            <div>
-              <button
-                type='submit'
-                className='group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md bg-emerald-600 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-200'>
-                Sign In with Email
-              </button>
-            </div>
-          </form>
-        )}
-
-        {/* CNIC Login Form */}
-        {activeTab === "cnic" && (
-          <form
-            className='space-y-6'
-            onSubmit={handleCnicSubmit}>
-            <InputField
-              label='CNIC Number'
-              type='text'
-              name='cnic'
-              value={cnic}
-              onChange={handleCnicChange}
-              required
-              autoComplete='off'
-              placeholder='Enter CNIC (xxxxx-xxxxxxx-x)'
-              maxLength={15}
-            />
-            <InputField
-              label='Password'
-              type='password'
-              name='cnicPassword'
-              value={cnicPassword}
-              onChange={(e) => setCnicPassword(e.target.value)}
-              required
-              autoComplete='current-password'
-            />
-            <div>
-              <button
-                type='submit'
-                className='group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md bg-emerald-600 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-200'>
-                Sign In with CNIC
-              </button>
-            </div>
-          </form>
-        )}
+        {/* Login Form */}
+        <form
+          className='space-y-6'
+          onSubmit={handleSubmit(onSubmit)}>
+          <InputField
+            label={activeTab === "email" ? "Email Address" : "PMDC Number"}
+            type='text'
+            name='identifier'
+            {...register("identifier")}
+            error={errors.identifier?.message}
+            placeholder={
+              activeTab === "email" ? "Enter email" : "Enter PMDC number"
+            }
+            autoComplete='username'
+          />
+          <InputField
+            label='Password'
+            type='password'
+            name='password'
+            {...register("password")}
+            error={errors.password?.message}
+            placeholder='Enter your password'
+            autoComplete='current-password'
+          />
+          <button
+            type='submit'
+            disabled={loading}
+            className='w-full py-2 px-4 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 transition duration-200 disabled:opacity-50'>
+            {loading
+              ? "Signing In..."
+              : `Sign In with ${activeTab === "email" ? "Email" : "PMDC"}`}
+          </button>
+        </form>
 
         <div className='mt-6 text-center'>
           <span className='text-sm text-emerald-700'>
             Don't have an account?
           </span>
           <Link
-            onClick={() => {
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
             to='/register'
-            className='ml-1 text-emerald-600 hover:underline font-medium'>
+            className='ml-1 text-emerald-600 hover:underline font-medium'
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
             Register
           </Link>
         </div>
       </div>
+      <Modal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        title='Login Status'
+        description={loginMessage}>
+        <button
+          className='mt-4 w-full rounded-lg bg-emerald-600 px-6 py-2 text-white font-semibold shadow-md hover:bg-emerald-700 transition duration-300 ease-in-out active:scale-95'
+          onClick={() => navigate("/doctor/upload-documents")}>
+          Upload Documents
+        </button>
+      </Modal>
     </div>
   );
 };

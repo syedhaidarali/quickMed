@@ -19,24 +19,5 @@ export const hospitalService = {
     return hospitalApi.getProfile(hospitalId, token);
   },
 
-  // Admin functions
-  getPendingHospitals: () => {
-    const token = localStorage.getItem("token");
-    return hospitalApi.getPendingHospitals(token);
-  },
-
-  getApprovedHospitals: () => {
-    const token = localStorage.getItem("token");
-    return hospitalApi.getApprovedHospitals(token);
-  },
-
-  approveHospital: (hospitalId) => {
-    const token = localStorage.getItem("token");
-    return hospitalApi.approveHospital(hospitalId, token);
-  },
-
-  rejectHospital: (hospitalId, reason) => {
-    const token = localStorage.getItem("token");
-    return hospitalApi.rejectHospital(hospitalId, reason, token);
-  },
+  getAllPublicHospital: () => hospitalApi.getAllPublicHospital(),
 };

@@ -3,7 +3,7 @@
 import { authApi } from "../api/auth.api";
 
 export const authService = {
-  validateToken: () => authApi.validateToken(token),
+  validateToken: () => authApi.validateToken(),
 
   signInRequest: (data) => authApi.signInRequest(data),
 

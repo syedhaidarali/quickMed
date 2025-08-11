@@ -22,4 +22,6 @@ export const hospitalApi = {
     request.put(`/hospital/profile/${hospitalId}`, profileData),
 
   getProfile: (hospitalId) => request.get(`/hospital/profile/${hospitalId}`),
+
+  getAllPublicHospital: () => request.get("/auth/hospitals"),
 };

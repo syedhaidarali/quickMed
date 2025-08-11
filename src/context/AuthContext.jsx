@@ -17,14 +17,13 @@ export const AuthProvider = ({ children }) => {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [allUsers, setAllUsers] = useState([]);
   const [error, setError] = useState(null);
-
+  console.log(user);
   const validateSession = async () => {
     try {
       const { data } = await authService.validateToken();
       setUser(data.data);
-      setIsAuthenticated(true);
-    } catch {
-      setIsAuthenticated(false);
+    } catch (err) {
+      console.log(err);
     } finally {
       setIsAuthLoading(false);
     }
@@ -54,15 +53,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signUpFun = async (credentials, navigate) => {
+    console.log(credentials);
     setLoading(true);
     try {
       const { data } = await authService.signUpRequest(credentials);
-      setHeaders(data.data.token);
       setUser(data.data.user);
       setIsAuthenticated(true);
       toast.success("Signup successful");
       if (navigate) {
-        navigate("/edit");
+        navigate("/login");
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Signup failed");

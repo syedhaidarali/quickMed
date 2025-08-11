@@ -1,89 +1,90 @@
 /** @format */
 
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import InputField from "../components/formItems/InputField";
 import { formatCNIC } from "../helpers/CNICFormat";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "../context/AuthContext";
+import { userFormSchema } from "../schemas/userFormSchema";
 
 const Register = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const initialState = {};
-  const [form, setForm] = useState(initialState);
+  const navigate = useNavigate();
+  const { signUpFun, loading } = useAuth();
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(userFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      cnic: "",
+      password: "",
+    },
+  });
 
   const handleCnicChange = (e) => {
-    const formattedCNIC = formatCNIC(e.target.value);
-    setForm((prev) => ({ ...prev, cnic: formattedCNIC }));
+    setValue("cnic", formatCNIC(e.target.value));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle registration logic here
+  const onSubmit = async (data) => {
+    try {
+      await signUpFun(data, navigate);
+    } catch (error) {
+      console.error("Registration error:", error);
+    }
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-emerald-50 py-12 px-4 sm:px-6 lg:px-8'>
-      <div className='max-w-md w-full bg-white p-8 rounded-xl shadow-md'>
+    <div className='min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
+      <div className='md:min-w-md w-full bg-white p-8 rounded-xl shadow-md'>
         <h2 className='mb-6 text-center text-3xl font-extrabold text-emerald-900'>
           Create your account
         </h2>
         <form
           className='space-y-6'
-          onSubmit={handleSubmit}>
+          onSubmit={handleSubmit(onSubmit)}>
           <InputField
             label='Name'
             type='text'
-            name='name'
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            {...register("name")}
+            error={errors.name?.message}
             required
-            autoComplete='name'
           />
           <InputField
             label='Email address'
             type='email'
-            name='email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register("email")}
+            error={errors.email?.message}
             required
-            autoComplete='email'
           />
           <InputField
             label='CNIC'
-            name='cnic'
-            value={form.cnic}
+            {...register("cnic")}
+            error={errors.cnic?.message}
             onChange={handleCnicChange}
             required
             placeholder='xxxxx-xxxxxxx-x'
             maxLength={15}
-            onlyNumbers
-            allowDashes
           />
           <InputField
             label='Password'
             type='password'
-            name='password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            {...register("password")}
+            error={errors.password?.message}
             required
-            autoComplete='new-password'
-          />
-          <InputField
-            label='Confirm Password'
-            type='password'
-            name='confirmPassword'
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            autoComplete='new-password'
           />
           <div>
             <button
               type='submit'
-              className='group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md bg-emerald-600 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-200'>
-              Register
+              disabled={loading}
+              className='group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md bg-emerald-600 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed'>
+              {loading ? "Creating Account..." : "Register"}
             </button>
           </div>
         </form>

@@ -8,16 +8,17 @@ const HospitalContext = createContext();
 
 export const HospitalProvider = ({ children }) => {
   const [hospital, setHospital] = useState(null);
+  const [allPublicHospital, setAllPublicHospital] = useState([]);
   const [pendingHospitals, setPendingHospitals] = useState([]);
   const [approvedHospitals, setApprovedHospitals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const validateSession = async () => {
     setLoading(true);
     try {
       const { data } = await hospitalService.validateToken();
+      console.log(data, "data");
       setHospital(data.data);
     } catch (err) {
       // console.log(err);
@@ -28,6 +29,7 @@ export const HospitalProvider = ({ children }) => {
 
   useEffect(() => {
     validateSession();
+    GetAllPublicHospital();
   }, []);
 
   const HospitalLogin = async (credentials, navigate) => {
@@ -74,6 +76,17 @@ export const HospitalProvider = ({ children }) => {
     } catch (err) {
       toast.error(err.response?.data?.message || "Update failed");
       setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const GetAllPublicHospital = async () => {
+    try {
+      const res = await hospitalService.getAllPublicHospital();
+      setAllPublicHospital(res.data.data.hospitals);
+    } catch (err) {
+      console.log(err);
     } finally {
       setLoading(false);
     }

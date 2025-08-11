@@ -7,7 +7,8 @@ import DropdownMenu from "../components/formItems/DropdownMenu";
 import NavLink from "../components/formItems/NavLink";
 import { Link } from "react-router-dom";
 import { useAdmin } from "../context/AdminContext";
-import { useDoctor } from "../context/context";
+import { useAuth, useDoctor } from "../context/context";
+import { useHospital } from "../context/HospitalContext";
 
 // ==========================
 // Call Button Component
@@ -34,6 +35,8 @@ const Header = () => {
   const { admin } = useAdmin();
   const menuRef = useRef(null);
   const { doctor } = useDoctor();
+  const { hospital } = useHospital();
+  const { user } = useAuth();
 
   const handleRoute = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -85,7 +88,7 @@ const Header = () => {
       )}
 
       <div className='flex justify-end space-x-3 w-fit ms-auto'>
-        {!admin && !doctor && (
+        {!admin && !doctor && !hospital && !user && (
           <>
             <LoginButton className='ml-2' />
             <NavLink
@@ -113,6 +116,18 @@ const Header = () => {
           <NavLink
             href='/doctor/profile'
             label='Doctor Profile'
+          />
+        )}
+        {hospital && (
+          <NavLink
+            href='/doctor/profile'
+            label='Hospital Profile'
+          />
+        )}
+        {user && (
+          <NavLink
+            href='/doctor/profile'
+            label='User Profile'
           />
         )}
       </div>
@@ -147,7 +162,7 @@ const Header = () => {
             />
           )
         )}
-        {!admin && !doctor && (
+        {!admin && !doctor && !hospital && !user && (
           <>
             <LoginButton
               onClick={handleCloseMenu}
@@ -180,6 +195,18 @@ const Header = () => {
           <NavLink
             href='/doctor/profile'
             label='Doctor Profile'
+          />
+        )}
+        {hospital && (
+          <NavLink
+            href='/doctor/profile'
+            label='Hospital Profile'
+          />
+        )}
+        {user && (
+          <NavLink
+            href='/doctor/profile'
+            label='User Profile'
           />
         )}
       </nav>
