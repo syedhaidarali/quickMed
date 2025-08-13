@@ -21,6 +21,13 @@ export { default as MedicineDetail } from "./MedicineDetail.jsx";
 export { default as BookNow } from "./BookNow.jsx";
 export { default as BookAppointmentHospital } from "./BookAppointmentHospital.jsx";
 
+// User Pages
+export { default as UserProfile } from "./UserProfile.jsx";
+
+// Consultation Pages
+export { default as Consultation } from "./Consultation.jsx";
+export { default as DoctorConsultation } from "./DoctorConsultation.jsx";
+
 // Admin Pages
 export { default as AdminLogin } from "./AdminLogin.jsx";
 export { default as AdminDashboard } from "./AdminDashboard.jsx";

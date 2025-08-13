@@ -14,4 +14,5 @@ export const doctorService = {
   uploadDocuments: (formData) => doctorApi.uploadDocuments(formData),
 
   updateDoctorProfile: (formData) => doctorApi.updateDoctorProfile(formData),
+  getAllPublicDoctors: () => doctorApi.getAllPublicDoctors(),
 };

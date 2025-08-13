@@ -1,10 +1,48 @@
 /** @format */
 
 import React from "react";
-import { doctors } from "../../assets/dummy";
+import { useDoctor } from "../../context/DoctorContext";
 import DoctorCard from "../cards/DoctorCards";
 
 const DoctorSections = () => {
+  const { allDoctors, loading } = useDoctor();
+
+  if (loading) {
+    return (
+      <div className='mx-auto px-4 sm:px-6 lg:px-8 pb-5'>
+        <div className='text-center mb-12'>
+          <h2 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>
+            Top Rated Doctors
+          </h2>
+          <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
+            Consult with Pakistan's best doctors from the comfort of your home
+          </p>
+        </div>
+        <div className='flex justify-center'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500'></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!allDoctors || allDoctors.length === 0) {
+    return (
+      <div className='mx-auto px-4 sm:px-6 lg:px-8 pb-5'>
+        <div className='text-center mb-12'>
+          <h2 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>
+            Top Rated Doctors
+          </h2>
+          <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
+            Consult with Pakistan's best doctors from the comfort of your home
+          </p>
+        </div>
+        <div className='text-center text-gray-500'>
+          <p>No doctors available at the moment.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className='mx-auto px-4 sm:px-6 lg:px-8 pb-5'>
       <div className='text-center mb-12'>
@@ -16,9 +54,9 @@ const DoctorSections = () => {
         </p>
       </div>
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
-        {doctors.map((doctor, index) => (
+        {allDoctors.map((doctor) => (
           <DoctorCard
-            key={index}
+            key={doctor._id}
             doctor={doctor}
           />
         ))}
@@ -26,4 +64,5 @@ const DoctorSections = () => {
     </div>
   );
 };
+
 export default DoctorSections;

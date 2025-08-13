@@ -26,8 +26,12 @@ import {
   HospitalDoctors,
   BookAppointmentHospital,
   DoctorDocumentUpload,
+  Consultation,
+  DoctorConsultation,
+  UserProfile,
 } from "./pages/pages.js";
 import { useAdmin } from "./context/AdminContext";
+import CurrentDoctorProfile from "./pages/CurrentDoctorProfile.jsx";
 
 const ProtectedAdminRoute = ({ children }) => {
   const { admin } = useAdmin();
@@ -67,10 +71,6 @@ const AppRoutes = () => (
         element={<AllMedicines />}
       />
       <Route
-        path='/doctor/:slug'
-        element={<DoctorDetail />}
-      />
-      <Route
         path='/hospitals/:slug'
         element={<HospitalDetail />}
       />
@@ -92,11 +92,19 @@ const AppRoutes = () => (
       />
       <Route
         path='/doctor/profile/'
+        element={<CurrentDoctorProfile />}
+      />
+      <Route
+        path='/doctor/profile/:slug'
         element={<DoctorProfile />}
       />
       <Route
         path='/doctor/book/:slug'
         element={<BookNow />}
+      />
+      <Route
+        path='/doctor/:slug'
+        element={<DoctorDetail />}
       />
       <Route
         path='/hospitals/:slug/doctors'
@@ -107,6 +115,10 @@ const AppRoutes = () => (
         element={<BookAppointmentHospital />}
       />
       <Route
+        path='/profile'
+        element={<UserProfile />}
+      />
+      <Route
         path='/admin/dashboard'
         element={
           <ProtectedAdminRoute>
@@ -115,6 +127,21 @@ const AppRoutes = () => (
         }
       />
     </Route>
+
+    {/* Consultation routes - no layout wrapper */}
+    <Route
+      path='/consultation/:meetingId/:doctorId'
+      element={<Consultation />}
+    />
+    <Route
+      path='/doctor/consultation/:meetingId/:patientId'
+      element={<DoctorConsultation />}
+    />
+    <Route
+      path='/doctor/consultation/new/:patientId'
+      element={<DoctorConsultation />}
+    />
+
     {/* Auth layout for login/register */}
     <Route element={<AuthLayout />}>
       <Route

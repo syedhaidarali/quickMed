@@ -231,3 +231,73 @@ export const LoadingSpinnerIcon = () => {
     </svg>
   );
 };
+
+export const MicIcon = () => (
+  <svg
+    className='w-5 h-5'
+    fill='currentColor'
+    viewBox='0 0 20 20'>
+    <path
+      fillRule='evenodd'
+      d='M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z'
+      clipRule='evenodd'
+    />
+  </svg>
+);
+
+export const MicOffIcon = () => (
+  <svg
+    className='w-4 h-4 text-white'
+    fill='currentColor'
+    viewBox='0 0 20 20'>
+    <path
+      fillRule='evenodd'
+      d='M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z'
+      clipRule='evenodd'
+    />
+  </svg>
+);
+
+export const VideoIcon = () => (
+  <svg
+    className='w-5 h-5'
+    fill='currentColor'
+    viewBox='0 0 20 20'>
+    <path d='M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z' />
+  </svg>
+);
+
+export const VideoOffIcon = () => (
+  <svg
+    className='w-4 h-4 text-white'
+    fill='currentColor'
+    viewBox='0 0 20 20'>
+    <path
+      fillRule='evenodd'
+      d='M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z'
+      clipRule='evenodd'
+    />
+  </svg>
+);
+
+export const ChatIcon = () => (
+  <svg
+    className='w-5 h-5'
+    fill='currentColor'
+    viewBox='0 0 20 20'>
+    <path
+      fillRule='evenodd'
+      d='M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z'
+      clipRule='evenodd'
+    />
+  </svg>
+);
+
+export const UsersIcon = () => (
+  <svg
+    className='w-5 h-5'
+    fill='currentColor'
+    viewBox='0 0 20 20'>
+    <path d='M13 7a3 3 0 11-6 0 3 3 0 016 0zm-6 8a6 6 0 1112 0H7z' />
+  </svg>
+);

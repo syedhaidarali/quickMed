@@ -115,19 +115,19 @@ const Header = () => {
         {doctor && (
           <NavLink
             href='/doctor/profile'
-            label='Doctor Profile'
+            label='My Profile'
           />
         )}
         {hospital && (
           <NavLink
             href='/doctor/profile'
-            label='Hospital Profile'
+            label='My Hospital Profile'
           />
         )}
         {user && (
           <NavLink
-            href='/doctor/profile'
-            label='User Profile'
+            href='/profile'
+            label='My Profile'
           />
         )}
       </div>
@@ -194,19 +194,19 @@ const Header = () => {
         {doctor && (
           <NavLink
             href='/doctor/profile'
-            label='Doctor Profile'
+            label='My Profile'
           />
         )}
         {hospital && (
           <NavLink
             href='/doctor/profile'
-            label='Hospital Profile'
+            label='My Hospital Profile'
           />
         )}
         {user && (
           <NavLink
-            href='/doctor/profile'
-            label='User Profile'
+            href='/profile'
+            label='My Profile'
           />
         )}
       </nav>

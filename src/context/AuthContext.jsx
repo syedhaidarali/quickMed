@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data } = await authService.validateToken();
       setUser(data.data);
+      setIsAuthenticated(true);
     } catch (err) {
       console.log(err);
     } finally {

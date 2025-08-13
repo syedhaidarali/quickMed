@@ -14,11 +14,12 @@ export const DoctorProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [doctorId, setDoctorId] = useState(null);
-
+  const [allDoctors, setAllDoctors] = useState([]);
   const validateSession = async () => {
     setLoading(true);
     try {
       const { data } = await doctorService.validateToken();
+      console.log(data.data, "doctorsssssssssssssssssssssss");
       setDoctor(data.data);
     } catch (err) {
       // console.log(err);
@@ -29,6 +30,7 @@ export const DoctorProvider = ({ children }) => {
 
   useEffect(() => {
     validateSession();
+    GetAllPublicDoctors();
   }, []);
 
   const DoctorLogin = async (credentials, navigate) => {
@@ -110,6 +112,16 @@ export const DoctorProvider = ({ children }) => {
     }
   };
 
+  const GetAllPublicDoctors = async () => {
+    try {
+      const result = await doctorService.getAllPublicDoctors();
+      setAllDoctors(result.data.data.doctors);
+      return result;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const logout = (navigate) => {
     navigate("/doctor/login");
     removeHeaders();
@@ -128,6 +140,7 @@ export const DoctorProvider = ({ children }) => {
         DoctorProfileUpdate,
         DoctorDocumentUpload,
         logout,
+        allDoctors,
       }}>
       {children}
     </DoctorContext.Provider>
