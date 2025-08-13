@@ -17,9 +17,7 @@ export const adminService = {
 
   getApprovedDoctors: () => adminApi.getApprovedDoctors(),
 
-  getApprovedHospitals: () => {
-    return adminApi.getApprovedHospitals();
-  },
+  getApprovedHospitals: () => adminApi.getApprovedHospitals(),
 
   getRejectedDoctors: () => adminApi.getRejectedDoctors(),
 

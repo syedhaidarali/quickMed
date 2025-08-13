@@ -33,11 +33,23 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
+  const refreshAllData = async () => {
+    await Promise.all([
+      fetchPendingDoctors(),
+      fetchApprovedDoctors(),
+      fetchRejectedDoctors(),
+      fetchPendingHospitals(),
+      fetchApprovedHospitals(),
+      fetchRejectedHospitals(),
+      DoctorsStatistics(),
+      HospitalStatistics(),
+    ]);
+  };
+
+  // Call refresh on mount
   useEffect(() => {
     validateSession();
-    DoctorsStatistics();
-    HospitalStatistics();
-    // getAllDoctor();
+    refreshAllData();
   }, []);
 
   const login = async (credentials, navigate) => {
@@ -45,10 +57,8 @@ export const AdminProvider = ({ children }) => {
     try {
       setLoading(true);
       const res = await adminService.login(credentials);
+      await validateSession();
       setAdmin(res.data.data.user);
-      DoctorsStatistics();
-      fetchApprovedDoctors();
-      fetchRejectedDoctors();
       toast.success("Admin login Successfully");
       setHeaders(res.data.data.token);
       navigate("/admin/dashboard");
@@ -94,6 +104,7 @@ export const AdminProvider = ({ children }) => {
   const fetchApprovedDoctors = async () => {
     try {
       const res = await adminService.getApprovedDoctors();
+      console.log("total approved doctor ", res);
       setApprovedDoctors(res.data.data.doctors);
     } catch (err) {
       setError(err);
@@ -105,10 +116,10 @@ export const AdminProvider = ({ children }) => {
   const fetchApprovedHospitals = async () => {
     try {
       const res = await adminService.getApprovedHospitals();
-      setApprovedHospitals(res.data);
-      console.log(res);
+      setApprovedHospitals(res.data.data.hospitals);
     } catch (err) {
       setError(err);
+      console.log("errrrrrr", err);
     } finally {
       setLoading(false);
     }
@@ -150,16 +161,15 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
+  // New: centralized refresh function
+
   const approveDoctor = async (doctorId) => {
-    console.log(doctorId, "approveDoctor");
     try {
-      const response = await adminService.approveDoctor(doctorId);
-      setPendingDoctors((prev) => prev.filter((doc) => doc._id !== doctorId));
+      await adminService.approveDoctor(doctorId);
       toast.success("Doctor approved successfully!");
-      return response;
+      await refreshAllData(); // ensure all lists are updated
     } catch (err) {
       setError(err);
-      throw err;
     } finally {
       setLoading(false);
     }
@@ -167,15 +177,11 @@ export const AdminProvider = ({ children }) => {
 
   const approveHospital = async (hospitalId) => {
     try {
-      const response = await adminService.approveHospital(hospitalId);
-      setPendingHospitals((prev) =>
-        prev.filter((doc) => doc._id !== hospitalId)
-      );
+      await adminService.approveHospital(hospitalId);
       toast.success("Hospital approved successfully!");
-      return response;
+      await refreshAllData();
     } catch (err) {
       setError(err);
-      throw err;
     } finally {
       setLoading(false);
     }
@@ -183,13 +189,11 @@ export const AdminProvider = ({ children }) => {
 
   const rejectDoctor = async (doctorId) => {
     try {
-      const response = await adminService.rejectDoctor(doctorId);
-      setPendingDoctors((prev) => prev.filter((doc) => doc._id !== doctorId));
+      await adminService.rejectDoctor(doctorId);
       toast.success("Doctor rejected successfully!");
-      return response;
+      await refreshAllData();
     } catch (err) {
       setError(err);
-      throw err;
     } finally {
       setLoading(false);
     }
@@ -197,15 +201,11 @@ export const AdminProvider = ({ children }) => {
 
   const rejectHospital = async (hospitalId, reason) => {
     try {
-      const response = await adminService.rejectHospital(hospitalId, reason);
-      setPendingHospitals((prev) =>
-        prev.filter((doc) => doc._id !== hospitalId)
-      );
+      await adminService.rejectHospital(hospitalId, reason);
       toast.success("Hospital rejected successfully!");
-      return response;
+      await refreshAllData();
     } catch (err) {
       setError(err);
-      throw err;
     } finally {
       setLoading(false);
     }

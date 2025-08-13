@@ -16,7 +16,7 @@ const BookNow = () => {
   const [submitted, setSubmitted] = useState(false);
   const [consultationType, setConsultationType] = useState("in-person"); // "in-person" or "video"
   const [doctor, setDoctor] = useState(null);
-
+  const { doctor: doctorData } = useDoctor();
   // Extract doctor ID from slug and find the doctor
   useEffect(() => {
     if (allDoctors && allDoctors.length > 0) {
@@ -27,6 +27,13 @@ const BookNow = () => {
       }
     }
   }, [allDoctors, slug]);
+
+  // Ensure smooth scroll to top after navigation
+  useEffect(() => {
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }, [slug]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -161,7 +168,7 @@ const BookNow = () => {
                   access.
                 </p>
 
-                {isAuthenticated ? (
+                {isAuthenticated || doctorData ? (
                   <div className='space-y-3'>
                     <div className='bg-yellow-50 border border-yellow-200 rounded-lg p-3'>
                       <p className='text-yellow-800 text-sm'>

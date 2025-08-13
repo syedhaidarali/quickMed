@@ -761,7 +761,68 @@ export const REGISTERED_HOSPITALS = [
   "Ziauddin Hospital",
 ];
 
-const personalFields = (doctor) => [
+//admin stats card
+export const adminStatsCard = (statistics, hospitalStatistics) => [
+  {
+    title: "Total Doctors",
+    count: statistics?.total,
+    icon: "👨‍⚕️",
+    bgColor: "bg-blue-100",
+    textColor: "text-blue-600",
+  },
+  {
+    title: "Pending Doctors Reviews",
+    count: statistics?.pending,
+    icon: "⏳",
+    bgColor: "bg-yellow-100",
+    textColor: "text-yellow-600",
+  },
+  {
+    title: "Approved Doctors",
+    count: statistics?.verified,
+    icon: "✅",
+    bgColor: "bg-green-100",
+    textColor: "text-green-600",
+  },
+  {
+    title: "Rejected Doctors",
+    count: statistics?.rejected,
+    icon: "❌",
+    bgColor: "bg-red-100",
+    textColor: "text-red-600",
+  },
+  {
+    title: "Total Hospitals",
+    count: hospitalStatistics?.total,
+    icon: "👨‍⚕️",
+    bgColor: "bg-blue-100",
+    textColor: "text-blue-600",
+  },
+  {
+    title: "Pending Hospitals Reviews",
+    count: hospitalStatistics?.pending,
+    icon: "⏳",
+    bgColor: "bg-yellow-100",
+    textColor: "text-yellow-600",
+  },
+  {
+    title: "Approved Hospitals",
+    count: hospitalStatistics?.verified,
+    icon: "✅",
+    bgColor: "bg-green-100",
+    textColor: "text-green-600",
+  },
+  {
+    title: "Rejected Hospitals",
+    count: hospitalStatistics?.rejected,
+    icon: "❌",
+    bgColor: "bg-red-100",
+    textColor: "text-red-600",
+  },
+];
+
+// Generate personal fields dynamically
+export const personalFields = (doctor) => [
   { key: "name", label: "Name", value: doctor.name },
   { key: "email", label: "Email", value: doctor.email },
   { key: "phone", label: "Phone", value: doctor.phone },
@@ -771,46 +832,26 @@ const personalFields = (doctor) => [
   { key: "address", label: "Address", value: doctor.fullAddress },
 ];
 
-const professionalFields = (doctor) => [
+// Generate professional fields dynamically
+export const professionalFields = (doctor) => [
   { key: "degree", label: "Main Degree", value: doctor.mainDegree },
   {
     key: "speciality",
     label: "Speciality",
-    value: doctor.speciality?.join(", "),
+    value: Array.isArray(doctor.speciality)
+      ? doctor.speciality.join(", ")
+      : doctor.speciality,
   },
   {
     key: "experience",
     label: "Experience",
-    value: `${doctor.experience} years`,
+    value: doctor.experience ? `${doctor.experience} years` : "Not specified",
   },
-  { key: "fee", label: "Fee", value: `Rs. ${doctor.fee}` },
+  {
+    key: "fee",
+    label: "Fee",
+    value: doctor.fee ? `Rs. ${doctor.fee}` : "Not set",
+  },
   { key: "hospital", label: "Hospital", value: doctor.hospital },
   { key: "pmdc", label: "PMDC Number", value: doctor.pmdcNumber },
-];
-
-const timestampFields = (doctor) => [
-  { key: "created", label: "Created", value: formatDate(doctor.createdAt) },
-  { key: "updated", label: "Updated", value: formatDate(doctor.updatedAt) },
-  ...(doctor.PaymentCompleted
-    ? [
-        {
-          key: "payment",
-          label: "Payment Completed",
-          value: formatDate(doctor.PaymentCompleted),
-        },
-      ]
-    : []),
-];
-
-const ratingFields = (doctor) => [
-  {
-    key: "avg",
-    label: "Average Rating",
-    value: `${doctor.rating?.average || 0}/5`,
-  },
-  {
-    key: "reviews",
-    label: "Total Reviews",
-    value: doctor.rating?.count || 0,
-  },
 ];

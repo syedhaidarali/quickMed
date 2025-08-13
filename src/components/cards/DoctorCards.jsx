@@ -1,33 +1,22 @@
 /** @format */
 
-import React from "react";
-import { Link } from "react-router-dom";
+import { useDoctor } from "../../context/DoctorContext";
+import { useAuth } from "../../context/AuthContext";
+import Modal from "../../modals/Modal";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAdmin } from "../../context/AdminContext";
 
 const DoctorCard = ({ doctor }) => {
-  // Handle specialty array or string
-  const getSpecialty = (specialty) => {
-    if (Array.isArray(specialty)) {
-      return specialty.join(", ");
-    }
-    return specialty || "General Medicine";
-  };
+  const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
+  const { doctor: doctorData } = useDoctor();
+  const { admin } = useAdmin();
+  const navigate = useNavigate();
 
-  // Handle rating object
-  const getRating = (rating) => {
-    if (rating && typeof rating === "object") {
-      return rating.average || 0;
-    }
-    return rating || 0;
-  };
+  const isCurrentDoctor = doctor?._id === doctorData?._id;
 
-  const getReviewCount = (rating) => {
-    if (rating && typeof rating === "object") {
-      return rating.count || 0;
-    }
-    return 0;
-  };
-
-  // Generate slug from doctor name and ID
+  const handleRoute = () => window.scrollTo({ top: 0, behavior: "smooth" });
   const generateSlug = (name, id) => {
     const nameSlug = name
       .toLowerCase()
@@ -55,7 +44,7 @@ const DoctorCard = ({ doctor }) => {
           {doctor.name}
         </h3>
         <p className='inline-block bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded-full mb-1'>
-          {getSpecialty(doctor.speciality)}
+          {doctor.speciality}
         </p>
         <p className='text-sm text-gray-500'>
           {doctor.experience || 0} years experience
@@ -67,10 +56,8 @@ const DoctorCard = ({ doctor }) => {
           <span className='text-gray-600'>Rating:</span>
           <div className='flex items-center gap-1 text-yellow-500'>
             <span>★</span>
-            <span className='font-medium'>{getRating(doctor.rating)}</span>
-            <span className='text-gray-400 ml-1'>
-              ({getReviewCount(doctor.rating)})
-            </span>
+            <span className='font-medium'>{doctor.rating.average}</span>
+            <span className='text-gray-400 ml-1'>({doctor.rating.count})</span>
           </div>
         </div>
 
@@ -124,13 +111,42 @@ const DoctorCard = ({ doctor }) => {
             className='px-3 py-2 text-sm border border-emerald-600 text-emerald-600 rounded-md hover:bg-emerald-50 transition-colors duration-200 text-center'>
             View Profile
           </Link>
-          <Link
-            to={`/doctor/book/${slug}`}
+
+          <button
+            onClick={() => {
+              if (user || admin || doctorData) {
+                navigate(`/doctor/book/${slug}`);
+              } else {
+                setIsOpen(true);
+              }
+            }}
+            disabled={isCurrentDoctor}
             className='px-3 py-2 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors duration-200 text-center'>
-            Book Now
-          </Link>
+            {isCurrentDoctor ? "Not allowed" : "Book Now"}
+          </button>
         </div>
       </div>
+      <Modal
+        title='Login Required'
+        description='Only logged in users can book appointments.'
+        open={isOpen}
+        onOpenChange={setIsOpen}>
+        <div className='mt-4 flex justify-end gap-2'>
+          <button
+            onClick={() => setIsOpen(false)}
+            className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'>
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              setIsOpen(false);
+              navigate("/login");
+            }}
+            className='px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700'>
+            Go to Login
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };

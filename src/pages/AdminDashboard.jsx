@@ -1,17 +1,13 @@
 /** @format */
-
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import AdminStatsCards from "../components/admin/AdminStatsCards";
 import ReviewTable from "../components/admin/ReviewTable";
-import RejectModal from "../components/admin/RejectModal";
-import AdminHeader from "../components/admin/AdminHeader";
 import { useAdmin } from "../context/AdminContext";
+import AdminHeader from "../components/admin/AdminHeader";
 
 const AdminDashboard = () => {
   const {
-    admin,
     pendingDoctors,
     approvedDoctors,
     rejectedDoctors,
@@ -22,18 +18,16 @@ const AdminDashboard = () => {
     rejectDoctor,
     approveHospital,
     rejectHospital,
-    logout,
     fetchPendingDoctors,
     fetchApprovedDoctors,
     fetchRejectedDoctors,
     fetchPendingHospitals,
     fetchRejectedHospitals,
+    fetchApprovedHospitals,
     statistics,
+    logout,
   } = useAdmin();
   const navigate = useNavigate();
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [showRejectModal, setShowRejectModal] = useState(false);
-  const [modalType, setModalType] = useState("");
 
   useEffect(() => {
     fetchPendingDoctors();
@@ -41,114 +35,80 @@ const AdminDashboard = () => {
     fetchRejectedDoctors();
     fetchPendingHospitals();
     fetchRejectedHospitals();
+    fetchApprovedHospitals();
   }, []);
-  const handleApproveDoctor = async (itemId, type) => {
-    if (type === "doctor") {
-      await approveDoctor(itemId);
-    } else if (type === "hospital") {
-      await approveHospital(itemId);
-    }
-  };
 
-  const handleApproveHospital = async (itemId) => {
-    await approveHospital(itemId);
-  };
-
-  const handleRejectDoctor = async (itemId) => {
-    await rejectDoctor(itemId);
-  };
-
-  const handleRejectHospital = async (itemId) => {
-    rejectHospital(itemId);
-  };
-
-  const openRejectModal = (item, type) => {
-    setSelectedItem(item);
-    setModalType(type);
-    setShowRejectModal(true);
-  };
+  const handleApproveDoctor = async (itemId) => await approveDoctor(itemId);
+  const handleApproveHospital = async (itemId) => await approveHospital(itemId);
+  const handleRejectDoctor = async (itemId) => await rejectDoctor(itemId);
+  const handleRejectHospital = async (itemId) => await rejectHospital(itemId);
 
   return (
     <div className='min-h-screen bg-emerald-50'>
+      {/* AdminHeader left as-is */}
       <AdminHeader
         logout={logout}
         navigate={navigate}
       />
-
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
         <AdminStatsCards statistics={statistics} />
-
-        {/* Doctor Applications Section */}
         <div className='bg-white rounded-lg shadow mb-8'>
-          <div className='px-6 py-4 border-b border-gray-200'>
-            <h2 className='text-xl font-semibold text-gray-900'>
-              Pending Doctor Applications
-            </h2>
-            <p className='text-sm text-gray-600 mt-1'>
-              Review and approve or reject doctor applications
-            </p>
-          </div>
-
           <ReviewTable
+            title='Pending Doctor Applications'
             pendingItems={pendingDoctors}
             type='doctor'
-            onApprove={(id) => handleApproveDoctor(id, "doctor")}
-            onReject={(id) => handleRejectDoctor(id, "doctor")}
-            onOpenRejectModal={(item) => openRejectModal(item, "doctor")}
-            // onToggleActive={onToggleActive}
+            onApprove={(id) => handleApproveDoctor(id)}
+            onReject={(id) => handleRejectDoctor(id)}
           />
         </div>
 
-        {/* Hospital Applications Section */}
-        <div className='bg-white rounded-lg shadow'>
-          <div className='px-6 py-4 border-b border-gray-200'>
-            <h2 className='text-xl font-semibold text-gray-900'>
-              Pending Hospital Applications
-            </h2>
-            <p className='text-sm text-gray-600 mt-1'>
-              Review and approve or reject hospital applications
-            </p>
-          </div>
-
+        <div className='bg-white rounded-lg shadow mb-8'>
           <ReviewTable
+            title='Pending Hospital Applications'
             pendingItems={pendingHospitals}
             type='hospital'
-            onApprove={(id) => handleApproveHospital(id, "hospital")}
-            onReject={(id) => handleRejectHospital(id, "hospital")}
-            onOpenRejectModal={(item) => openRejectModal(item, "hospital")}
+            onApprove={(id) => handleApproveHospital(id)}
+            onReject={(id) => handleRejectHospital(id)}
           />
         </div>
 
-        {/* Rejected Doctor Applications Section */}
-        <div className='bg-white rounded-lg shadow my-8'>
-          <div className='px-6 py-4 border-b border-gray-200'>
-            <h2 className='text-xl font-semibold text-gray-900'>
-              Rejected Doctor Applications
-            </h2>
-            <p className='text-sm text-gray-600 mt-1'>
-              List of rejected doctor applications
-            </p>
-          </div>
+        <div className='bg-white rounded-lg shadow mb-8'>
           <ReviewTable
-            pendingItems={rejectedDoctors}
+            title='Approved Doctor Applications'
+            pendingItems={approvedDoctors}
             type='doctor'
-            isRejected={true}
+            onApprove={(id) => handleApproveDoctor(id)}
+            onReject={(id) => handleRejectDoctor(id)}
           />
         </div>
-        {/* Rejected Hospital Applications Section */}
-        <div className='bg-white rounded-lg shadow'>
-          <div className='px-6 py-4 border-b border-gray-200'>
-            <h2 className='text-xl font-semibold text-gray-900'>
-              Rejected Hospital Applications
-            </h2>
-            <p className='text-sm text-gray-600 mt-1'>
-              List of rejected hospital applications
-            </p>
-          </div>
+
+        <div className='bg-white rounded-lg shadow mb-8'>
           <ReviewTable
+            title='Approved Hospital Applications'
+            pendingItems={approvedHospitals}
+            type='hospital'
+            onApprove={(id) => handleApproveHospital(id)}
+            onReject={(id) => handleRejectHospital(id)}
+          />
+        </div>
+
+        <div className='bg-white rounded-lg shadow mb-8'>
+          <ReviewTable
+            title='Rejected Doctor Applications'
+            pendingItems={rejectedDoctors}
+            type='doctor'
+            onApprove={(id) => handleApproveDoctor(id)}
+            onReject={(id) => handleRejectDoctor(id)}
+          />
+        </div>
+
+        <div className='bg-white rounded-lg shadow mb-8'>
+          <ReviewTable
+            title='Rejected Hospital Applications'
             pendingItems={rejectedHospitals}
             type='hospital'
-            isRejected={true}
+            onApprove={(id) => handleApproveHospital(id)}
+            onReject={(id) => handleRejectHospital(id)}
           />
         </div>
       </div>

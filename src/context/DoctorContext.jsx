@@ -38,10 +38,13 @@ export const DoctorProvider = ({ children }) => {
     setError(null);
     try {
       const doctorData = await doctorService.login(credentials);
-      console.log(doctorData.data.data.user.hasDocuments);
+      console.log(
+        doctorData?.data?.data?.user?.hasDocuments,
+        typeof doctorData?.data?.data?.user?.hasDocuments
+      );
       setDoctor(doctorData.data.data.user);
       setHeaders(doctorData.data.data.token);
-      if (doctorData?.data?.data?.user?.hasDocuments) {
+      if (doctorData?.data?.data?.user?.hasDocuments === true) {
         navigate("/");
       } else {
         navigate("/doctor/upload-documents");

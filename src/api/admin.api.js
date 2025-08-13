@@ -15,7 +15,7 @@ export const adminApi = {
 
   getApprovedDoctors: () => request.get("/admin/doctors/verified"),
 
-  getApprovedHospitals: () => request.get("/admin/approved-hospitals"),
+  getApprovedHospitals: () => request.get("/admin/hospitals/verified"),
 
   getRejectedDoctors: () => request.get("/admin/doctors/rejected"),
 

@@ -16,6 +16,11 @@ const DoctorProfile = () => {
   const [doctor, setDoctor] = useState(null);
   const [consultationType, setConsultationType] = useState("video");
 
+  useEffect(() => {
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }, [slug]);
   // Extract doctor ID from slug and find the doctor
   useEffect(() => {
     if (allDoctors && allDoctors.length > 0) {

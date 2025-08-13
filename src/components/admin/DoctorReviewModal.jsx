@@ -3,7 +3,14 @@ import { useAdmin } from "../../context/AdminContext";
 import { toast } from "sonner";
 
 import React, { useState } from "react";
+import {
+  CloseIcon,
+  EditIcon,
+  DocumentIcon,
+  DownloadIcon,
+} from "../../assets/svg";
 import DoctorFormFields from "../forms/DoctorFormFields";
+import { personalFields, professionalFields } from "../../assets/dummy";
 
 // Reusable InfoRow
 const InfoRow = ({ label, value }) => (
@@ -264,41 +271,6 @@ const DoctorReviewModal = ({
     };
   }, [isImageViewerOpen]);
 
-  // Generate personal fields dynamically
-  const personalFields = [
-    { key: "name", label: "Name", value: doctor.name },
-    { key: "email", label: "Email", value: doctor.email },
-    { key: "phone", label: "Phone", value: doctor.phone },
-    { key: "cnic", label: "CNIC", value: doctor.cnic },
-    { key: "gender", label: "Gender", value: doctor.gender },
-    { key: "religion", label: "Religion", value: doctor.religion },
-    { key: "address", label: "Address", value: doctor.fullAddress },
-  ];
-
-  // Generate professional fields dynamically
-  const professionalFields = [
-    { key: "degree", label: "Main Degree", value: doctor.mainDegree },
-    {
-      key: "speciality",
-      label: "Speciality",
-      value: Array.isArray(doctor.speciality)
-        ? doctor.speciality.join(", ")
-        : doctor.speciality,
-    },
-    {
-      key: "experience",
-      label: "Experience",
-      value: doctor.experience ? `${doctor.experience} years` : "Not specified",
-    },
-    {
-      key: "fee",
-      label: "Fee",
-      value: doctor.fee ? `Rs. ${doctor.fee}` : "Not set",
-    },
-    { key: "hospital", label: "Hospital", value: doctor.hospital },
-    { key: "pmdc", label: "PMDC Number", value: doctor.pmdcNumber },
-  ];
-
   // Render editable input field
   const renderEditableField = (field, label, type = "text", options = null) => (
     <div className='space-y-2'>
@@ -509,18 +481,7 @@ const DoctorReviewModal = ({
                   profileImageInputRef.current &&
                   profileImageInputRef.current.click()
                 }>
-                <svg
-                  className='w-4 h-4 text-gray-600'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'>
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M15.232 5.232l3.536 3.536M9 13l6-6m2 2l-6 6m-2 2H7a2 2 0 01-2-2v-1.586a1 1 0 01.293-.707l9.414-9.414a1 1 0 011.414 0l1.586 1.586a1 1 0 010 1.414l-9.414 9.414A1 1 0 017 19v-1.586z'
-                  />
-                </svg>
+                <EditIcon />
               </button>
               <input
                 type='file'
@@ -553,18 +514,7 @@ const DoctorReviewModal = ({
             <button
               onClick={onClose}
               className='text-gray-400 hover:text-gray-600'>
-              <svg
-                className='w-6 h-6'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'>
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M6 18L18 6M6 6l12 12'
-                />
-              </svg>
+              <CloseIcon />
             </button>
           </div>
         </div>
@@ -627,10 +577,13 @@ const DoctorReviewModal = ({
             </div>
           ) : (
             <>
-              {renderInfoSection("Personal Information", personalFields)}
+              {renderInfoSection(
+                "Personal Information",
+                personalFields(doctor)
+              )}
               {renderInfoSection(
                 "Professional Information",
-                professionalFields
+                professionalFields(doctor)
               )}
             </>
           )}
@@ -722,18 +675,7 @@ const DoctorReviewModal = ({
                   className='flex items-center justify-between p-3 bg-gray-50 rounded-lg'>
                   <div className='flex items-center space-x-3'>
                     <div className='h-8 w-8 bg-emerald-100 rounded flex items-center justify-center'>
-                      <svg
-                        className='w-4 h-4 text-emerald-600'
-                        fill='none'
-                        stroke='currentColor'
-                        viewBox='0 0 24 24'>
-                        <path
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          strokeWidth={2}
-                          d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
-                        />
-                      </svg>
+                      <DocumentIcon />
                     </div>
                     <span className='text-sm font-medium text-gray-900'>
                       Document {i + 1}
@@ -826,7 +768,6 @@ const DoctorReviewModal = ({
       </div>
 
       {/* Image Viewer Modal */}
-      {console.log("Modal render state:", { isImageViewerOpen, selectedImage })}
       {isImageViewerOpen && selectedImage && (
         <div
           className='fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[60]'
@@ -838,18 +779,7 @@ const DoctorReviewModal = ({
             <button
               onClick={closeImageViewer}
               className='absolute top-4 right-4 text-white hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full p-2'>
-              <svg
-                className='w-6 h-6'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'>
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M6 18L18 6M6 6l12 12'
-                />
-              </svg>
+              <CloseIcon />
             </button>
 
             {/* Download button */}
@@ -861,18 +791,7 @@ const DoctorReviewModal = ({
                 link.click();
               }}
               className='absolute top-4 right-16 text-white hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full p-2'>
-              <svg
-                className='w-6 h-6'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'>
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
-                />
-              </svg>
+              <DownloadIcon />
             </button>
 
             {/* Image */}

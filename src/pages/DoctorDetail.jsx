@@ -4,14 +4,30 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { doctors } from "../assets/dummy";
 import DoctorCard from "../components/cards/DoctorCards";
+import { useDoctor } from "../context/DoctorContext";
 
 const DoctorDetail = () => {
+  const { allDoctors } = useDoctor();
+  console.log(allDoctors);
   const { slug } = useParams();
-  const filteredDoctors = doctors.filter((d) =>
-    d.slug
-      ? d.slug === slug
-      : d.specialty.toLowerCase().replace(/\s+/g, "-") === slug
-  );
+  const filteredDoctors = allDoctors?.filter((d) => {
+    if (d.slug && d.slug === slug) return true;
+
+    if (Array.isArray(d.speciality)) {
+      return d.speciality.some(
+        (spec) =>
+          spec?.toLowerCase().replace(/\s+/g, "-") === slug.toLowerCase()
+      );
+    }
+
+    if (typeof d.speciality === "string") {
+      return (
+        d.speciality?.toLowerCase().replace(/\s+/g, "-") === slug.toLowerCase()
+      );
+    }
+
+    return false;
+  });
 
   if (filteredDoctors.length === 0) {
     return (

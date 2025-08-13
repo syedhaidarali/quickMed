@@ -11,17 +11,15 @@ import { useAuth, useDoctor } from "../context/context";
 import { useHospital } from "../context/HospitalContext";
 
 // ==========================
-// Call Button Component
-// ==========================
-
-// ==========================
 // Login Button Component
 // ==========================
-const LoginButton = ({ onClick, className = "" }) => (
+const LoginButton = ({ onClick, className = "", disabled }) => (
   <Link
-    to='/login'
-    onClick={onClick}
-    className={`px-4 py-2 border-2 border-[#004d71] text-[#004d71] bg-white rounded font-bold hover:bg-[#f7f7f7] transition-colors duration-150 ${className}`}>
+    to={disabled ? "#" : "/login"}
+    onClick={disabled ? (e) => e.preventDefault() : onClick}
+    className={`px-4 py-2 border-2 border-[#004d71] text-[#004d71] bg-white rounded font-bold hover:bg-[#f7f7f7] transition-colors duration-150 ${
+      disabled ? "pointer-events-none opacity-50" : ""
+    } ${className}`}>
     Login
   </Link>
 );
@@ -37,6 +35,8 @@ const Header = () => {
   const { doctor } = useDoctor();
   const { hospital } = useHospital();
   const { user } = useAuth();
+
+  const isAuthenticated = admin || doctor || hospital || user;
 
   const handleRoute = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -88,24 +88,26 @@ const Header = () => {
       )}
 
       <div className='flex justify-end space-x-3 w-fit ms-auto'>
-        {!admin && !doctor && !hospital && !user && (
-          <>
-            <LoginButton className='ml-2' />
-            <NavLink
-              href='/doctor/login'
-              label='Doctor'
-            />
-            <NavLink
-              href='/hospital/login'
-              className={``}
-              label='Hospital'
-            />
-            <NavLink
-              href='/admin/login'
-              label='Admin'
-            />
-          </>
-        )}
+        <LoginButton
+          className='ml-2'
+          disabled={isAuthenticated}
+        />
+        <NavLink
+          href={isAuthenticated ? "#" : "/doctor/login"}
+          label='Doctor'
+          className={isAuthenticated ? "pointer-events-none opacity-50" : ""}
+        />
+        <NavLink
+          href={isAuthenticated ? "#" : "/hospital/login"}
+          label='Hospital'
+          className={isAuthenticated ? "pointer-events-none opacity-50" : ""}
+        />
+        <NavLink
+          href={isAuthenticated ? "#" : "/admin/login"}
+          label='Admin'
+          className={isAuthenticated ? "pointer-events-none opacity-50" : ""}
+        />
+
         {admin && (
           <NavLink
             href='/admin/dashboard'
@@ -162,29 +164,32 @@ const Header = () => {
             />
           )
         )}
-        {!admin && !doctor && !hospital && !user && (
-          <>
-            <LoginButton
-              onClick={handleCloseMenu}
-              className='mt-2'
-            />
-            <NavLink
-              href='/doctor/login'
-              label='Doctor'
-              onClick={handleCloseMenu}
-            />
-            <NavLink
-              href='/register/hospital'
-              className={`flex items-center gap-2 px-4 py-2 bg-[#004d71] text-white rounded border border-[#004d71] font-medium hover:bg-[#014e78] transition-colors duration-150 `}
-              label='Register Hospital'
-            />
-            <NavLink
-              href='/admin/login'
-              label='Admin'
-              onClick={handleCloseMenu}
-            />
-          </>
-        )}
+
+        <LoginButton
+          onClick={handleCloseMenu}
+          className='mt-2'
+          disabled={isAuthenticated}
+        />
+        <NavLink
+          href={isAuthenticated ? "#" : "/doctor/login"}
+          label='Doctor'
+          onClick={handleCloseMenu}
+          className={isAuthenticated ? "pointer-events-none opacity-50" : ""}
+        />
+        <NavLink
+          href={isAuthenticated ? "#" : "/register/hospital"}
+          label='Register Hospital'
+          className={`flex items-center gap-2 px-4 py-2 bg-[#004d71] text-white rounded border border-[#004d71] font-medium hover:bg-[#014e78] transition-colors duration-150 ${
+            isAuthenticated ? "pointer-events-none opacity-50" : ""
+          }`}
+        />
+        <NavLink
+          href={isAuthenticated ? "#" : "/admin/login"}
+          label='Admin'
+          onClick={handleCloseMenu}
+          className={isAuthenticated ? "pointer-events-none opacity-50" : ""}
+        />
+
         {admin && (
           <NavLink
             href='/admin/dashboard'
@@ -219,7 +224,7 @@ const Header = () => {
           {/* Logo */}
           <Link
             to='/'
-            aria-label='Marham Logo'
+            aria-label='quickMed Logo'
             className='flex items-center'
             onClick={handleRoute}>
             <img
@@ -240,7 +245,7 @@ const Header = () => {
 
           <MobileMenu />
 
-          {/* Mobile Phone Call Icon (Hidden or placeholder) */}
+          {/* Mobile Phone Call Icon */}
           <a
             target='_self'
             href='https://wa.me/923488597922'
