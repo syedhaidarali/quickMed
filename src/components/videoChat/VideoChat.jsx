@@ -8,6 +8,7 @@ import {
   MeetingProvider,
   useMeeting,
   useParticipant,
+  usePubSub,
 } from "@videosdk.live/react-sdk";
 import {
   MicIcon,
@@ -186,8 +187,8 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
   const [joined, setJoined] = useState(null);
   const [showChat, setShowChat] = useState(true);
   const [showParticipants, setShowParticipants] = useState(false);
-  const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const chatContainerRef = useRef(null);
 
   const { join, participants, localParticipant } = useMeeting({
     onMeetingJoined: () => {
@@ -209,22 +210,42 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
     },
   });
 
+  // Use VideoSDK's usePubSub hook for chat
+  const { publish, messages } = usePubSub("CHAT", {
+    onMessageReceived: (message) => {
+      console.log("📨 Chat message received:", message);
+      toast.info(`${message.senderName} sent a message`);
+    },
+  });
+
+  // Auto-scroll to latest message
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   const joinMeeting = () => {
     setJoined("JOINING");
     join();
   };
 
   const sendMessage = () => {
-    if (newMessage.trim()) {
-      const newMsg = {
-        id: Date.now(),
-        sender: participantName,
-        message: newMessage,
-        timestamp: new Date().toLocaleTimeString(),
-        isLocal: true,
-      };
-      setChatMessages((prev) => [...prev, newMsg]);
-      setNewMessage("");
+    if (newMessage.trim() && publish) {
+      console.log("📤 Sending chat message:", newMessage);
+
+      try {
+        // Send message using VideoSDK's publish method
+        publish(newMessage, { persist: true });
+        setNewMessage("");
+        toast.success("Message sent!");
+      } catch (error) {
+        console.error("Failed to send message:", error);
+        toast.error("Failed to send message. Please try again.");
+      }
+    } else if (newMessage.trim()) {
+      toast.error("Chat not available. Please try again.");
     }
   };
 
@@ -337,43 +358,64 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
                 <p className='text-gray-400 text-xs'>Meeting: {meetingId}</p>
               </div>
 
-              <div className='flex-1 overflow-y-auto p-4 space-y-3'>
-                {chatMessages.map((msg) => (
+              <div
+                className='flex-1 overflow-y-auto p-4 space-y-3'
+                ref={chatContainerRef}>
+                {messages.map((msg) => (
                   <div
                     key={msg.id}
                     className={`p-3 rounded-lg ${
-                      msg.isLocal ? "bg-blue-600 ml-8" : "bg-gray-700 mr-8"
+                      msg.senderId === localParticipant?.id
+                        ? "bg-blue-600 ml-8"
+                        : "bg-gray-700 mr-8"
                     }`}>
                     <div className='flex justify-between items-start mb-1'>
                       <span
                         className={`font-medium text-sm ${
-                          msg.isLocal ? "text-blue-100" : "text-blue-400"
+                          msg.senderId === localParticipant?.id
+                            ? "text-blue-100"
+                            : "text-blue-400"
                         }`}>
-                        {msg.sender}
+                        {msg.senderName || "Unknown"}
                       </span>
                       <span className='text-gray-400 text-xs'>
-                        {msg.timestamp}
+                        {new Date(msg.timestamp).toLocaleTimeString()}
                       </span>
                     </div>
                     <p className='text-sm text-white'>{msg.message}</p>
                   </div>
                 ))}
+                {messages.length === 0 && (
+                  <div className='text-center text-gray-400 text-sm py-8'>
+                    <p>No messages yet</p>
+                    <p className='text-xs mt-1'>Start the conversation!</p>
+                  </div>
+                )}
               </div>
 
               <div className='p-4 border-t border-gray-700'>
                 <div className='flex space-x-2'>
-                  <input
-                    type='text'
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder='Type a message...'
-                    className='flex-1 px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
-                    maxLength={500}
-                  />
+                  <div className='flex-1 relative'>
+                    <input
+                      type='text'
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder='Type a message...'
+                      className='w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      maxLength={500}
+                      disabled={joined !== "JOINED" || !publish}
+                    />
+                    <div className='absolute right-2 top-1/2 transform -translate-y-1/2 text-xs text-gray-400'>
+                      {newMessage.length}/500
+                    </div>
+                  </div>
                   <button
                     onClick={sendMessage}
-                    className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'>
+                    disabled={
+                      !newMessage.trim() || joined !== "JOINED" || !publish
+                    }
+                    className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'>
                     Send
                   </button>
                 </div>
