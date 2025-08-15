@@ -12,6 +12,7 @@ export const HospitalProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  console.log(allPublicHospital);
   const validateSession = async () => {
     setLoading(true);
     try {

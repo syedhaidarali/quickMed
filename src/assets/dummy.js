@@ -189,24 +189,7 @@ export const navLinks = [
   },
   {
     label: "Hospitals",
-    dropdown: [
-      {
-        label: "Hospitals in Lahore",
-        href: "hospitals/lahore",
-      },
-      {
-        label: "Hospitals in Karachi",
-        href: "hospitals/karachi",
-      },
-      {
-        label: "Hospitals in Islamabad",
-        href: "hospitals/islamabad",
-      },
-      {
-        label: "All Hospitals (City wise)",
-        href: "/hospitals",
-      },
-    ],
+    dropdown: [],
   },
 
   {

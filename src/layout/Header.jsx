@@ -5,6 +5,7 @@ import { navLinks } from "../assets/dummy";
 import { MenuIcon } from "../assets/svg";
 import DropdownMenu from "../components/formItems/DropdownMenu";
 import NavLink from "../components/formItems/NavLink";
+import HospitalsDropdown from "../components/formItems/HospitalsDropdown";
 import { Link } from "react-router-dom";
 import { useAdmin } from "../context/AdminContext";
 import { useAuth, useDoctor } from "../context/context";
@@ -18,8 +19,9 @@ const LoginButton = ({ onClick, className = "", disabled }) => (
   <Link
     to={disabled ? "#" : "/login"}
     onClick={disabled ? (e) => e.preventDefault() : onClick}
-    className={`px-4 py-2 border-2 border-[#004d71] text-[#004d71] bg-white rounded font-bold hover:bg-[#f7f7f7] transition-colors duration-150 $$
-      {disabled ? "pointer-events-none opacity-50" : ""} ${className}`}>
+    className={`px-4 py-2 border-2 border-[#004d71] text-[#004d71] bg-white rounded font-bold hover:bg-[#f7f7f7] transition-colors duration-150 ${
+      disabled ? "pointer-events-none opacity-50" : ""
+    } ${className}`}>
     Login
   </Link>
 );
@@ -33,7 +35,7 @@ const Header = () => {
   const { admin } = useAdmin();
   const menuRef = useRef(null);
   const { doctor } = useDoctor();
-  const { hospital } = useHospital();
+  const { hospital, allPublicHospital } = useHospital();
   const { user } = useAuth();
 
   const isAuthenticated = admin || doctor || hospital || user;
@@ -66,7 +68,6 @@ const Header = () => {
 
   // ---- new helper to render single Admin button ----
   const renderAdminButton = (isMobile = false) => {
-    // when admin logged in -> go to dashboard
     if (admin) {
       return (
         <NavLink
@@ -77,8 +78,6 @@ const Header = () => {
       );
     }
 
-    // not admin: show Admin -> link to login
-    // but if *someone else* is logged in, keep it disabled (same behavior you used before)
     return (
       <NavLink
         href={isAuthenticated ? "#" : "/admin/login"}
@@ -95,7 +94,17 @@ const Header = () => {
   const DesktopNav = () => (
     <nav className='hidden lg:flex items-center space-x-4 ml-4 xl:ml-8 flex-1'>
       {navLinks.map((link, idx) =>
-        link.dropdown ? (
+        // Render dynamic Hospitals dropdown instead of static dropdown
+        link.label === "Hospitals" ? (
+          <HospitalsDropdown
+            key={link.label}
+            idx={idx}
+            openDropdown={openDropdown}
+            setOpenDropdown={setOpenDropdown}
+            isMobile={false}
+            onLinkClick={handleCloseMenu}
+          />
+        ) : link.dropdown ? (
           <DropdownMenu
             key={link.label}
             link={link}
@@ -105,7 +114,7 @@ const Header = () => {
           />
         ) : (
           <NavLink
-            key={link.label}
+            key={`${link.label}-${idx}`}
             href={link.href}
             label={link.label}
           />
@@ -161,7 +170,16 @@ const Header = () => {
         ref={menuRef}
         className='absolute top-full left-0 w-full bg-white shadow-lg z-40 flex flex-col py-4 px-4 lg:hidden animate-fade-in max-h-[80vh] overflow-y-auto'>
         {navLinks.map((link, idx) =>
-          link.dropdown ? (
+          link.label === "Hospitals" ? (
+            <HospitalsDropdown
+              key={link.label}
+              idx={idx}
+              openDropdown={openDropdown}
+              setOpenDropdown={setOpenDropdown}
+              isMobile={true}
+              onLinkClick={handleCloseMenu}
+            />
+          ) : link.dropdown ? (
             <DropdownMenu
               key={link.label}
               link={link}

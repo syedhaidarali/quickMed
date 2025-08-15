@@ -4,11 +4,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const HospitalCard = ({ hospital }) => {
-  const slug =
-    hospital.slug ||
-    (hospital.name
-      ? hospital.name.toLowerCase().replace(/\s+/g, "-")
-      : hospital.city?.toLowerCase().replace(/\s+/g, "-") || hospital._id);
+  const generateSlug = (name, id) => {
+    const nameSlug = name
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
+    return `${nameSlug}-${id}`;
+  };
+
+  const slug = generateSlug(hospital.name, hospital._id);
   return (
     <div className='bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center'>
       <img
@@ -37,13 +41,9 @@ const HospitalCard = ({ hospital }) => {
         <span className='font-semibold'>Beds:</span>{" "}
         {hospital.beds ?? hospital.totalBeds}
       </div>
+
       <Link
-        to={`/hospitals/${slug}/book`}
-        className='px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors duration-200 font-medium w-full mb-2 text-center'>
-        Book Appointment
-      </Link>
-      <Link
-        to={`/hospitals/${slug}`}
+        to={`/hospital/profile/${slug}`}
         className='px-4 py-2 border border-emerald-600 text-emerald-600 rounded-md hover:bg-emerald-50 transition-colors duration-200 font-medium w-full text-center'>
         View Hospital
       </Link>

@@ -12,6 +12,10 @@ import {
   Heart,
   Activity,
   Shield,
+  AlertCircle,
+  Users,
+  Clock,
+  TrendingUp,
 } from "lucide-react";
 
 const QuickHelpModal = ({ isOpen, onClose }) => {
@@ -20,6 +24,9 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const chatContainerRef = useRef(null);
   const modalRef = useRef(null);
+
+  const MIN_CHARACTERS = 11;
+  const isInputValid = inputMessage.trim().length >= MIN_CHARACTERS;
 
   useEffect(() => {
     // auto-scroll when messages change
@@ -37,7 +44,7 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
           id: 1,
           type: "bot",
           content:
-            "Hello! I'm Dr. AI, your virtual health assistant. I'm here to help you find the right doctor based on your symptoms. Please describe what you're experiencing.",
+            "Hello! I'm Dr. AI, your virtual health assistant. I'm here to help you find the right doctor based on your symptoms. Please describe what you're experiencing in detail (minimum 11 characters).",
           timestamp: new Date(),
         },
       ]);
@@ -63,7 +70,7 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
   }, [isOpen, messages]);
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || loading) return;
+    if (!inputMessage.trim() || loading || !isInputValid) return;
 
     const userMessage = {
       id: Date.now(),
@@ -84,13 +91,22 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
       const recommendations = response?.data?.data;
       console.log("aiRecommendationService", response);
 
+      // Debug: Log the structure to understand the data
+      console.log("API Response data:", response?.data);
+      console.log(
+        "Total doctors analyzed:",
+        response?.data?.totalDoctorsAnalyzed
+      );
+      console.log("Recommendations data:", recommendations);
+
       const botResponse = {
         id: Date.now() + 1,
         type: "bot",
         content:
-          "Based on your symptoms, here's my medical analysis and recommendations:",
+          "Based on your symptoms, here's my detailed medical analysis and recommendations:",
         timestamp: new Date(),
         recommendations: recommendations,
+        apiResponse: response?.data,
       };
 
       setMessages((prev) => [...prev, botResponse]);
@@ -114,7 +130,13 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      if (isInputValid) {
+        handleSendMessage();
+      } else {
+        toast.error(
+          `Please enter at least ${MIN_CHARACTERS} characters to describe your symptoms.`
+        );
+      }
     }
   };
 
@@ -122,6 +144,46 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
     setMessages([]);
     setInputMessage("");
     onClose();
+  };
+
+  const handleSpecialtyClick = (specialty) => {
+    // Navigate to doctor details page with specialty filter
+    // You can customize this navigation based on your routing setup
+    const searchParams = new URLSearchParams({
+      specialty: specialty,
+      source: "ai-recommendation",
+    });
+
+    // Close the modal first
+    handleClose();
+
+    // Create URL-friendly specialty name (lowercase, replace spaces with hyphens, remove special chars)
+    const urlFriendlySpecialty = specialty
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
+
+    // Navigate to specialty page with correct URL pattern: /quickMed/doctor/{specialty}
+    window.location.href = `/quickMed/doctor/${urlFriendlySpecialty}`;
+
+    toast.success(`Searching for ${specialty} specialists...`);
+  };
+
+  const handleDoctorClick = (doctor) => {
+    // Navigate to specific doctor details page with correct URL pattern
+    handleClose();
+
+    // Create URL-friendly name (lowercase, replace spaces with hyphens, remove special chars)
+    const urlFriendlyName = doctor.name
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
+
+    // Construct the correct URL pattern: /quickMed/doctor/profile/{name}-{id}
+    const doctorUrl = `/quickMed/doctor/profile/${urlFriendlyName}-${doctor.doctorId}`;
+
+    window.location.href = doctorUrl;
+    toast.success(`Viewing ${doctor.name}'s profile...`);
   };
 
   if (!isOpen) return null;
@@ -203,10 +265,54 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
                       {message.content}
                     </p>
 
-                    {/* Recommendations */}
-                    {message.recommendations && (
+                    {/* API Analysis Summary */}
+                    {message.apiResponse && (
                       <div className='mt-4 space-y-3'>
-                        {message.recommendations.analysis?.symptomAnalysis && (
+                        {/* Analysis Stats */}
+                        <div className='bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-xl border border-purple-200'>
+                          <div className='flex items-center gap-2 mb-3'>
+                            <TrendingUp className='w-4 h-4 text-purple-600' />
+                            <h4 className='font-semibold text-purple-800 text-sm'>
+                              Analysis Summary
+                            </h4>
+                          </div>
+                          <div className='grid grid-cols-2 gap-3 text-xs'>
+                            <div className='flex items-center gap-2'>
+                              <Users className='w-3 h-3 text-purple-600' />
+                              <span className='text-purple-700'>
+                                {(() => {
+                                  // Try different possible locations for totalDoctorsAnalyzed
+                                  const totalDoctors =
+                                    message.apiResponse?.totalDoctorsAnalyzed ||
+                                    message.apiResponse?.data
+                                      ?.totalDoctorsAnalyzed ||
+                                    message.recommendations
+                                      ?.totalDoctorsAnalyzed ||
+                                    message.recommendations?.analysis
+                                      ?.totalDoctorsAnalyzed ||
+                                    0;
+                                  return `${totalDoctors} doctors analyzed`;
+                                })()}
+                              </span>
+                            </div>
+                            <div className='flex items-center gap-2'>
+                              <Clock className='w-3 h-3 text-purple-600' />
+                              <span className='text-purple-700'>
+                                {(() => {
+                                  const timestamp =
+                                    message.apiResponse?.timestamp ||
+                                    message.recommendations?.timestamp ||
+                                    new Date();
+                                  return new Date(
+                                    timestamp
+                                  ).toLocaleTimeString();
+                                })()}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {message.recommendations?.analysis?.symptomAnalysis && (
                           <div className='bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200'>
                             <div className='flex items-center gap-2 mb-2'>
                               <Activity className='w-4 h-4 text-blue-600' />
@@ -220,7 +326,7 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
                           </div>
                         )}
 
-                        {message.recommendations.analysis?.generalAdvice && (
+                        {message.recommendations?.analysis?.generalAdvice && (
                           <div className='bg-gradient-to-r from-yellow-50 to-yellow-100 p-4 rounded-xl border border-yellow-200'>
                             <div className='flex items-center gap-2 mb-2'>
                               <Heart className='w-4 h-4 text-yellow-600' />
@@ -234,7 +340,7 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
                           </div>
                         )}
 
-                        {message.recommendations.analysis
+                        {message.recommendations?.analysis
                           ?.recommendedSpecialities && (
                           <div className='bg-gradient-to-r from-emerald-50 to-emerald-100 p-4 rounded-xl border border-emerald-200'>
                             <div className='flex items-center gap-2 mb-3'>
@@ -246,18 +352,21 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
                             <div className='flex flex-wrap gap-2'>
                               {message.recommendations.analysis.recommendedSpecialities.map(
                                 (specialty, index) => (
-                                  <span
+                                  <button
                                     key={index}
-                                    className='inline-block bg-emerald-200 text-emerald-800 text-xs px-3 py-1.5 rounded-full font-medium border border-emerald-300'>
+                                    onClick={() =>
+                                      handleSpecialtyClick(specialty)
+                                    }
+                                    className='inline-block bg-emerald-200 text-emerald-800 text-xs px-3 py-1.5 rounded-full font-medium border border-emerald-300 hover:bg-emerald-300 hover:border-emerald-400 transition-all duration-200 cursor-pointer'>
                                     {specialty}
-                                  </span>
+                                  </button>
                                 )
                               )}
                             </div>
                           </div>
                         )}
 
-                        {message.recommendations.analysis?.recommendations && (
+                        {message.recommendations?.analysis?.recommendations && (
                           <div className='bg-white p-4 rounded-xl border border-gray-200 shadow-sm'>
                             <div className='flex items-center gap-2 mb-3'>
                               <Stethoscope className='w-4 h-4 text-gray-600' />
@@ -276,7 +385,8 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
                                 .map((doctor, index) => (
                                   <div
                                     key={index}
-                                    className='border border-gray-200 rounded-lg p-3 bg-gradient-to-r from-gray-50 to-white'>
+                                    className='border border-gray-200 rounded-lg p-3 bg-gradient-to-r from-gray-50 to-white hover:shadow-md transition-shadow duration-200 cursor-pointer'
+                                    onClick={() => handleDoctorClick(doctor)}>
                                     <div className='flex justify-between items-start mb-2'>
                                       <h5 className='font-semibold text-gray-800 text-sm'>
                                         {doctor.name}
@@ -305,6 +415,9 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
                                       <span>
                                         {doctor.city || "Location N/A"}
                                       </span>
+                                    </div>
+                                    <div className='mt-2 text-xs text-gray-500'>
+                                      {doctor.reasoning}
                                     </div>
                                   </div>
                                 ))}
@@ -362,24 +475,58 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder='Describe your symptoms in detail...'
-                className='w-full px-4 py-3 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none shadow-sm'
+                placeholder={`Describe your symptoms in detail (minimum ${MIN_CHARACTERS} characters)...`}
+                className={`w-full px-4 py-3 text-sm border rounded-xl focus:outline-none focus:ring-2 resize-none shadow-sm transition-all duration-200 ${
+                  inputMessage.length > 0 && !isInputValid
+                    ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                    : "border-gray-300 focus:ring-emerald-500 focus:border-transparent"
+                }`}
                 rows={1}
                 maxLength={500}
                 disabled={loading}
               />
-              <div className='absolute right-3 bottom-2 text-xs text-gray-400'>
-                {inputMessage.length}/500
+
+              {/* Character count and validation */}
+              <div className='absolute right-3 bottom-2 flex items-center gap-2'>
+                {inputMessage.length > 0 && !isInputValid && (
+                  <AlertCircle className='w-4 h-4 text-red-400' />
+                )}
+                <div
+                  className={`text-xs ${
+                    inputMessage.length > 0 && !isInputValid
+                      ? "text-red-400"
+                      : inputMessage.length >= MIN_CHARACTERS
+                      ? "text-emerald-500"
+                      : "text-gray-400"
+                  }`}>
+                  {inputMessage.length}/{MIN_CHARACTERS}
+                </div>
               </div>
             </div>
+
             <button
               onClick={handleSendMessage}
-              disabled={!inputMessage.trim() || loading}
-              className='px-4 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105'
+              disabled={!inputMessage.trim() || loading || !isInputValid}
+              className={`px-4 py-3 rounded-xl transition-all duration-200 flex items-center justify-center shadow-lg transform hover:scale-105 ${
+                isInputValid && inputMessage.trim()
+                  ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700 hover:shadow-xl"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
               aria-label='Send message'>
               <Send className='w-4 h-4' />
             </button>
           </div>
+
+          {/* Validation message */}
+          {inputMessage.length > 0 && !isInputValid && (
+            <div className='mt-2 flex items-center gap-2 text-xs text-red-500'>
+              <AlertCircle className='w-3 h-3' />
+              <span>
+                Please enter at least {MIN_CHARACTERS} characters to describe
+                your symptoms
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>

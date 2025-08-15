@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useParams } from "react-router-dom";
-import { doctors } from "../assets/dummy";
 import DoctorCard from "../components/cards/DoctorCards";
 import { useDoctor } from "../context/DoctorContext";
 import { specialitiesEnglish } from "../assets/dummy";

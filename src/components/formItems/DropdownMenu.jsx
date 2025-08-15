@@ -44,14 +44,14 @@ const DropdownMenu = ({
         } bg-[#f9f9f9] mt-1 shadow-lg rounded transition-all duration-200 ${
           link.label === "Find Doctors" ? "max-h-96 overflow-y-auto" : ""
         }`}>
-        {link.dropdown.map((item) => (
+        {link.dropdown.map((item, i) => (
           <Link
             key={item.label}
             to={item.href}
             onClick={handleRoute}
             className={`block px-4 py-2.5 text-[#014e78] hover:bg-[#f1f1f1] font-medium whitespace-nowrap ${
               link.label === "Find Doctors" ? "text-sm" : "text-[15px]"
-            }`}>
+            } ${i === 0 ? "border-b border-gray-200" : ""}`}>
             {item.label}
           </Link>
         ))}

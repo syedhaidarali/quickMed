@@ -8,6 +8,7 @@ import AppRoutes from "./Routes.jsx";
 import { DoctorProvider } from "./context/context.js";
 import { HospitalProvider } from "./context/HospitalContext.jsx";
 import { AdminProvider } from "./context/AdminContext.jsx";
+import { RatingProvider } from "./context/RatingContext.jsx";
 
 function App() {
   return (
@@ -15,9 +16,11 @@ function App() {
       <HospitalProvider>
         <DoctorProvider>
           <AuthProvider>
-            <BrowserRouter basename='/quickMed'>
-              <AppRoutes />
-            </BrowserRouter>
+            <RatingProvider>
+              <BrowserRouter basename='/quickMed'>
+                <AppRoutes />
+              </BrowserRouter>
+            </RatingProvider>
           </AuthProvider>
         </DoctorProvider>
       </HospitalProvider>

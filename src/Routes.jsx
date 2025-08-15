@@ -34,6 +34,7 @@ import { useAdmin } from "./context/AdminContext";
 import CurrentDoctorProfile from "./pages/CurrentDoctorProfile.jsx";
 import { useAuth } from "./context/AuthContext.jsx";
 import { useDoctor } from "./context/DoctorContext.jsx";
+import HospitalProfile from "./pages/HospitalProfile.jsx";
 
 const ProtectedAdminRoute = ({ children }) => {
   const { admin } = useAdmin();
@@ -101,6 +102,10 @@ const AppRoutes = () => (
       <Route
         path='/doctor/profile/:slug'
         element={<DoctorProfile />}
+      />
+      <Route
+        path='/hospital/profile/:slug'
+        element={<HospitalProfile />}
       />
       <Route
         path='/doctor/book/:slug'

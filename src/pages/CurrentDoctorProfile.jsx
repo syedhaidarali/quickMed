@@ -539,7 +539,7 @@ const CurrentDoctorProfile = () => {
                 Consultation Status
               </h3>
               <div className='bg-gray-50 border border-gray-200 rounded-lg p-4'>
-                <p className='text-gray-600 text-sm'>
+                <div className='text-gray-600 text-sm'>
                   {pendingConsultations && pendingConsultations.length > 0 ? (
                     <>
                       <span className='font-medium text-yellow-700'>
@@ -595,7 +595,7 @@ const CurrentDoctorProfile = () => {
                       No pending consultations at the moment.
                     </span>
                   )}
-                </p>
+                </div>
               </div>
             </div>
           </div>

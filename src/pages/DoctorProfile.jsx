@@ -6,6 +6,8 @@ import { useAuth } from "../context/AuthContext";
 import { useDoctor } from "../context/DoctorContext";
 import { toast } from "sonner";
 import ConsultationLauncher from "../components/videoChat/ConsultationLauncher";
+import ReviewModal from "../modals/ReviewModal";
+import { useRating } from "../context/RatingContext";
 
 const DoctorProfile = () => {
   const { slug } = useParams();
@@ -15,6 +17,7 @@ const DoctorProfile = () => {
   const { allDoctors, loading } = useDoctor();
   const [doctor, setDoctor] = useState(null);
   const [consultationType, setConsultationType] = useState("video");
+  const { addDoctorRating } = useRating();
 
   useEffect(() => {
     window.requestAnimationFrame(() => {
@@ -34,6 +37,10 @@ const DoctorProfile = () => {
 
   const handleBookAppointment = () => {
     navigate(`/doctor/book/${slug}`);
+  };
+
+  const handleRatingOnly = ({ rating }) => {
+    addDoctorRating({ rating: rating }, doctor._id);
   };
 
   if (loading) {
@@ -113,10 +120,23 @@ const DoctorProfile = () => {
               <div className='flex items-center justify-center lg:justify-start space-x-2'>
                 <span className='text-yellow-500'>★</span>
                 <span className='font-medium'>{getRating(doctor.rating)}</span>
+
                 <span className='text-gray-500'>
                   ({getReviewCount(doctor.rating)} reviews)
                 </span>
               </div>
+              <ReviewModal
+                trigger={
+                  <button className='px-3 mt-2 py-2 bg-yellow-500 text-white rounded'>
+                    Add Rating
+                  </button>
+                }
+                mode='rating-only'
+                onSubmit={handleRatingOnly}
+                title='Rate this Service'
+                description='Tap the stars to leave a quick rating'
+                submitLabel='Send Rating'
+              />
             </div>
 
             {/* Key Information */}
