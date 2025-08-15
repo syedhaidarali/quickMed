@@ -135,6 +135,11 @@ const CurrentDoctorProfile = () => {
                 <strong>Speciality:</strong>{" "}
                 {doctor.speciality?.join(", ") || "Not specified"}
               </p>
+              <button
+                onClick={handleLogout}
+                className='bg-red-600 text-white mt-4 px-4 py-2 rounded-lg hover:bg-red-700'>
+                Logout
+              </button>
             </div>
           </div>
         </div>

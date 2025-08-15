@@ -39,15 +39,19 @@ const DropdownMenu = ({
               ? "block"
               : "hidden"
             : isOpen
-            ? "absolute left-0 w-56 min-w-fit z-20"
+            ? "absolute left-0 w-64 min-w-fit z-20"
             : "hidden"
-        } bg-[#f9f9f9] mt-1 shadow-lg rounded transition-all duration-200`}>
+        } bg-[#f9f9f9] mt-1 shadow-lg rounded transition-all duration-200 ${
+          link.label === "Find Doctors" ? "max-h-96 overflow-y-auto" : ""
+        }`}>
         {link.dropdown.map((item) => (
           <Link
             key={item.label}
             to={item.href}
             onClick={handleRoute}
-            className='block px-4 py-3 text-[#014e78] hover:bg-[#f1f1f1] text-[15px] font-medium whitespace-nowrap'>
+            className={`block px-4 py-2.5 text-[#014e78] hover:bg-[#f1f1f1] font-medium whitespace-nowrap ${
+              link.label === "Find Doctors" ? "text-sm" : "text-[15px]"
+            }`}>
             {item.label}
           </Link>
         ))}

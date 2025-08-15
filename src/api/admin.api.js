@@ -49,6 +49,9 @@ export const adminApi = {
   doctorAction: (doctorId, action) =>
     request.post(`/admin/doctors/action/${doctorId}`, { action }),
 
+  hospitalAction: (hospitalId, action) =>
+    request.post(`/admin/hospitals/action/${hospitalId}`, { action }),
+
   uploadDocuments: (data, doctorId) => {
     return request.post(`/admin/doctor/documents/${doctorId}`, data, {
       headers: {
@@ -56,6 +59,14 @@ export const adminApi = {
       },
     });
   },
+  uploadHospitalsDocuments: (data, hospitalId) => {
+    return request.post(`/admin/hospitals/documents/${hospitalId}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+
   doctorProfilePicture: (doctorId, data) => {
     return request.post(`/admin/doctor/picture/${doctorId}`, data, {
       headers: {

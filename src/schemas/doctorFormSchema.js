@@ -41,13 +41,6 @@ export const doctorFormSchema = z
       .regex(phoneRegex, "Please provide a valid phone number")
       .length(11, "Phone number must be exactly 11 digits"),
 
-    religion: z
-      .string()
-      .min(1, "Religion is required")
-      .min(2, "Religion must be at least 2 characters long")
-      .max(50, "Religion cannot exceed 50 characters")
-      .trim(),
-
     gender: z.enum(["Male", "Female"], {
       required_error: "Gender is required",
       invalid_type_error: "Gender must be either Male or Female",
@@ -140,7 +133,6 @@ export const defaultValues = {
   email: "",
   speciality: [],
   phone: "",
-  religion: "",
   gender: undefined,
   pmdcNumber: "",
   mainDegree: "",

@@ -18,26 +18,10 @@ const AdminDashboard = () => {
     rejectDoctor,
     approveHospital,
     rejectHospital,
-    fetchPendingDoctors,
-    fetchApprovedDoctors,
-    fetchRejectedDoctors,
-    fetchPendingHospitals,
-    fetchRejectedHospitals,
-    fetchApprovedHospitals,
     statistics,
     logout,
   } = useAdmin();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchPendingDoctors();
-    fetchApprovedDoctors();
-    fetchRejectedDoctors();
-    fetchPendingHospitals();
-    fetchRejectedHospitals();
-    fetchApprovedHospitals();
-  }, []);
-
   const handleApproveDoctor = async (itemId) => await approveDoctor(itemId);
   const handleApproveHospital = async (itemId) => await approveHospital(itemId);
   const handleRejectDoctor = async (itemId) => await rejectDoctor(itemId);
@@ -79,6 +63,7 @@ const AdminDashboard = () => {
             type='doctor'
             onApprove={(id) => handleApproveDoctor(id)}
             onReject={(id) => handleRejectDoctor(id)}
+            isApproved={true}
           />
         </div>
 
@@ -89,6 +74,7 @@ const AdminDashboard = () => {
             type='hospital'
             onApprove={(id) => handleApproveHospital(id)}
             onReject={(id) => handleRejectHospital(id)}
+            isApproved={true}
           />
         </div>
 
@@ -99,6 +85,7 @@ const AdminDashboard = () => {
             type='doctor'
             onApprove={(id) => handleApproveDoctor(id)}
             onReject={(id) => handleRejectDoctor(id)}
+            isRejected={true}
           />
         </div>
 
@@ -109,6 +96,7 @@ const AdminDashboard = () => {
             type='hospital'
             onApprove={(id) => handleApproveHospital(id)}
             onReject={(id) => handleRejectHospital(id)}
+            isRejected={true}
           />
         </div>
       </div>

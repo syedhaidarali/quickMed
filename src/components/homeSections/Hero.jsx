@@ -7,6 +7,7 @@ import { FaUserMd } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import { useDoctor } from "../../context/DoctorContext";
 import { useAdmin } from "../../context/AdminContext";
+import { QuickHelpButton } from "../QuickHelp";
 
 // Animate the map center when coords change
 function AnimateMapCenter({ coords }) {
@@ -142,8 +143,9 @@ const Hero = () => {
 
       {/* Prompt below map */}
       {!selectedCity && (
-        <div className='w-full flex justify-center mt-6'>
+        <div className='w-full flex flex-col items-center mt-6 space-y-4'>
           <h2 className='text-lg font-bold'>How can we help you today?</h2>
+          <QuickHelpButton className='text-sm px-6 py-3' />
         </div>
       )}
     </>

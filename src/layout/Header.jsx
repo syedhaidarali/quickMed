@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { useAdmin } from "../context/AdminContext";
 import { useAuth, useDoctor } from "../context/context";
 import { useHospital } from "../context/HospitalContext";
+import { QuickHelpButton } from "../components/QuickHelp";
 
 // ==========================
 // Login Button Component
@@ -17,9 +18,8 @@ const LoginButton = ({ onClick, className = "", disabled }) => (
   <Link
     to={disabled ? "#" : "/login"}
     onClick={disabled ? (e) => e.preventDefault() : onClick}
-    className={`px-4 py-2 border-2 border-[#004d71] text-[#004d71] bg-white rounded font-bold hover:bg-[#f7f7f7] transition-colors duration-150 ${
-      disabled ? "pointer-events-none opacity-50" : ""
-    } ${className}`}>
+    className={`px-4 py-2 border-2 border-[#004d71] text-[#004d71] bg-white rounded font-bold hover:bg-[#f7f7f7] transition-colors duration-150 $$
+      {disabled ? "pointer-events-none opacity-50" : ""} ${className}`}>
     Login
   </Link>
 );
@@ -64,6 +64,31 @@ const Header = () => {
     };
   }, [isMenuOpen]);
 
+  // ---- new helper to render single Admin button ----
+  const renderAdminButton = (isMobile = false) => {
+    // when admin logged in -> go to dashboard
+    if (admin) {
+      return (
+        <NavLink
+          href='/admin/dashboard'
+          label='Admin Dashboard'
+          onClick={isMobile ? handleCloseMenu : undefined}
+        />
+      );
+    }
+
+    // not admin: show Admin -> link to login
+    // but if *someone else* is logged in, keep it disabled (same behavior you used before)
+    return (
+      <NavLink
+        href={isAuthenticated ? "#" : "/admin/login"}
+        label='Admin'
+        onClick={isMobile ? handleCloseMenu : undefined}
+        className={isAuthenticated ? "pointer-events-none opacity-50" : ""}
+      />
+    );
+  };
+
   // ==========================
   // Desktop Navigation
   // ==========================
@@ -102,18 +127,9 @@ const Header = () => {
           label='Hospital'
           className={isAuthenticated ? "pointer-events-none opacity-50" : ""}
         />
-        <NavLink
-          href={isAuthenticated ? "#" : "/admin/login"}
-          label='Admin'
-          className={isAuthenticated ? "pointer-events-none opacity-50" : ""}
-        />
 
-        {admin && (
-          <NavLink
-            href='/admin/dashboard'
-            label='Admin Dashboard'
-          />
-        )}
+        {renderAdminButton(false)}
+
         {doctor && (
           <NavLink
             href='/doctor/profile'
@@ -183,19 +199,8 @@ const Header = () => {
             isAuthenticated ? "pointer-events-none opacity-50" : ""
           }`}
         />
-        <NavLink
-          href={isAuthenticated ? "#" : "/admin/login"}
-          label='Admin'
-          onClick={handleCloseMenu}
-          className={isAuthenticated ? "pointer-events-none opacity-50" : ""}
-        />
+        {renderAdminButton(true)}
 
-        {admin && (
-          <NavLink
-            href='/admin/dashboard'
-            label='Admin Dashboard'
-          />
-        )}
         {doctor && (
           <NavLink
             href='/doctor/profile'

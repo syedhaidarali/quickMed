@@ -60,18 +60,18 @@ const AdminLogin = () => {
             autoComplete='current-password'
             required
           />
-
-          {error && (
+          {/* 
+          {error.session && (
             <div className='bg-red-100 text-red-600 p-2 rounded text-sm'>
-              {error}
+              {error.session}
             </div>
-          )}
+          )} */}
 
           <button
             type='submit'
             className='w-full py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition disabled:opacity-50'
-            disabled={loading}>
-            {loading ? "Signing in..." : "Sign In"}
+            disabled={loading.login}>
+            {loading.login ? "Signing in..." : "Sign In"}
           </button>
         </form>
       </div>

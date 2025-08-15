@@ -6,10 +6,11 @@ import Footer from "./Footer";
 import { Outlet } from "react-router-dom";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { useAdmin } from "../context/AdminContext";
+import { QuickHelpButton } from "../components/QuickHelp";
 
 const AppLayout = () => {
   const { loading } = useAdmin();
-  if (loading) {
+  if (loading.session) {
     return <LoadingSpinner />;
   }
   return (
@@ -19,6 +20,7 @@ const AppLayout = () => {
         <Outlet />
       </main>
       <Footer />
+      <QuickHelpButton variant='floating' />
     </div>
   );
 };

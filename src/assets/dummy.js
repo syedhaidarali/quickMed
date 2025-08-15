@@ -4,44 +4,187 @@ export const navLinks = [
   {
     label: "Find Doctors",
     dropdown: [
-      {
-        label: "Dermatologist",
-        href: "doctor/dermatologist",
-      },
-      {
-        label: "Gynecologist",
-        href: "doctor/gynecologist",
-      },
-      {
-        label: "Psychiatrist",
-        href: "doctor/psychiatrist",
-      },
-      {
-        label: "Psychologist",
-        href: "doctor/psychologist",
-      },
-      { label: "Urologist", href: "doctor/urologist" },
-      {
-        label: "General Physician",
-        href: "doctor/general-physician",
-      },
-      {
-        label: "Gastroenterologist",
-        href: "doctor/gastroenterologist",
-      },
-      {
-        label: "Pediatrician",
-        href: "doctor/pediatrician",
-      },
-      {
-        label: "General Practitioner",
-        href: "doctor/general-practitioner",
-      },
-      {
-        label: "Nutritionist",
-        href: "doctor/nutritionist",
-      },
       { label: "All Specialities", href: "/doctors" },
+      {
+        label: "Allergy & Immunology",
+        href: "doctor/allergy-immunology",
+      },
+      {
+        label: "Anesthesiology & Critical Care",
+        href: "doctor/anesthesiology-critical-care",
+      },
+      {
+        label: "Cardiology",
+        href: "doctor/cardiology",
+      },
+      {
+        label: "Cardiothoracic Surgery",
+        href: "doctor/cardiothoracic-surgery",
+      },
+      {
+        label: "Clinical Biochemical Genetics",
+        href: "doctor/clinical-biochemical-genetics",
+      },
+      {
+        label: "Dermatology",
+        href: "doctor/dermatology",
+      },
+      {
+        label: "Emergency Medicine",
+        href: "doctor/emergency-medicine",
+      },
+      {
+        label: "Endocrinology",
+        href: "doctor/endocrinology",
+      },
+      {
+        label: "Family Medicine",
+        href: "doctor/family-medicine",
+      },
+      {
+        label: "Forensic Pathology",
+        href: "doctor/forensic-pathology",
+      },
+      {
+        label: "Gastroenterology & Hepatology",
+        href: "doctor/gastroenterology-hepatology",
+      },
+      {
+        label: "Geriatric Medicine",
+        href: "doctor/geriatric-medicine",
+      },
+      {
+        label: "Hematology / Medical Oncology",
+        href: "doctor/hematology-oncology",
+      },
+      {
+        label: "Infectious Diseases",
+        href: "doctor/infectious-diseases",
+      },
+      {
+        label: "Internal Medicine",
+        href: "doctor/internal-medicine",
+      },
+      {
+        label: "Interventional Cardiology",
+        href: "doctor/interventional-cardiology",
+      },
+      {
+        label: "Neonatology (Pediatric Subspecialty)",
+        href: "doctor/neonatology",
+      },
+      {
+        label: "Nephrology",
+        href: "doctor/nephrology",
+      },
+      {
+        label: "Neurology",
+        href: "doctor/neurology",
+      },
+      {
+        label: "Neurosurgery",
+        href: "doctor/neurosurgery",
+      },
+      {
+        label: "Nuclear Medicine",
+        href: "doctor/nuclear-medicine",
+      },
+      {
+        label: "Obstetrics & Gynecology (OB/GYN)",
+        href: "doctor/obstetrics-gynecology",
+      },
+      {
+        label: "Ophthalmology",
+        href: "doctor/ophthalmology",
+      },
+      {
+        label: "Oral & Maxillofacial Surgery",
+        href: "doctor/oral-maxillofacial-surgery",
+      },
+      {
+        label: "Otorhinolaryngology (ENT)",
+        href: "doctor/otorhinolaryngology",
+      },
+      {
+        label: "Orthopedic Surgery",
+        href: "doctor/orthopedic-surgery",
+      },
+      {
+        label: "Palliative Medicine",
+        href: "doctor/palliative-medicine",
+      },
+      {
+        label: "Pathology (Anatomical & Clinical)",
+        href: "doctor/pathology",
+      },
+      {
+        label: "Physical Medicine & Rehabilitation (PM&R)",
+        href: "doctor/physical-medicine-rehabilitation",
+      },
+      {
+        label: "Plastic, Reconstructive & Aesthetic Surgery",
+        href: "doctor/plastic-surgery",
+      },
+      {
+        label: "Preventive & Lifestyle Medicine",
+        href: "doctor/preventive-lifestyle-medicine",
+      },
+      {
+        label: "Psychiatry & Child-Adolescent Psychiatry",
+        href: "doctor/psychiatry",
+      },
+      {
+        label: "Public Health & Occupational Medicine",
+        href: "doctor/public-health-occupational-medicine",
+      },
+      {
+        label: "Pulmonology / Respiratory Medicine",
+        href: "doctor/pulmonology",
+      },
+      {
+        label: "Radiation Oncology",
+        href: "doctor/radiation-oncology",
+      },
+      {
+        label: "Radiology & Interventional Radiology",
+        href: "doctor/radiology",
+      },
+      {
+        label: "Rheumatology",
+        href: "doctor/rheumatology",
+      },
+      {
+        label: "Sleep Medicine",
+        href: "doctor/sleep-medicine",
+      },
+      {
+        label: "Sports Medicine",
+        href: "doctor/sports-medicine",
+      },
+      {
+        label: "Thoracic Surgery",
+        href: "doctor/thoracic-surgery",
+      },
+      {
+        label: "Toxicology",
+        href: "doctor/toxicology",
+      },
+      {
+        label: "Transfusion Medicine",
+        href: "doctor/transfusion-medicine",
+      },
+      {
+        label: "Urology",
+        href: "doctor/urology",
+      },
+      {
+        label: "Vascular Surgery & Interventional Radiologists",
+        href: "doctor/vascular-surgery",
+      },
+      {
+        label: "Research Physicians",
+        href: "doctor/research-physicians",
+      },
     ],
   },
   {
@@ -77,22 +220,22 @@ export const navLinks = [
     ],
   },
   {
-    label: "Labs",
-    dropdown: [
-      {
-        label: "Chughtai Lab",
-        href: "/lab/chughtai-lab",
-      },
-      {
-        label: "Dr. Essa’s Laboratory & Diagnostic Center",
-        href: "/lab/dr-essa-s-laboratory-diagnostic-center",
-      },
-      {
-        label: "Excel Labs",
-        href: "/lab/excel-labs",
-      },
-      { label: "All Labs", href: "/labs" },
-    ],
+    // label: "Labs",
+    // dropdown: [
+    //   {
+    //     label: "Chughtai Lab",
+    //     href: "/lab/chughtai-lab",
+    //   },
+    //   {
+    //     label: "Dr. Essa’s Laboratory & Diagnostic Center",
+    //     href: "/lab/dr-essa-s-laboratory-diagnostic-center",
+    //   },
+    //   {
+    //     label: "Excel Labs",
+    //     href: "/lab/excel-labs",
+    //   },
+    //   { label: "All Labs", href: "/labs" },
+    // ],
   },
   // { label: "Doctor", href: "/register/doctor" },
 ];
@@ -527,13 +670,6 @@ export const HOSPITAL_CATEGORIES = [
   "Emergency",
 ];
 
-export const RELIGIONS = [
-  "Islam",
-  "Christianity",
-  "Hinduism",
-  "Sikhism",
-  "Other",
-];
 export const GENDERS = ["Male", "Female", "Other"];
 export const DEGREE_OPTIONS = ["MBBS", "BDS"];
 export const cityCoordsMap = {
@@ -794,7 +930,7 @@ export const adminStatsCard = (statistics, hospitalStatistics) => [
   {
     title: "Total Hospitals",
     count: hospitalStatistics?.total,
-    icon: "👨‍⚕️",
+    icon: "🏥",
     bgColor: "bg-blue-100",
     textColor: "text-blue-600",
   },
@@ -828,7 +964,6 @@ export const personalFields = (doctor) => [
   { key: "phone", label: "Phone", value: doctor.phone },
   { key: "cnic", label: "CNIC", value: doctor.cnic },
   { key: "gender", label: "Gender", value: doctor.gender },
-  { key: "religion", label: "Religion", value: doctor.religion },
   { key: "address", label: "Address", value: doctor.fullAddress },
 ];
 

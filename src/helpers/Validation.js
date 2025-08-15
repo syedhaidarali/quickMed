@@ -34,15 +34,6 @@ export const validate = (form) => {
     newErrors.phone = "Phone number must be exactly 11 digits";
   }
 
-  // Religion validation
-  if (!form.religion?.trim()) {
-    newErrors.religion = "Religion is required";
-  } else if (form.religion.trim().length < 2) {
-    newErrors.religion = "Religion must be at least 2 characters long";
-  } else if (form.religion.trim().length > 50) {
-    newErrors.religion = "Religion cannot exceed 50 characters";
-  }
-
   // Gender validation
   if (!form.gender) {
     newErrors.gender = "Gender is required";

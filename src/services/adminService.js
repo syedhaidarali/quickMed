@@ -44,8 +44,15 @@ export const adminService = {
   },
 
   doctorAction: (doctorId, action) => adminApi.doctorAction(doctorId, action),
+
+  hospitalAction: (hospitalId, action) =>
+    adminApi.hospitalAction(hospitalId, action),
+
   uploadDocuments: (doctorDocuments, doctorId) =>
     adminApi.uploadDocuments(doctorDocuments, doctorId),
+
+  uploadHospitalsDocuments: (hospitalDocuments, hospitalId) =>
+    adminApi.uploadHospitalsDocuments(hospitalDocuments, hospitalId),
 
   doctorProfilePicture: (doctorId, data) =>
     adminApi.doctorProfilePicture(doctorId, data),

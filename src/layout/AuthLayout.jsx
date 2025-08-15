@@ -9,34 +9,13 @@ import { useDoctor } from "../context/DoctorContext";
 import { useAuth } from "../context/AuthContext";
 
 const AuthLayout = () => {
-  const { admin, loading } = useAdmin();
-  const { doctor } = useDoctor();
-  const { user } = useAuth();
-  if (loading) {
+  const { loading } = useAdmin();
+  const { loading: doctorLoading } = useDoctor();
+  const { user: userLoading } = useAuth();
+  if (loading.session) {
     return <LoadingSpinner />;
   }
-  if (admin) {
-    return (
-      <Navigate
-        to='/admin/dashboard'
-        replace
-      />
-    );
-  } else if (doctor) {
-    return (
-      <Navigate
-        to='/'
-        replace
-      />
-    );
-  } else if (user) {
-    return (
-      <Navigate
-        to='/'
-        replace
-      />
-    );
-  }
+
   return (
     <>
       <Header />

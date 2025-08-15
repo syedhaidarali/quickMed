@@ -27,4 +27,5 @@ export const doctorApi = {
 
   updateDoctorProfile: (credentials) => request.put("/doctor", credentials),
   getAllPublicDoctors: () => request.get("/auth/doctors"),
+  recommendationsApiSearch: (prompt) => request.post(""),
 };

@@ -10,6 +10,7 @@ const ReviewTable = ({
   onApprove,
   onReject,
   isRejected,
+  isApproved,
   onOpenRejectModal,
   onActivatePayment,
 }) => {
@@ -252,29 +253,6 @@ const ReviewTable = ({
             </div>
           ),
         },
-        {
-          key: "services",
-          label: "Services",
-          render: (item) => (
-            <div className='flex flex-wrap gap-1'>
-              {item.emergencyServices && (
-                <span className='inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800'>
-                  Emergency
-                </span>
-              )}
-              {item.ambulanceServices && (
-                <span className='inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800'>
-                  Ambulance
-                </span>
-              )}
-              {item.icuServices && (
-                <span className='inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800'>
-                  ICU
-                </span>
-              )}
-            </div>
-          ),
-        },
       ];
     }
   };
@@ -333,11 +311,13 @@ const ReviewTable = ({
                 ))}
                 <td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
                   <div className='flex space-x-2'>
-                    <button
-                      onClick={() => onApprove(item._id)}
-                      className='bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition-colors'>
-                      Approve
-                    </button>
+                    {!isApproved && (
+                      <button
+                        onClick={() => onApprove(item._id)}
+                        className='bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition-colors'>
+                        Approve
+                      </button>
+                    )}
                     {!isRejected && (
                       <button
                         onClick={() => onReject(item._id)}
@@ -416,6 +396,7 @@ const ReviewTable = ({
           doctor={selectedDoctor}
           handleDoctorReject={onReject}
           isRejected={isRejected}
+          isApproved={isApproved}
         />
       )}
       {showHospitalModal && selectedHospital && (
@@ -426,6 +407,7 @@ const ReviewTable = ({
           hospital={selectedHospital}
           handleHospitalReject={onReject}
           isRejected={isRejected}
+          isApproved={isApproved}
         />
       )}
     </div>

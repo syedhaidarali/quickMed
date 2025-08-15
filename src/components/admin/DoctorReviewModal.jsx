@@ -50,13 +50,13 @@ const StatusBadge = ({ status }) => {
 // Main Modal
 const DoctorReviewModal = ({
   isRejected,
+  isApproved,
   isOpen,
   doctor,
   onClose,
   onApprove,
   onReject,
   handleDoctorReject,
-  // Add new props for updating doctor status and profile image
   onToggleActive,
   onProfileImageUpload,
 }) => {
@@ -380,7 +380,6 @@ const DoctorReviewModal = ({
           { value: "Female", label: "Female" },
           { value: "Other", label: "Other" },
         ])}
-        {renderEditableField("religion", "Religion")}
         {renderEditableField("fullAddress", "Address", "textarea")}
       </div>
     </div>
@@ -759,11 +758,13 @@ const DoctorReviewModal = ({
               Reject
             </button>
           )}
-          <button
-            onClick={() => onApprove(doctor._id)}
-            className='px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700'>
-            Approve
-          </button>
+          {!isApproved && (
+            <button
+              onClick={() => onApprove(doctor._id)}
+              className='px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700'>
+              Approve
+            </button>
+          )}
         </div>
       </div>
 

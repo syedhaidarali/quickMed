@@ -22,7 +22,7 @@ export const DoctorProvider = ({ children }) => {
       console.log(data.data, "doctorsssssssssssssssssssssss");
       setDoctor(data.data);
     } catch (err) {
-      // console.log(err);
+      console.log(err);
     } finally {
       setLoading(false);
     }
@@ -38,22 +38,17 @@ export const DoctorProvider = ({ children }) => {
     setError(null);
     try {
       const doctorData = await doctorService.login(credentials);
-      console.log(
-        doctorData?.data?.data?.user?.hasDocuments,
-        typeof doctorData?.data?.data?.user?.hasDocuments
-      );
       setDoctor(doctorData.data.data.user);
       setHeaders(doctorData.data.data.token);
-      if (doctorData?.data?.data?.user?.hasDocuments === true) {
-        navigate("/");
-      } else {
+      if (!doctorData.data.data.user.hasDocuments) {
         navigate("/doctor/upload-documents");
+      } else {
+        navigate("/");
       }
       toast.success("Login Successfully");
       return doctorData.response.data.message;
     } catch (err) {
-      console.log(err);
-      // toast.error(err);
+      toast.error(err.response.data.data);
     } finally {
       setLoading(false);
     }
@@ -125,6 +120,16 @@ export const DoctorProvider = ({ children }) => {
     }
   };
 
+  const DoctorRecommendationsApiSearch = async (prompt) => {
+    try {
+      const res = await doctorService.recommendationsApiSearch(prompt);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = (navigate) => {
     navigate("/doctor/login");
     removeHeaders();
@@ -144,6 +149,7 @@ export const DoctorProvider = ({ children }) => {
         DoctorDocumentUpload,
         logout,
         allDoctors,
+        DoctorRecommendationsApiSearch,
       }}>
       {children}
     </DoctorContext.Provider>

@@ -5,9 +5,8 @@ import axios from "axios";
 
 // VideoSDK Configuration
 export const VIDEOSDK_CONFIG = {
-  API_KEY: "dac164d6-2dd7-4232-b6b1-05cd1a0edb83",
-  SECRET_KEY:
-    "fc6ce9fe05e735a33e7f3f234e1afe1ec8481389c54a94482d3b6685133a3ef3",
+  API_KEY: import.meta.env.VITE_VIDEOSDK_API_KEY,
+  SECRET_KEY: import.meta.env.VITE_VIDEOSDK_SECRET_KEY,
   API_BASE_URL: "https://api.videosdk.live/v2",
   // Development token (expires 1 month from creation)
   TEMP_TOKEN:

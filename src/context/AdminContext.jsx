@@ -9,66 +9,66 @@ const AdminContext = createContext();
 
 export const AdminProvider = ({ children }) => {
   const [admin, setAdmin] = useState(null);
+
   const [pendingDoctors, setPendingDoctors] = useState([]);
-  const [pendingHospitals, setPendingHospitals] = useState([]);
   const [approvedDoctors, setApprovedDoctors] = useState([]);
-  const [approvedHospitals, setApprovedHospitals] = useState([]);
-  // const [getAllDoctors, setAllDoctors] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [rejectedDoctors, setRejectedDoctors] = useState([]);
+
+  const [pendingHospitals, setPendingHospitals] = useState([]);
+  const [approvedHospitals, setApprovedHospitals] = useState([]);
   const [rejectedHospitals, setRejectedHospitals] = useState([]);
+
   const [statistics, setStatistics] = useState(null);
   const [hospitalStatistics, setHospitalStatistics] = useState(null);
 
+  console.log(statistics, "sssssssssss");
+  console.log(hospitalStatistics, "ssssssssssssss");
+
+  // scoped loading/error
+  const [loading, setLoading] = useState({});
+  const [error, setError] = useState({});
+
+  const setLoadingKey = (key, value) =>
+    setLoading((prev) => ({ ...prev, [key]: value }));
+  const setErrorKey = (key, value) =>
+    setError((prev) => ({ ...prev, [key]: value }));
+
+  // ---------------- AUTH ----------------
   const validateSession = async () => {
-    setLoading(true);
+    setLoadingKey("session", true);
     try {
       const { data } = await adminService.validateToken();
-      setAdmin(data.data);
+      const user = data?.data;
+      console.log(user);
+      setAdmin(user);
+      // fetch data only if role is admin
+      if (user?.role === "admin") {
+        await refreshAllData();
+      }
     } catch (err) {
-      // console.log(err);
+      setErrorKey("session", err);
     } finally {
-      setLoading(false);
+      setLoadingKey("session", false);
     }
   };
 
-  const refreshAllData = async () => {
-    await Promise.all([
-      fetchPendingDoctors(),
-      fetchApprovedDoctors(),
-      fetchRejectedDoctors(),
-      fetchPendingHospitals(),
-      fetchApprovedHospitals(),
-      fetchRejectedHospitals(),
-      DoctorsStatistics(),
-      HospitalStatistics(),
-    ]);
-  };
-
-  // Call refresh on mount
-  useEffect(() => {
-    validateSession();
-    refreshAllData();
-  }, []);
-
   const login = async (credentials, navigate) => {
-    console.log(credentials, "admin Login");
+    setLoadingKey("login", true);
     try {
-      setLoading(true);
       const res = await adminService.login(credentials);
-      await validateSession();
-      setAdmin(res.data.data.user);
-      toast.success("Admin login Successfully");
-      setHeaders(res.data.data.token);
+      const token = res?.data?.data?.token;
+      setHeaders(token);
+      const user = res?.data?.data?.user;
+      setAdmin(user);
+      toast.success("Admin login successfully");
+      await refreshAllData();
       navigate("/admin/dashboard");
       return res;
     } catch (err) {
-      console.log(err);
-      setError(err);
+      setErrorKey("login", err);
       throw err;
     } finally {
-      setLoading(false);
+      setLoadingKey("login", false);
     }
   };
 
@@ -77,277 +77,243 @@ export const AdminProvider = ({ children }) => {
     setAdmin(null);
   };
 
+  // ---------------- FETCH HELPERS ----------------
   const fetchPendingDoctors = async () => {
+    setLoadingKey("pendingDoctors", true);
     try {
       const res = await adminService.getPendingDoctors();
-      // console.log(res.data.data.doctors);
       setPendingDoctors(res.data.data.doctors);
+      setErrorKey("pendingDoctors", null);
     } catch (err) {
-      setError(err);
+      setErrorKey("pendingDoctors", err);
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchPendingHospitals = async () => {
-    try {
-      const res = await adminService.getPendingHospitals();
-      // console.log(res.data.data.hospitals);
-      setPendingHospitals(res.data.data.hospitals);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
+      setLoadingKey("pendingDoctors", false);
     }
   };
 
   const fetchApprovedDoctors = async () => {
+    setLoadingKey("approvedDoctors", true);
     try {
       const res = await adminService.getApprovedDoctors();
-      console.log("total approved doctor ", res);
       setApprovedDoctors(res.data.data.doctors);
+      setErrorKey("approvedDoctors", null);
     } catch (err) {
-      setError(err);
+      setErrorKey("approvedDoctors", err);
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchApprovedHospitals = async () => {
-    try {
-      const res = await adminService.getApprovedHospitals();
-      setApprovedHospitals(res.data.data.hospitals);
-    } catch (err) {
-      setError(err);
-      console.log("errrrrrr", err);
-    } finally {
-      setLoading(false);
+      setLoadingKey("approvedDoctors", false);
     }
   };
 
   const fetchRejectedDoctors = async () => {
+    setLoadingKey("rejectedDoctors", true);
     try {
       const res = await adminService.getRejectedDoctors();
-      // console.log("rejected doctors", res);
       setRejectedDoctors(res.data.data.doctors);
+      setErrorKey("rejectedDoctors", null);
     } catch (err) {
-      setError(err);
+      setErrorKey("rejectedDoctors", err);
     } finally {
-      setLoading(false);
+      setLoadingKey("rejectedDoctors", false);
     }
   };
 
-  const DoctorsStatistics = async () => {
+  const fetchPendingHospitals = async () => {
+    setLoadingKey("pendingHospitals", true);
     try {
-      const result = await adminService.getDoctorsStatistics();
-      setStatistics(result.data.data.statistics);
-      // console.log("doctors statistics", result.data.data.statistics);
+      const res = await adminService.getPendingHospitals();
+      setPendingHospitals(res.data.data.hospitals);
+      setErrorKey("pendingHospitals", null);
     } catch (err) {
-      // console.log(err, "doctor statistics error");
+      setErrorKey("pendingHospitals", err);
     } finally {
-      setLoading(false);
-    }
-  };
-  const HospitalStatistics = async () => {
-    try {
-      const result = await adminService.getHospitalStatistics();
-      setHospitalStatistics(result.data.data.statistics);
-      console.log(result.data.data.statistics);
-      console.log("doctors statistics", result.data.data.statistics);
-    } catch (err) {
-      console.log(err, "doctor statistics error");
-    } finally {
-      setLoading(false);
+      setLoadingKey("pendingHospitals", false);
     }
   };
 
-  // New: centralized refresh function
-
-  const approveDoctor = async (doctorId) => {
+  const fetchApprovedHospitals = async () => {
+    setLoadingKey("approvedHospitals", true);
     try {
-      await adminService.approveDoctor(doctorId);
-      toast.success("Doctor approved successfully!");
-      await refreshAllData(); // ensure all lists are updated
+      const res = await adminService.getApprovedHospitals();
+      setApprovedHospitals(res.data.data.hospitals);
+      setErrorKey("approvedHospitals", null);
     } catch (err) {
-      setError(err);
+      setErrorKey("approvedHospitals", err);
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const approveHospital = async (hospitalId) => {
-    try {
-      await adminService.approveHospital(hospitalId);
-      toast.success("Hospital approved successfully!");
-      await refreshAllData();
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const rejectDoctor = async (doctorId) => {
-    try {
-      await adminService.rejectDoctor(doctorId);
-      toast.success("Doctor rejected successfully!");
-      await refreshAllData();
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const rejectHospital = async (hospitalId, reason) => {
-    try {
-      await adminService.rejectHospital(hospitalId, reason);
-      toast.success("Hospital rejected successfully!");
-      await refreshAllData();
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
+      setLoadingKey("approvedHospitals", false);
     }
   };
 
   const fetchRejectedHospitals = async () => {
+    setLoadingKey("rejectedHospitals", true);
     try {
       const res = await adminService.getRejectedHospitals();
-      console.log(res);
       setRejectedHospitals(res.data.data.hospitals);
+      setErrorKey("rejectedHospitals", null);
     } catch (err) {
-      setError(err);
+      setErrorKey("rejectedHospitals", err);
     } finally {
-      setLoading(false);
+      setLoadingKey("rejectedHospitals", false);
     }
+  };
+
+  const DoctorsStatistics = async () => {
+    setLoadingKey("statistics", true);
+    try {
+      const res = await adminService.getDoctorsStatistics();
+      setStatistics(res.data.data.statistics);
+      setErrorKey("statistics", null);
+    } catch (err) {
+      setErrorKey("statistics", err);
+    } finally {
+      setLoadingKey("statistics", false);
+    }
+  };
+
+  const HospitalStatistics = async () => {
+    setLoadingKey("hospitalStatistics", true);
+    try {
+      const res = await adminService.getHospitalStatistics();
+      setHospitalStatistics(res.data.data.statistics);
+      setErrorKey("hospitalStatistics", null);
+    } catch (err) {
+      setErrorKey("hospitalStatistics", err);
+    } finally {
+      setLoadingKey("hospitalStatistics", false);
+    }
+  };
+
+  // ---------------- REFRESH ----------------
+  const refreshAllData = async () => {
+    await Promise.all([
+      DoctorsStatistics(),
+      HospitalStatistics(),
+      fetchPendingDoctors(),
+      fetchApprovedDoctors(),
+      fetchRejectedDoctors(),
+      fetchPendingHospitals(),
+      fetchApprovedHospitals(),
+      fetchRejectedHospitals(),
+    ]);
+  };
+
+  // ---------------- ACTIONS ----------------
+  const approveDoctor = async (doctorId) => {
+    await adminService.approveDoctor(doctorId);
+    toast.success("Doctor approved successfully");
+    await refreshAllData();
+  };
+
+  const approveHospital = async (hospitalId) => {
+    await adminService.approveHospital(hospitalId);
+    toast.success("Hospital approved successfully");
+    await refreshAllData();
+  };
+
+  const rejectDoctor = async (doctorId) => {
+    await adminService.rejectDoctor(doctorId);
+    toast.success("Doctor rejected successfully");
+    await refreshAllData();
+  };
+
+  const rejectHospital = async (hospitalId, reason) => {
+    await adminService.rejectHospital(hospitalId, reason);
+    toast.success("Hospital rejected successfully");
+    await refreshAllData();
   };
 
   const doctorAction = async (doctorId, action) => {
-    try {
-      const response = await adminService.doctorAction(doctorId, action);
-      console.log(response, "doctor Action");
-      toast.success("Doctor Action Updated Successfully");
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
+    await adminService.doctorAction(doctorId, action);
+    toast.success("Doctor action updated successfully");
   };
+
+  const HospitalAction = async (hospitalId, action) => {
+    await adminService.hospitalAction(hospitalId, action);
+    toast.success("Hospital action updated successfully");
+  };
+
   const DoctorDocumentUpload = async (formData, doctorId) => {
-    // setLoading(true);
-    try {
-      const result = await adminService.uploadDocuments(formData, doctorId);
-      console.log("document", result);
-      console.log(result.data.data.documents[0].documentUrl);
-      navigate(``);
-      toast.success("Documents Uploaded");
-      return result;
-    } catch (err) {
-      toast.error(err?.data || "Upload failed");
-    } finally {
-      setLoading(false);
-    }
+    const res = await adminService.uploadDocuments(formData, doctorId);
+    toast.success("Doctor documents uploaded");
+    return res;
+  };
+
+  const HospitalDocumentUpload = async (formData, hospitalId) => {
+    const res = await adminService.uploadHospitalsDocuments(
+      formData,
+      hospitalId
+    );
+    toast.success("Hospital documents uploaded");
+    return res;
   };
 
   const doctorProfilePicture = async (doctorId, formData) => {
-    // setLoading(true);
-    try {
-      const res = await adminService.doctorProfilePicture(doctorId, formData);
-      toast.success("Profile Picture Change Successfully");
-      console.log(res);
-      return res;
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
+    await adminService.doctorProfilePicture(doctorId, formData);
+    toast.success("Doctor profile picture updated");
   };
 
   const hospitalProfilePicture = async (hospitalId, formData) => {
-    try {
-      const res = await adminService.hospitalProfilePicture(
-        hospitalId,
-        formData
-      );
-      toast.success("Profile Picture Change Successfully");
-      console.log(res);
-    } catch (err) {
-    } finally {
-      setLoading(false);
-    }
+    await adminService.hospitalProfilePicture(hospitalId, formData);
+    toast.success("Hospital profile picture updated");
   };
 
   const updateDoctorDetails = async (doctorId, data) => {
-    console.log(doctorId, "doctorId");
-    console.log(data, "data");
-    try {
-      const res = await adminService.updateDoctorDetails(doctorId, data);
-      const updatedDoc =
-        res?.data?.data?.doctor || res?.data?.data || res?.data || null;
+    const res = await adminService.updateDoctorDetails(doctorId, data);
+    const updatedDoc = res?.data?.data?.doctor || {};
+    const mergeUpdate = (doc) => ({ ...doc, ...data, ...updatedDoc });
 
-      // Optimistically update any lists that might contain this doctor
-      const mergeUpdate = (doc) => ({ ...doc, ...data, ...(updatedDoc || {}) });
+    setPendingDoctors((prev) =>
+      prev.map((doc) => (doc._id === doctorId ? mergeUpdate(doc) : doc))
+    );
+    setApprovedDoctors((prev) =>
+      prev.map((doc) => (doc._id === doctorId ? mergeUpdate(doc) : doc))
+    );
+    setRejectedDoctors((prev) =>
+      prev.map((doc) => (doc._id === doctorId ? mergeUpdate(doc) : doc))
+    );
 
-      setPendingDoctors((prev) =>
-        Array.isArray(prev)
-          ? prev.map((doc) => (doc._id === doctorId ? mergeUpdate(doc) : doc))
-          : prev
-      );
-      setApprovedDoctors((prev) =>
-        Array.isArray(prev)
-          ? prev.map((doc) => (doc._id === doctorId ? mergeUpdate(doc) : doc))
-          : prev
-      );
-      setRejectedDoctors((prev) =>
-        Array.isArray(prev)
-          ? prev.map((doc) => (doc._id === doctorId ? mergeUpdate(doc) : doc))
-          : prev
-      );
-      // setAllDoctors((prev) =>
-      //   Array.isArray(prev)
-      //     ? prev.map((doc) => (doc._id === doctorId ? mergeUpdate(doc) : doc))
-      //     : prev
-      // );
-
-      toast.success("Details updated successfully");
-      return updatedDoc || res;
-    } catch (err) {
-      console.log(err);
-    } finally {
-    }
+    toast.success("Doctor details updated");
   };
+
+  // ---------------- INIT ----------------
+  useEffect(() => {
+    validateSession();
+  }, []);
+
   return (
     <AdminContext.Provider
       value={{
+        admin,
         login,
         logout,
-        pendingDoctors,
-        pendingHospitals,
-        approvedDoctors,
-        approvedHospitals,
         loading,
         error,
-        fetchPendingDoctors,
-        fetchPendingHospitals,
-        fetchApprovedDoctors,
-        fetchApprovedHospitals,
-        approveDoctor,
-        rejectDoctor,
-        approveHospital,
-        rejectHospital,
-        admin,
+        pendingDoctors,
+        approvedDoctors,
         rejectedDoctors,
+        pendingHospitals,
+        approvedHospitals,
         rejectedHospitals,
-        fetchRejectedDoctors,
-        fetchRejectedHospitals,
         statistics,
-        doctorAction,
-        DoctorDocumentUpload,
-        doctorProfilePicture,
-        updateDoctorDetails,
-        hospitalProfilePicture,
         hospitalStatistics,
+        fetchPendingDoctors,
+        fetchApprovedDoctors,
+        fetchRejectedDoctors,
+        fetchPendingHospitals,
+        fetchApprovedHospitals,
+        fetchRejectedHospitals,
+        DoctorsStatistics,
+        HospitalStatistics,
+        approveDoctor,
+        approveHospital,
+        rejectDoctor,
+        rejectHospital,
+        doctorAction,
+        HospitalAction,
+        DoctorDocumentUpload,
+        HospitalDocumentUpload,
+        doctorProfilePicture,
+        hospitalProfilePicture,
+        updateDoctorDetails,
       }}>
       {children}
     </AdminContext.Provider>

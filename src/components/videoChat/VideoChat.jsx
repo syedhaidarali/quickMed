@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { useAuth } from "../../context/AuthContext";
 import { useDoctor } from "../../context/DoctorContext";
@@ -9,6 +9,7 @@ import {
   useMeeting,
   useParticipant,
   usePubSub,
+  createCameraVideoTrack, // <-- new import for custom HD track
 } from "@videosdk.live/react-sdk";
 import {
   MicIcon,
@@ -25,49 +26,49 @@ import {
   validateMeeting,
 } from "../../config/videoSDK";
 
+// ---------------------------
 // Participant View Component
+// ---------------------------
 function ParticipantView({ participantId }) {
   const micRef = useRef(null);
   const videoRef = useRef(null);
+  // get participant streams + metadata
   const { webcamStream, micStream, webcamOn, micOn, isLocal, displayName } =
     useParticipant(participantId);
 
-  console.log("ParticipantView for:", participantId, {
-    webcamOn,
-    micOn,
-    isLocal,
-    displayName,
-    hasWebcamStream: !!webcamStream,
-    hasMicStream: !!micStream,
-  });
-
   useEffect(() => {
     if (videoRef.current && webcamOn && webcamStream) {
-      console.log("Setting video stream for:", displayName, webcamStream);
+      // create a MediaStream for the video element
       const mediaStream = new MediaStream();
-      mediaStream.addTrack(webcamStream.track);
+      try {
+        mediaStream.addTrack(webcamStream.track);
+      } catch (e) {
+        console.error("Failed to add track to MediaStream:", e);
+      }
       videoRef.current.srcObject = mediaStream;
-      videoRef.current.play().catch((error) => {
-        console.error("Video play failed:", error);
-      });
+      videoRef.current
+        .play()
+        .catch((error) => console.error("Video play failed:", error));
     } else if (videoRef.current) {
-      console.log("Clearing video stream for:", displayName);
       videoRef.current.srcObject = null;
     }
   }, [webcamStream, webcamOn, displayName]);
 
   useEffect(() => {
-    if (micRef.current) {
-      if (micOn && micStream) {
-        const mediaStream = new MediaStream();
+    if (!micRef.current) return;
+    if (micOn && micStream) {
+      const mediaStream = new MediaStream();
+      try {
         mediaStream.addTrack(micStream.track);
-        micRef.current.srcObject = mediaStream;
-        micRef.current
-          .play()
-          .catch((error) => console.error("audio play failed", error));
-      } else {
-        micRef.current.srcObject = null;
+      } catch (e) {
+        console.error("Failed to add mic track to MediaStream:", e);
       }
+      micRef.current.srcObject = mediaStream;
+      micRef.current
+        .play()
+        .catch((error) => console.error("audio play failed", error));
+    } else {
+      micRef.current.srcObject = null;
     }
   }, [micStream, micOn]);
 
@@ -85,7 +86,10 @@ function ParticipantView({ participantId }) {
           autoPlay
           playsInline
           muted={isLocal}
-          className='w-full h-full object-cover'
+          // use contain to avoid stretching low-res video
+          className='w-full h-full object-contain'
+          // ONLY mirror the local preview — remote participants are NOT mirrored
+          style={isLocal ? { transform: "scaleX(-1)" } : { transform: "none" }}
           onLoadedMetadata={() =>
             console.log("Video metadata loaded for:", displayName)
           }
@@ -125,7 +129,9 @@ function ParticipantView({ participantId }) {
   );
 }
 
+// ---------------------------
 // Controls Component
+// ---------------------------
 function Controls({
   onLeave,
   setShowChat,
@@ -182,7 +188,9 @@ function Controls({
   );
 }
 
+// ---------------------------
 // Meeting View Component
+// ---------------------------
 function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
   const [joined, setJoined] = useState(null);
   const [showChat, setShowChat] = useState(true);
@@ -190,30 +198,59 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
   const [newMessage, setNewMessage] = useState("");
   const chatContainerRef = useRef(null);
 
-  const { join, participants, localParticipant } = useMeeting({
-    onMeetingJoined: () => {
-      setJoined("JOINED");
-      console.log("✅ Meeting joined successfully!");
-      console.log("Local participant:", localParticipant);
-      console.log("Participants:", participants);
-      toast.success("Joined meeting successfully!");
-    },
-    onMeetingLeft: () => {
-      console.log("❌ Meeting left");
-      onLeave();
-    },
-    onParticipantJoined: (participant) => {
-      console.log("👤 Participant joined:", participant);
-    },
-    onParticipantLeft: (participant) => {
-      console.log("👤 Participant left:", participant);
-    },
-  });
+  // gather meeting helpers (we also need enableWebcam/disableWebcam to publish custom tracks)
+  const { join, participants, localParticipant, enableWebcam, disableWebcam } =
+    useMeeting({
+      onMeetingJoined: async () => {
+        setJoined("JOINED");
+        toast.success("Joined meeting successfully!");
 
-  // Use VideoSDK's usePubSub hook for chat
+        // Try to publish a custom HD webcam track for higher quality
+        // (best-effort — failure here won't break the meeting)
+        (async function publishHD() {
+          try {
+            // disable existing webcam (ignore errors)
+            if (disableWebcam) {
+              try {
+                await disableWebcam();
+              } catch (err) {
+                // ignore if not enabled or already disabled
+              }
+            }
+
+            // create a custom HD track: encoderConfig presets like 'h720p_30fps'
+            const customTrack = await createCameraVideoTrack({
+              encoderConfig: "h720p_30fps", // request 720p 30fps
+              optimizationMode: "motion", // better for people/motion
+              facingMode: "user",
+            });
+
+            // enable webcam with the custom track (SDK accepts custom track)
+            if (enableWebcam) {
+              await enableWebcam(customTrack);
+              console.log("Published custom HD webcam track");
+              toast.success("Using HD camera (if supported)");
+            }
+          } catch (err) {
+            // fallback: don't block the meeting; show small console warning
+            console.warn("Could not publish HD webcam track:", err);
+          }
+        })();
+      },
+      onMeetingLeft: () => {
+        onLeave();
+      },
+      onParticipantJoined: (participant) => {
+        console.log("Participant joined:", participant);
+      },
+      onParticipantLeft: (participant) => {
+        console.log("Participant left:", participant);
+      },
+    });
+
+  // PubSub (chat)
   const { publish, messages } = usePubSub("CHAT", {
     onMessageReceived: (message) => {
-      console.log("📨 Chat message received:", message);
       toast.info(`${message.senderName} sent a message`);
     },
   });
@@ -233,10 +270,7 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
 
   const sendMessage = () => {
     if (newMessage.trim() && publish) {
-      console.log("📤 Sending chat message:", newMessage);
-
       try {
-        // Send message using VideoSDK's publish method
         publish(newMessage, { persist: true });
         setNewMessage("");
         toast.success("Message sent!");
@@ -271,7 +305,6 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
     return (
       <div className='flex h-screen bg-gray-900'>
         <div className='flex-1 flex flex-col'>
-          {/* Meeting Code Display for Doctors */}
           {isDoctor && meetingId && (
             <div className='bg-blue-600 text-white p-3 text-center'>
               <p className='text-sm font-medium'>
@@ -295,21 +328,12 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
           )}
 
           <div className='flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4'>
-            {/* Debug info */}
-            {console.log("Rendering participants:", {
-              localParticipant: localParticipant?.id,
-              allParticipants: [...participants.keys()],
-              remoteParticipants: [...participants.keys()].filter(
-                (id) => id !== localParticipant?.id
-              ),
-            })}
-
             {/* Local Participant */}
             {localParticipant && (
               <ParticipantView participantId={localParticipant.id} />
             )}
 
-            {/* Remote Participants - exclude local participant */}
+            {/* Remote Participants */}
             {[...participants.keys()]
               .filter((participantId) => participantId !== localParticipant?.id)
               .map((participantId) => (
@@ -319,7 +343,6 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
                 />
               ))}
 
-            {/* Placeholder for additional participants */}
             {[...participants.keys()].filter(
               (participantId) => participantId !== localParticipant?.id
             ).length === 0 && (
@@ -340,6 +363,7 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
               </div>
             )}
           </div>
+
           <Controls
             onLeave={onLeave}
             setShowChat={setShowChat}
@@ -349,7 +373,7 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
           />
         </div>
 
-        {/* Chat Sidebar */}
+        {/* Chat / Participants Sidebar */}
         <div className='w-80 bg-gray-800 border-l border-gray-700'>
           {showChat && (
             <div className='h-full flex flex-col'>
@@ -385,6 +409,7 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
                     <p className='text-sm text-white'>{msg.message}</p>
                   </div>
                 ))}
+
                 {messages.length === 0 && (
                   <div className='text-center text-gray-400 text-sm py-8'>
                     <p>No messages yet</p>
@@ -473,7 +498,9 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
   );
 }
 
+// ---------------------------
 // Main VideoChat Component
+// ---------------------------
 const VideoChat = ({
   meetingId,
   doctorId,
@@ -488,7 +515,7 @@ const VideoChat = ({
   const [finalMeetingId, setFinalMeetingId] = useState(meetingId);
   const [loading, setLoading] = useState(true);
 
-  // Determine if this user is the doctor or patient
+  // Determine role & display name
   const isDoctor = !isPatient;
   const currentUser = isDoctor ? doctor : user;
   const participantName = currentUser?.name || userName || "User";
@@ -498,7 +525,7 @@ const VideoChat = ({
       try {
         setLoading(true);
 
-        // Generate auth token
+        // Generate auth token (your implementation returns token)
         const token = await generateAuthToken(
           currentUser?._id || userId,
           participantName,
@@ -508,15 +535,13 @@ const VideoChat = ({
 
         setAuthToken(token);
 
-        // Handle meeting creation/validation
+        // Doctor: create new meeting if needed, otherwise validate
         if (isDoctor) {
           if (meetingId === "new" || !meetingId) {
-            // Create new meeting for doctor
             const newMeeting = await createMeeting(token);
             setFinalMeetingId(newMeeting.roomId);
             toast.success(`New meeting created: ${newMeeting.roomId}`);
           } else {
-            // Validate existing meeting
             try {
               const validation = await validateMeeting(token, meetingId);
               if (validation.isValid) {
@@ -525,18 +550,16 @@ const VideoChat = ({
                 throw new Error("Invalid meeting");
               }
             } catch (error) {
-              // Create new meeting if validation fails
               const newMeeting = await createMeeting(token);
               setFinalMeetingId(newMeeting.roomId);
               toast.success(`New meeting created: ${newMeeting.roomId}`);
             }
           }
         } else {
-          // Patient can only join existing meetings
+          // Patient must provide an existing meeting id
           if (!meetingId || meetingId === "new") {
             throw new Error("Meeting ID is required for patients");
           }
-
           const validation = await validateMeeting(token, meetingId);
           if (!validation.isValid) {
             throw new Error("Invalid meeting ID");
@@ -583,12 +606,15 @@ const VideoChat = ({
 
   return (
     <MeetingProvider
+      // Request HD upload and disable multiStream (best for 1:1 or small groups)
       config={{
         meetingId: finalMeetingId,
         name: participantName,
         micEnabled: true,
         webcamEnabled: true,
         participantId: currentUser?._id || userId,
+        maxResolution: "hd", // request 720p upload
+        multiStream: false, // simpler SFU handling for 1:1
       }}
       token={authToken}
       joinWithoutUserInteraction={false}>

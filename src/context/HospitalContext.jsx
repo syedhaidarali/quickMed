@@ -9,8 +9,6 @@ const HospitalContext = createContext();
 export const HospitalProvider = ({ children }) => {
   const [hospital, setHospital] = useState(null);
   const [allPublicHospital, setAllPublicHospital] = useState([]);
-  const [pendingHospitals, setPendingHospitals] = useState([]);
-  const [approvedHospitals, setApprovedHospitals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -96,8 +94,7 @@ export const HospitalProvider = ({ children }) => {
     <HospitalContext.Provider
       value={{
         hospital,
-        pendingHospitals,
-        approvedHospitals,
+        allPublicHospital,
         loading,
         error,
         HospitalLogin,

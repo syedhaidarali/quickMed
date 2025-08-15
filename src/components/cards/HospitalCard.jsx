@@ -4,11 +4,17 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const HospitalCard = ({ hospital }) => {
+  const slug =
+    hospital.slug ||
+    (hospital.name
+      ? hospital.name.toLowerCase().replace(/\s+/g, "-")
+      : hospital.city?.toLowerCase().replace(/\s+/g, "-") || hospital._id);
   return (
     <div className='bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center'>
       <img
         src={
           hospital.image ||
+          hospital.profilePicture ||
           "https://ui-avatars.com/api/?name=Hospital&background=random"
         }
         alt={hospital.name}
@@ -24,20 +30,22 @@ const HospitalCard = ({ hospital }) => {
         <span className='font-semibold'>Address:</span> {hospital.address}
       </div>
       <div className='text-gray-700 text-sm mb-1'>
-        <span className='font-semibold'>Contact:</span> {hospital.contact}
+        <span className='font-semibold'>Contact:</span>{" "}
+        {hospital.contact || hospital.phone}
       </div>
       <div className='text-gray-700 text-sm mb-2'>
-        <span className='font-semibold'>Beds:</span> {hospital.beds}
+        <span className='font-semibold'>Beds:</span>{" "}
+        {hospital.beds ?? hospital.totalBeds}
       </div>
       <Link
-        to={`/hospitals/${hospital.slug}/book`}
+        to={`/hospitals/${slug}/book`}
         className='px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors duration-200 font-medium w-full mb-2 text-center'>
         Book Appointment
       </Link>
       <Link
-        to={`/hospitals/${hospital.slug}/doctors`}
+        to={`/hospitals/${slug}`}
         className='px-4 py-2 border border-emerald-600 text-emerald-600 rounded-md hover:bg-emerald-50 transition-colors duration-200 font-medium w-full text-center'>
-        View Doctors
+        View Hospital
       </Link>
     </div>
   );

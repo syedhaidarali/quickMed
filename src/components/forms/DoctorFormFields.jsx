@@ -8,7 +8,6 @@ import {
   DEGREE_OPTIONS,
   GENDERS,
   REGISTERED_HOSPITALS,
-  RELIGIONS,
 } from "../../assets/dummy";
 
 /**
@@ -31,7 +30,6 @@ const DoctorFormFields = ({
     degreeOptions: options.degreeOptions || DEGREE_OPTIONS,
     genders: options.genders || GENDERS,
     hospitals: options.hospitals || REGISTERED_HOSPITALS,
-    religions: options.religions || RELIGIONS,
   };
 
   const show = {
@@ -93,24 +91,6 @@ const DoctorFormFields = ({
         placeholder='03XXXXXXXXX'
         onlyNumbers
       />
-
-      {/* Religion */}
-      <div>
-        <label className='block text-emerald-700 font-medium mb-1'>
-          Religion
-        </label>
-        <Dropdown
-          options={opt.religions}
-          value={values.religion || ""}
-          onChange={(val) => onDropdownChange?.("religion", val)}
-          placeholder='Select Religion'
-        />
-        {errors.religion && (
-          <p className='text-red-500 text-xs mt-1'>
-            {errors.religion?.message || errors.religion}
-          </p>
-        )}
-      </div>
 
       {/* Gender */}
       <div>

@@ -32,13 +32,17 @@ import {
 } from "./pages/pages.js";
 import { useAdmin } from "./context/AdminContext";
 import CurrentDoctorProfile from "./pages/CurrentDoctorProfile.jsx";
+import { useAuth } from "./context/AuthContext.jsx";
+import { useDoctor } from "./context/DoctorContext.jsx";
 
 const ProtectedAdminRoute = ({ children }) => {
   const { admin } = useAdmin();
+  const { user } = useAuth();
+  const { doctor } = useDoctor();
   if (!admin) {
     return (
       <Navigate
-        to='/admin/login'
+        to='/'
         replace
       />
     );

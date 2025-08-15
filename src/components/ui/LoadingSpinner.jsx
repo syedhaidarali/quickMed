@@ -8,7 +8,7 @@ const LoadingSpinner = () => (
     <div className='flex flex-col items-center'>
       <LoadingSpinnerIcon />
       <span className='mt-4 text-lg font-semibold text-emerald-700 animate-pulse'>
-        Authenticating...
+        Loading...
       </span>
     </div>
   </div>
