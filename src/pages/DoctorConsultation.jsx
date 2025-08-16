@@ -2,10 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import VideoChat from "../components/videoChat/VideoChat";
+import { useAuth, useDoctor } from "../context";
 import { toast } from "sonner";
-import { useDoctor } from "../context/DoctorContext";
+import { VideoChat } from "../components/videoChat";
 
 const DoctorConsultation = () => {
   const { meetingId, patientId } = useParams();

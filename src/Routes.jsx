@@ -29,12 +29,10 @@ import {
   Consultation,
   DoctorConsultation,
   UserProfile,
-} from "./pages/pages.js";
-import { useAdmin } from "./context/AdminContext";
-import CurrentDoctorProfile from "./pages/CurrentDoctorProfile.jsx";
-import { useAuth } from "./context/AuthContext.jsx";
-import { useDoctor } from "./context/DoctorContext.jsx";
-import HospitalProfile from "./pages/HospitalProfile.jsx";
+  CurrentDoctorProfile,
+  HospitalProfile,
+} from "./pages";
+import { useAdmin, useAuth, useDoctor } from "./context";
 
 const ProtectedAdminRoute = ({ children }) => {
   const { admin } = useAdmin();

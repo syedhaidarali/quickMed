@@ -3,14 +3,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { navLinks } from "../assets/dummy";
 import { MenuIcon } from "../assets/svg";
-import DropdownMenu from "../components/formItems/DropdownMenu";
-import NavLink from "../components/formItems/NavLink";
-import HospitalsDropdown from "../components/formItems/HospitalsDropdown";
 import { Link } from "react-router-dom";
-import { useAdmin } from "../context/AdminContext";
-import { useAuth, useDoctor } from "../context/context";
-import { useHospital } from "../context/HospitalContext";
-import { QuickHelpButton } from "../components/QuickHelp";
+import { useAdmin, useAuth, useDoctor, useHospital } from "../context";
+import {
+  DropdownMenu,
+  HospitalsDropdown,
+  NavLink,
+} from "../components/formItems";
 
 // ==========================
 // Login Button Component

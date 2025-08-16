@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import InputField from "../components/formItems/InputField";
-import { useAdmin } from "../context/AdminContext";
+import { useAdmin } from "../context";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { InputField } from "../components/formItems";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email"),

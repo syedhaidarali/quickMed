@@ -5,10 +5,10 @@ import {
   hospitalFormSchema,
   defaultValues,
 } from "../schemas/hospitalFormSchema";
-import { formatCNIC } from "../helpers/CNICFormat";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useHospital } from "../context/HospitalContext";
+import { useHospital } from "../context";
+import { formatCNIC } from "../helpers";
 
 export const useHospitalFormHandler = () => {
   const [showSuccess, setShowSuccess] = useState(false);

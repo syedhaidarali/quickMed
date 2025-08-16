@@ -1,10 +1,10 @@
 /** @format */
 
 "use client";
+import { removeHeaders, setHeaders } from "../helpers";
+import { authService } from "../services";
 import React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
-import { authService } from "../services/authService";
-import { removeHeaders, setHeaders } from "../helpers/auth.helper";
 import { toast } from "sonner";
 
 const AuthContext = createContext();

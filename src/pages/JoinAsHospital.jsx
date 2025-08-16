@@ -1,12 +1,9 @@
 /** @format */
 import React from "react";
 import { Link } from "react-router-dom";
-import { useHospitalFormHandler } from "../hooks/useHospitalFormHandler";
-import InputField from "../components/formItems/InputField";
-import Dropdown from "../components/formItems/Dropdown";
-import FileUpload from "../components/formItems/FileUpload";
-import DocumentUpload from "../components/formItems/DocumentUpload";
 import { HOSPITAL_CATEGORIES, HOSPITAL_TYPES } from "../assets/dummy";
+import { useHospitalFormHandler } from "../hooks";
+import { Dropdown, FileUpload, InputField } from "../components/formItems";
 
 const JoinAsHospital = () => {
   const {

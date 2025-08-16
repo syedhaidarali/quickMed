@@ -1,9 +1,34 @@
 /** @format */
-
 import React from "react";
-import { stats } from "../../assets/dummy";
+import { useDoctor, useHospital } from "../../context";
 
 const StatsSection = () => {
+  const { allDoctors } = useDoctor();
+  const { allPublicHospital } = useHospital();
+
+  const dynamicStats = [
+    {
+      number: allDoctors?.length || 0, // Doctors length
+      label: "Verified Doctors",
+      description: "PMC verified doctors across Pakistan",
+    },
+    {
+      number: "1M+", // keep static
+      label: "Happy Patients",
+      description: "Patients served nationwide",
+    },
+    {
+      number: allPublicHospital?.length || 0, // Hospitals length
+      label: "Hospitals",
+      description: "Partner hospitals and clinics",
+    },
+    {
+      number: "24/7", // keep static
+      label: "Support",
+      description: "Round the clock customer support",
+    },
+  ];
+
   return (
     <section className='py-16 bg-emerald-700 text-white'>
       <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
@@ -17,7 +42,7 @@ const StatsSection = () => {
         </div>
 
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8'>
-          {stats.map((stat, index) => (
+          {dynamicStats.map((stat, index) => (
             <div
               key={index}
               className='bg-emerald-800 bg-opacity-80 rounded-xl shadow-md p-8 flex flex-col items-center transition-transform duration-200 hover:scale-105'>

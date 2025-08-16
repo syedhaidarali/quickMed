@@ -1,6 +1,6 @@
 /** @format */
 
-import { doctorApi } from "../api/doctor.api";
+import { doctorApi } from "../api";
 
 export const doctorService = {
   validateToken: () => doctorApi.validateToken(),

@@ -1,6 +1,6 @@
 /** @format */
 
-import { adminApi } from "../api/admin.api";
+import { adminApi } from "../api";
 
 export const adminService = {
   validateToken: () => adminApi.validateToken(),

@@ -3,7 +3,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { labs } from "../assets/dummy";
-import LabCard from "../components/cards/LabCard";
+import { LabCard } from "../components/cards";
 
 const LabDetail = () => {
   const { slug } = useParams();

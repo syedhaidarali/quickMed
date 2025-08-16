@@ -3,10 +3,8 @@
 import React from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import Header from "./Header";
-import { useAdmin } from "../context/AdminContext";
-import LoadingSpinner from "../components/ui/LoadingSpinner";
-import { useDoctor } from "../context/DoctorContext";
-import { useAuth } from "../context/AuthContext";
+import { useAdmin, useDoctor, useAuth } from "../context";
+import { LoadingSpinner } from "../components/ui";
 
 const AuthLayout = () => {
   const { loading } = useAdmin();

@@ -1,30 +1,28 @@
 /** @format */
 import React from "react";
-import InputField from "../formItems/InputField";
-import Dropdown from "../formItems/Dropdown";
-import MultiSelectSpecialty from "../formItems/MultiSelectSpecialty";
-import SearchableDropdown from "../formItems/SearchableDropdown";
 import {
   DEGREE_OPTIONS,
   GENDERS,
   REGISTERED_HOSPITALS,
 } from "../../assets/dummy";
+import {
+  Dropdown,
+  InputField,
+  MultiSelectSpecialty,
+  SearchableDropdown,
+} from "../formItems";
 
-/**
- * Reusable doctor form fields block.
- * Parent controls state and validation; this component renders inputs only.
- */
 const DoctorFormFields = ({
   values = {},
   errors = {},
-  onInputChange, // (fieldName) => (event) => void
-  onDropdownChange, // (fieldName, value)
-  onSpecialtyChange, // (array)
-  onHospitalChange, // (value)
-  onHospitalVerification, // (bool)
-  onCnicChange, // (value)
-  options = {}, // override options if needed
-  include = {}, // control visibility of optional fields
+  onInputChange,
+  onDropdownChange,
+  onSpecialtyChange,
+  onHospitalChange,
+  onHospitalVerification,
+  onCnicChange,
+  options = {},
+  include = {},
 }) => {
   const opt = {
     degreeOptions: options.degreeOptions || DEGREE_OPTIONS,

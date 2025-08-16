@@ -9,8 +9,8 @@ const SearchableDropdown = ({
   icon: Icon,
   disabled = false,
   allowAddNew = false,
-  onVerificationChange = () => {}, // Callback to handle verification status
-  registeredOptions = [], // Array of registered options for verification
+  onVerificationChange = () => {},
+  registeredOptions = [],
 }) => {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");

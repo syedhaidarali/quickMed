@@ -1,11 +1,11 @@
 /** @format */
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { doctorFormSchema, defaultValues } from "../schemas/doctorFormSchema";
-import { formatCNIC } from "../helpers/CNICFormat";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDoctor } from "../context/DoctorContext";
+import { useDoctor } from "../context";
+import { formatCNIC } from "../helpers";
+import { doctorFormSchema, defaultValues } from "../schemas/doctorFormSchema";
 
 export const useFormHandler = () => {
   const [showSuccess, setShowSuccess] = useState(false);

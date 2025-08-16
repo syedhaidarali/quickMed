@@ -1,5 +1,5 @@
 /** @format */
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context";
 import { toast } from "sonner";
 
 import React, { useState } from "react";

@@ -1,7 +1,7 @@
 /** @format */
 
 import { adminStatsCard } from "../../assets/dummy";
-import { useAdmin } from "../../context/AdminContext";
+import { useAdmin } from "../../context";
 import React from "react";
 
 const AdminStatsCards = ({ statistics }) => {

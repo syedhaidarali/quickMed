@@ -1,6 +1,6 @@
 /** @format */
 
-import { userApi } from "../api/user.api";
+import { userApi } from "../api";
 
 export const userService = {
   signUp: (formData) => userApi.signUp(formData),

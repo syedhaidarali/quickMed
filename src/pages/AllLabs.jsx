@@ -2,7 +2,7 @@
 
 import React from "react";
 import { labs } from "../assets/dummy";
-import LabCard from "../components/cards/LabCard";
+import { LabCard } from "../components/cards";
 
 const AllLabs = () => (
   <div className='min-h-[60vh] bg-emerald-50 py-16 px-4'>

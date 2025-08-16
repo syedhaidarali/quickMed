@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "../components/formItems/InputField";
-import { useHospital } from "../context/HospitalContext";
+import { useHospital } from "../context";
 import { hospitalLoginSchema } from "../schemas/hospitalLoginSchema";
 
 const HospitalLogin = () => {
@@ -46,7 +46,9 @@ const HospitalLogin = () => {
           Login as a Hospital
         </h2>
 
-        <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className='space-y-6'
+          onSubmit={handleSubmit(onSubmit)}>
           <InputField
             label='Email Address'
             type='email'
@@ -66,26 +68,24 @@ const HospitalLogin = () => {
             autoComplete='current-password'
           />
 
-          {submitError && (
-            <p className='text-red-500 text-sm'>{submitError}</p>
-          )}
+          {submitError && <p className='text-red-500 text-sm'>{submitError}</p>}
 
           <button
             type='submit'
             disabled={loading}
-            className='w-full py-2 px-4 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 transition duration-200 disabled:opacity-50'
-          >
+            className='w-full py-2 px-4 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 transition duration-200 disabled:opacity-50'>
             {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
 
         <div className='mt-6 text-center'>
-          <span className='text-sm text-emerald-700'>Don't have an account?</span>
+          <span className='text-sm text-emerald-700'>
+            Don't have an account?
+          </span>
           <Link
             to='/register/hospital'
             className='ml-1 text-emerald-600 hover:underline font-medium'
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          >
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
             Register
           </Link>
         </div>
@@ -95,5 +95,3 @@ const HospitalLogin = () => {
 };
 
 export default HospitalLogin;
-
-

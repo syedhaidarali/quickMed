@@ -1,13 +1,12 @@
 /** @format */
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import InputField from "../components/formItems/InputField";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { doctorLoginSchema } from "../schemas/doctorLoginSchema";
-import Modal from "../modals/Modal";
-import { useDoctor } from "../context/DoctorContext";
+import { InputField } from "../components/formItems";
+import { doctorLoginSchema } from "../schemas";
+import { Modal } from "../modals";
 
 const Login = () => {
   const [activeTab, setActiveTab] = useState("email");
@@ -66,7 +65,7 @@ const Login = () => {
                   ? "bg-white text-emerald-600 shadow-sm"
                   : "text-gray-600 hover:text-gray-900"
               }`}>
-              PMDC Login
+              CNIC Login
             </button>
           </div>
         </div>
@@ -101,7 +100,7 @@ const Login = () => {
             className='w-full py-2 px-4 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 transition duration-200 disabled:opacity-50'>
             {loading
               ? "Signing In..."
-              : `Sign In with ${activeTab === "email" ? "Email" : "PMDC"}`}
+              : `Sign In with ${activeTab === "email" ? "Email" : "CNIC"}`}
           </button>
         </form>
 

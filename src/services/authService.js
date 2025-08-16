@@ -1,6 +1,6 @@
 /** @format */
 
-import { authApi } from "../api/auth.api";
+import { authApi } from "../api";
 
 export const authService = {
   validateToken: () => authApi.validateToken(),

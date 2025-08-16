@@ -2,8 +2,8 @@
 
 import React, { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useHospital } from "../context/HospitalContext";
-import HospitalCard from "../components/cards/HospitalCard";
+import { useHospital } from "../context";
+import { HospitalCard } from "../components/cards";
 
 const HospitalDetail = () => {
   const { allPublicHospital } = useHospital();

@@ -1,6 +1,6 @@
 /** @format */
 
-import { ratingService } from "../services/ratingService";
+import { ratingService } from "../services";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -23,10 +23,14 @@ export const RatingProvider = ({ children }) => {
     console.log(newRating, doctorId);
     try {
       const response = await ratingService.addDoctorRating(newRating, doctorId);
+      console.log(response, "response");
       toast.success("Rating added!");
     } catch (error) {
-      console.log(error);
-      toast.error("Failed to add rating");
+      if (error.response.data.data === "You have already rated this doctor") {
+        toast.error(
+          "You’ve already rated this doctor. Update or delete instead."
+        );
+      }
     }
   };
   const addPlatformRating = async (newRating) => {
@@ -34,31 +38,34 @@ export const RatingProvider = ({ children }) => {
       const response = await ratingService.addPlatformRating(newRating);
       toast.success("Rating added!");
     } catch (error) {
-      toast.error("Failed to add rating");
+      toast.error(error.response.data.data);
     }
   };
-  const updateDoctorRating = async (newRating) => {
+  const updateDoctorRating = async (newRating, doctorId) => {
     try {
-      const response = await ratingService.updateDoctorRating(newRating);
-      setRatings((prev) => [...prev, data]);
-      toast.success("Rating added!");
+      const response = await ratingService.updateDoctorRating(
+        doctorId,
+        newRating
+      );
+      console.log(response, "response");
+      toast.success("Rating Updated Successfully!");
     } catch (error) {
-      toast.error("Failed to add rating");
+      toast.error(error.response.data.data);
     }
   };
   const updatePlatformRating = async (newRating) => {
     try {
-      const response = await ratingService.setRatings(newRating);
-      toast.success("Rating added!");
+      const response = await ratingService.updatePlatformRating(newRating);
+      toast.success("Platform Rating Updated Successfully!");
     } catch (error) {
-      toast.error("Failed to add rating");
+      toast.error(error.response.data.data);
     }
   };
   const deleteDoctorRating = async (doctorId) => {
     try {
-      const response = await ratingService.deleteDoctorRating();
-      setRatings((prev) => [...prev, data]);
-      toast.success("Rating added!");
+      const response = await ratingService.deleteDoctorRating(doctorId);
+      // setRatings((prev) => [...prev, data]);
+      toast.success("Rating Deleted !");
     } catch (error) {
       toast.error("Failed to add rating");
     }
@@ -66,10 +73,9 @@ export const RatingProvider = ({ children }) => {
   const deletePlatformRating = async () => {
     try {
       const response = await ratingService.deletePlatformRating();
-      setRatings((prev) => [...prev, data]);
-      toast.success("Rating added!");
+      toast.success("Rating Deleted Successfully");
     } catch (error) {
-      toast.error("Failed to add rating");
+      toast.error(err.response.data.data);
     }
   };
   useEffect(() => {
@@ -82,6 +88,11 @@ export const RatingProvider = ({ children }) => {
         ratings,
         addDoctorRating,
         addPlatformRating,
+        updateDoctorRating,
+        deleteDoctorRating,
+        updatePlatformRating,
+        deletePlatformRating,
+        getPlatformRatings,
       }}>
       {children}
     </RatingContext.Provider>

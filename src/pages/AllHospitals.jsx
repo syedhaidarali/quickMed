@@ -1,8 +1,8 @@
 /** @format */
 
 import React from "react";
-import HospitalCard from "../components/cards/HospitalCard";
-import { useHospital } from "../context/HospitalContext";
+import { useHospital } from "../context";
+import { HospitalCard } from "../components/cards";
 
 const AllHospitals = () => {
   const { allPublicHospital, loading } = useHospital();

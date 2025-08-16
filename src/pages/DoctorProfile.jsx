@@ -2,12 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { useDoctor } from "../context/DoctorContext";
+import { useAuth, useDoctor, useRating } from "../context";
 import { toast } from "sonner";
-import ConsultationLauncher from "../components/videoChat/ConsultationLauncher";
-import ReviewModal from "../modals/ReviewModal";
-import { useRating } from "../context/RatingContext";
+import { ConsultationLauncher } from "../components/videoChat";
+import { ReviewModal } from "../modals";
 
 const DoctorProfile = () => {
   const { slug } = useParams();
@@ -16,8 +14,10 @@ const DoctorProfile = () => {
   const { user, isAuthenticated } = useAuth();
   const { allDoctors, loading } = useDoctor();
   const [doctor, setDoctor] = useState(null);
+  const [openRatingModal, setOpenRatingModal] = useState(false);
   const [consultationType, setConsultationType] = useState("video");
-  const { addDoctorRating } = useRating();
+  const { addDoctorRating, updateDoctorRating, deleteDoctorRating } =
+    useRating();
 
   useEffect(() => {
     window.requestAnimationFrame(() => {
@@ -41,6 +41,17 @@ const DoctorProfile = () => {
 
   const handleRatingOnly = ({ rating }) => {
     addDoctorRating({ rating: rating }, doctor._id);
+    setOpenRatingModal(false);
+  };
+
+  const handleUpdateRating = ({ rating }) => {
+    updateDoctorRating({ rating: rating }, doctor._id);
+    setOpenRatingModal(false);
+  };
+
+  const handleDeleteRating = () => {
+    deleteDoctorRating(doctor._id);
+    setOpenRatingModal(false);
   };
 
   if (loading) {
@@ -131,11 +142,16 @@ const DoctorProfile = () => {
                     Add Rating
                   </button>
                 }
+                showActionButtons={true}
                 mode='rating-only'
                 onSubmit={handleRatingOnly}
+                onUpdate={handleUpdateRating}
+                onDelete={handleDeleteRating}
+                open={openRatingModal}
+                onOpenChange={setOpenRatingModal}
                 title='Rate this Service'
                 description='Tap the stars to leave a quick rating'
-                submitLabel='Send Rating'
+                submitLabel='Add Rating'
               />
             </div>
 

@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import InputField from "../components/formItems/InputField";
-import { useDoctor } from "../context/context";
-import Modal from "../modals/Modal";
+import { useDoctor } from "../context";
 import { toast } from "sonner";
+import { InputField } from "../components/formItems";
+import { Modal } from "../modals";
 
 const CurrentDoctorProfile = () => {
   const { doctor, logout, DoctorProfileUpdate, UpdateProfilePic } = useDoctor();

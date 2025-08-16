@@ -1,5 +1,4 @@
 /** @format */
-import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,7 +6,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../components/ui/dialog";
+} from "../components/ui";
+import React, { useState, useEffect } from "react";
 
 const ReviewModal = ({
   mode = "rating-and-review",
@@ -17,6 +17,8 @@ const ReviewModal = ({
   initialRating = 0,
   initialReview = "",
   onSubmit = () => {},
+  onUpdate = () => {},
+  onDelete = () => {},
   title = "Leave a Review",
   description = "",
   submitLabel = "Submit",
@@ -44,6 +46,14 @@ const ReviewModal = ({
 
   const handleSubmit = async () => {
     onSubmit({ rating, review: review.trim() });
+  };
+
+  const handleUpdate = async () => {
+    onUpdate({ rating, review: review.trim() });
+  };
+
+  const handleDelete = async () => {
+    onDelete();
   };
 
   const Star = ({ index }) => {
@@ -136,6 +146,28 @@ const ReviewModal = ({
             className='px-4 py-2 rounded-md text-sm bg-gray-100 hover:bg-gray-200 transition'
             disabled={submitting}>
             Cancel
+          </button>
+          <button
+            type='button'
+            onClick={handleDelete}
+            disabled={submitting}
+            className={`px-4 py-2 rounded-md text-sm text-white transition ${
+              submitting
+                ? "bg-red-300 cursor-not-allowed"
+                : "bg-red-600 hover:bg-red-700"
+            }`}>
+            Delete
+          </button>
+          <button
+            type='button'
+            onClick={handleUpdate}
+            disabled={!rating || submitting}
+            className={`px-4 py-2 rounded-md text-sm text-white transition ${
+              !rating || submitting
+                ? "bg-blue-300 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}>
+            Update
           </button>
           <button
             type='button'

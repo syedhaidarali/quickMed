@@ -2,12 +2,12 @@
 
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import InputField from "../components/formItems/InputField";
-import { formatCNIC } from "../helpers/CNICFormat";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "../context/AuthContext";
-import { userFormSchema } from "../schemas/userFormSchema";
+import { useAuth } from "../context";
+import { InputField } from "../components/formItems";
+import { formatCNIC } from "../helpers";
+import { userFormSchema } from "../schemas";
 
 const Register = () => {
   const navigate = useNavigate();

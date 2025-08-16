@@ -1,6 +1,6 @@
 /** @format */
 
-import { useHospital } from "../context/HospitalContext";
+import { useHospital } from "../context";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 

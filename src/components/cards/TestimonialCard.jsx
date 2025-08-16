@@ -42,7 +42,7 @@ const TestimonialCard = ({ testimonial }) => {
 
   return (
     <article
-      className='bg-white rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 max-w-md mx-auto flex flex-col'
+      className='bg-white rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 max-w-md mx-auto flex flex-col h-full min-h-[280px]'
       aria-label={`Testimonial from ${name}`}>
       {/* quote icon */}
       <div className='flex items-start justify-between mb-4'>
@@ -56,7 +56,11 @@ const TestimonialCard = ({ testimonial }) => {
               loading='lazy'
             />
           ) : (
-            <div></div>
+            <div className='w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center'>
+              <span className='text-emerald-600 font-semibold text-lg'>
+                {name.charAt(0).toUpperCase()}
+              </span>
+            </div>
           )}
 
           {/* name & rating */}
@@ -82,20 +86,27 @@ const TestimonialCard = ({ testimonial }) => {
       </div>
 
       {/* testimonial body */}
-      <blockquote className='relative text-gray-800 italic text-sm sm:text-base mb-6'>
+      <blockquote className='relative text-gray-800 italic text-sm sm:text-base mb-6 flex-grow'>
         <span
           className='absolute -top-4 -left-3 text-4xl text-emerald-100'
           aria-hidden='true'>
-          “
+          "
         </span>
-        <p className='pl-4'>{description}</p>
+        <p className='pl-4'>
+          {description ? (
+            description
+          ) : (
+            <span className='text-gray-400 italic'>
+              "Great experience with QuickMed platform!"
+            </span>
+          )}
+        </p>
       </blockquote>
+
       {/* status pill */}
-      <div>
+      <div className='mt-auto'>
         <StatusPill level={satisfactionLevel} />
       </div>
-
-      {/* footer / actions */}
     </article>
   );
 };

@@ -1,10 +1,8 @@
 /** @format */
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useAdmin } from "../context";
 import { useNavigate } from "react-router-dom";
-import AdminStatsCards from "../components/admin/AdminStatsCards";
-import ReviewTable from "../components/admin/ReviewTable";
-import { useAdmin } from "../context/AdminContext";
-import AdminHeader from "../components/admin/AdminHeader";
+import { AdminHeader, AdminStatsCards, ReviewTable } from "../components/admin";
 
 const AdminDashboard = () => {
   const {

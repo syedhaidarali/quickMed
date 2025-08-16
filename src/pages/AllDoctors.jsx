@@ -1,9 +1,8 @@
 /** @format */
 
 import React from "react";
-import { doctors } from "../assets/dummy";
-import DoctorCard from "../components/cards/DoctorCards";
-import { useDoctor } from "../context/DoctorContext";
+import { useDoctor } from "../context";
+import { DoctorCard } from "../components/cards";
 
 const AllDoctors = () => {
   const { allDoctors } = useDoctor();

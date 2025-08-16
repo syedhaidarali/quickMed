@@ -1,9 +1,9 @@
 /** @format */
 import React, { useState, useEffect } from "react";
 import { UploadCloud, UserCircle, CheckCircle } from "lucide-react";
-import Modal from "../modals/Modal";
-import { useDoctor } from "../context/DoctorContext";
+import { useDoctor } from "../context";
 import { useNavigate } from "react-router-dom";
+import { Modal } from "../modals";
 
 const DoctorDocumentUpload = () => {
   const [documents, setDocuments] = useState(null);

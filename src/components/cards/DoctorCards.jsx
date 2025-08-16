@@ -1,11 +1,9 @@
 /** @format */
 
-import { useDoctor } from "../../context/DoctorContext";
-import { useAuth } from "../../context/AuthContext";
+import { useDoctor, useAuth, useAdmin } from "../../context";
 import Modal from "../../modals/Modal";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAdmin } from "../../context/AdminContext";
 
 const DoctorCard = ({ doctor }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,7 +59,7 @@ const DoctorCard = ({ doctor }) => {
           </div>
         </div>
 
-        <div className='flex items-center justify-between text-sm'>
+        <div className='flex items-center justify-between gap-7 text-sm'>
           <span className='text-gray-600'>Hospital:</span>
           <div className='flex items-center gap-1 text-gray-500 text-xs'>
             🏥 {doctor.hospital || "Not specified"}

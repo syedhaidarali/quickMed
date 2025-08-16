@@ -1,13 +1,12 @@
 /** @format */
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import InputField from "../components/formItems/InputField";
-import { useAuth } from "../context/AuthContext";
+import { useAuth, useDoctor } from "../context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { doctorLoginSchema } from "../schemas/doctorLoginSchema";
-import Modal from "../modals/Modal";
-import { useDoctor } from "../context/DoctorContext";
+import { InputField } from "../components/formItems";
+import { doctorLoginSchema } from "../schemas";
+import { Modal } from "../modals";
 
 const DoctorLogin = () => {
   const [activeTab, setActiveTab] = useState("email");

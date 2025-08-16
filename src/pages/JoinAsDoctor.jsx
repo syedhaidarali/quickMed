@@ -1,8 +1,8 @@
 /** @format */
 import React from "react";
-import DoctorFormFields from "../components/forms/DoctorFormFields";
 import { Link } from "react-router-dom";
-import { useFormHandler } from "../hooks/useFormHandler";
+import DoctorFormFields from "../components/forms/DoctorFormFields";
+import { useFormHandler } from "../hooks";
 const JoinAsDoctor = () => {
   const {
     handleSubmit,

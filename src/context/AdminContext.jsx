@@ -1,9 +1,9 @@
 /** @format */
 
 import { toast } from "sonner";
-import { adminService } from "../services/adminService";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { removeHeaders, setHeaders } from "../helpers/auth.helper";
+import { removeHeaders, setHeaders } from "../helpers";
+import { adminService } from "../services";
 
 const AdminContext = createContext();
 
@@ -20,9 +20,6 @@ export const AdminProvider = ({ children }) => {
 
   const [statistics, setStatistics] = useState(null);
   const [hospitalStatistics, setHospitalStatistics] = useState(null);
-
-  console.log(statistics, "sssssssssss");
-  console.log(hospitalStatistics, "ssssssssssssss");
 
   // scoped loading/error
   const [loading, setLoading] = useState({});

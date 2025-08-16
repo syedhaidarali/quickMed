@@ -2,13 +2,8 @@
 
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { DropdownIcon } from "../../assets/svg"; // same icon path you used
-import { useHospital } from "../../context/HospitalContext";
-
-/**
- * Shows cities only (no counts). Only the top "All Hospitals (City wise)"
- * link keeps a bottom border; city items have no border and no number.
- */
+import { DropdownIcon } from "../../assets/svg";
+import { useHospital } from "../../context";
 
 const slugify = (text = "") =>
   text

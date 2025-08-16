@@ -2,9 +2,9 @@
 
 import React from "react";
 import { useParams } from "react-router-dom";
-import DoctorCard from "../components/cards/DoctorCards";
-import { useDoctor } from "../context/DoctorContext";
+import { useDoctor } from "../context";
 import { specialitiesEnglish } from "../assets/dummy";
+import { DoctorCard } from "../components/cards";
 
 const DoctorDetail = () => {
   const { allDoctors } = useDoctor();

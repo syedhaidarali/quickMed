@@ -2,10 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { useDoctor } from "../context/DoctorContext";
+import { useAuth, useDoctor } from "../context";
 import { toast } from "sonner";
-import ConsultationLauncher from "../components/videoChat/ConsultationLauncher";
+import { ConsultationLauncher } from "../components/videoChat";
 
 const BookNow = () => {
   const { slug } = useParams();

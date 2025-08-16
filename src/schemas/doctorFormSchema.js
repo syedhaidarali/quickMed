@@ -1,6 +1,6 @@
 /** @format */
+import { validateCNIC } from "../helpers";
 import { z } from "zod";
-import { validateCNIC } from "../helpers/CNICFormat";
 
 // Custom CNIC validation function for Zod
 const cnicSchema = z.string().refine((value) => validateCNIC(value), {

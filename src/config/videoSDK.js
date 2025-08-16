@@ -1,6 +1,4 @@
 /** @format */
-
-// config/videoSDK.js - Enhanced VideoSDK Configuration with Server-Side Token Support
 import axios from "axios";
 
 // VideoSDK Configuration

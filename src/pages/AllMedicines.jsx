@@ -2,7 +2,7 @@
 
 import React from "react";
 import { medicines } from "../assets/dummy";
-import MedicineCard from "../components/cards/MedicineCard";
+import { MedicineCard } from "../components/cards";
 
 const AllMedicines = () => (
   <div className='min-h-[60vh] bg-emerald-50 py-16 px-4'>

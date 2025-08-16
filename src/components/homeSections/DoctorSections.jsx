@@ -1,7 +1,7 @@
 /** @format */
 
 import React from "react";
-import { useDoctor } from "../../context/DoctorContext";
+import { useDoctor } from "../../context";
 import DoctorCard from "../cards/DoctorCards";
 
 const DoctorSections = () => {

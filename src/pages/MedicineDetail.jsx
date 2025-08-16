@@ -3,7 +3,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { medicines } from "../assets/dummy";
-import MedicineCard from "../components/cards/MedicineCard";
+import { MedicineCard } from "../components/cards";
 
 const MedicineDetail = () => {
   const { slug } = useParams();

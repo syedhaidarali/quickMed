@@ -1,8 +1,8 @@
 /** @format */
 
 // context/DoctorContext.jsx
-import { doctorService } from "../services/doctorService";
-import { removeHeaders, setHeaders } from "../helpers/auth.helper";
+import { removeHeaders, setHeaders } from "../helpers";
+import { doctorService } from "../services";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 import { toast } from "sonner";

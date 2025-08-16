@@ -1,7 +1,8 @@
 /** @format */
 
-import { aiRecommendationApi } from "../api/aiRecommendation.api";
+import { aiRecommendationApi } from "../api";
 
 export const aiRecommendationService = {
-  getDoctorRecommendations: (symptoms) => aiRecommendationApi.getDoctorRecommendations(symptoms),
+  getDoctorRecommendations: (symptoms) =>
+    aiRecommendationApi.getDoctorRecommendations(symptoms),
 };

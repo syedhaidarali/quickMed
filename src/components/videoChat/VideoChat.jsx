@@ -2,8 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
-import { useAuth } from "../../context/AuthContext";
-import { useDoctor } from "../../context/DoctorContext";
+import { useAuth, useDoctor } from "../../context";
 import {
   MeetingProvider,
   useMeeting,

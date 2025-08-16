@@ -1,51 +1,34 @@
 /** @format */
 
-import React, { useState } from "react";
-import QuickHelpModal from "./QuickHelpModal";
+import React from "react";
+import { useQuickHelp } from "../../context";
 import { Stethoscope, Sparkles } from "lucide-react";
 
-const QuickHelpButton = ({ className = "", variant = "default" }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const QuickHelpButton = ({ className = "", size = "default" }) => {
+  const { openModal } = useQuickHelp();
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const sizeClasses = {
+    small: "w-10 h-10",
+    default: "w-12 h-12",
+    large: "w-14 h-14",
+  };
 
-  if (variant === "floating") {
-    return (
-      <>
-        <button
-          onClick={openModal}
-          className='fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-full shadow-lg transition-all duration-300 hover:scale-110 group'
-          title='Quick Help - Get AI Doctor Recommendations'>
-          <div className='relative'>
-            <Stethoscope className='w-6 h-6' />
-            <Sparkles className='absolute -top-1 -right-1 w-4 h-4 text-yellow-300 animate-pulse' />
-          </div>
-        </button>
-
-        <QuickHelpModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-        />
-      </>
-    );
-  }
+  const iconSizes = {
+    small: "w-5 h-5",
+    default: "w-6 h-6",
+    large: "w-7 h-7",
+  };
 
   return (
-    <>
-      <button
-        onClick={openModal}
-        className={`inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors duration-200 font-medium ${className}`}>
-        <Stethoscope className='w-4 h-4' />
-        <span>Quick Help</span>
-        <Sparkles className='w-4 h-4 text-yellow-300' />
-      </button>
-
-      <QuickHelpModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-      />
-    </>
+    <button
+      onClick={openModal}
+      className={`${sizeClasses[size]} ${className} fixed bottom-6 right-6 bg-gradient-to-r from-emerald-500 to-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center z-40`}
+      aria-label='Open AI Health Assistant'>
+      <div className='relative'>
+        <Stethoscope className={iconSizes[size]} />
+        <Sparkles className='absolute -top-1 -right-1 w-3 h-3 text-yellow-300 animate-pulse' />
+      </div>
+    </button>
   );
 };
 

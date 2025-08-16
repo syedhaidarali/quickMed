@@ -3,12 +3,15 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
-import { AuthProvider } from "./context/AuthContext.jsx";
-import AppRoutes from "./Routes.jsx";
-import { DoctorProvider } from "./context/context.js";
-import { HospitalProvider } from "./context/HospitalContext.jsx";
-import { AdminProvider } from "./context/AdminContext.jsx";
-import { RatingProvider } from "./context/RatingContext.jsx";
+import {
+  AuthProvider,
+  DoctorProvider,
+  HospitalProvider,
+  AdminProvider,
+  RatingProvider,
+  QuickHelpProvider,
+} from "./context";
+import AppRoutes from "./Routes";
 
 function App() {
   return (
@@ -17,9 +20,11 @@ function App() {
         <DoctorProvider>
           <AuthProvider>
             <RatingProvider>
-              <BrowserRouter basename='/quickMed'>
-                <AppRoutes />
-              </BrowserRouter>
+              <QuickHelpProvider>
+                <BrowserRouter basename='/quickMed'>
+                  <AppRoutes />
+                </BrowserRouter>
+              </QuickHelpProvider>
             </RatingProvider>
           </AuthProvider>
         </DoctorProvider>

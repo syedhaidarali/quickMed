@@ -1,6 +1,6 @@
 /** @format */
 
-import { ratingApi } from "../api/rating.api";
+import { ratingApi } from "../api";
 
 export const ratingService = {
   getPlatformRatings: () => ratingApi.getPlatformRatings(),
@@ -11,7 +11,7 @@ export const ratingService = {
   addPlatformRating: (newRating) => ratingApi.addPlatformRating(newRating),
 
   updateDoctorRating: (doctorId, newRating) => {
-    return ratingApi.updateProfile(doctorId, newRating);
+    return ratingApi.updateDoctorRating(doctorId, newRating);
   },
 
   updatePlatformRating: (newRating) => {
@@ -19,9 +19,9 @@ export const ratingService = {
   },
 
   deleteDoctorRating: (doctorId) => {
-    return ratingApi.updatePlatformRating(doctorId);
+    return ratingApi.deleteDoctorRating(doctorId);
   },
-  deletePlatformRating: (doctorId) => {
-    return ratingApi.updatePlatformRating(doctorId);
+  deletePlatformRating: () => {
+    return ratingApi.deletePlatformRating();
   },
 };

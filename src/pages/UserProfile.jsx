@@ -1,10 +1,10 @@
 /** @format */
 
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context";
 import { toast } from "sonner";
-import InputField from "../components/formItems/InputField";
-import { formatCNIC } from "../helpers/CNICFormat";
+import { formatCNIC } from "../helpers";
+import { InputField } from "../components/formItems";
 
 const UserProfile = () => {
   const { user, loading, signOut } = useAuth();

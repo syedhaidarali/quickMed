@@ -1,7 +1,7 @@
 /** @format */
 
+import { hospitalService } from "../services";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { hospitalService } from "../services/hospitalService";
 import { toast } from "sonner";
 
 const HospitalContext = createContext();

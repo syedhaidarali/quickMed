@@ -1,15 +1,12 @@
 /** @format */
 
 import React, { useState } from "react";
-import SearchBar from "../formItems/SearchBar";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import { FaUserMd } from "react-icons/fa";
-import { useAuth } from "../../context/AuthContext";
-import { useDoctor } from "../../context/DoctorContext";
-import { useAdmin } from "../../context/AdminContext";
+import { useAuth, useDoctor, useAdmin } from "../../context";
 import { QuickHelpButton } from "../QuickHelp";
+import { SearchBar } from "../formItems";
 
-// Animate the map center when coords change
 function AnimateMapCenter({ coords }) {
   const map = useMap();
   React.useEffect(() => {

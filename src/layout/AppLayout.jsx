@@ -4,9 +4,9 @@ import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import { Outlet } from "react-router-dom";
-import LoadingSpinner from "../components/ui/LoadingSpinner";
-import { useAdmin } from "../context/AdminContext";
-import { QuickHelpButton } from "../components/QuickHelp";
+import { useAdmin } from "../context";
+import { QuickHelpButton, QuickHelpModal } from "../components/QuickHelp";
+import { LoadingSpinner } from "../components/ui";
 
 const AppLayout = () => {
   const { loading } = useAdmin();
@@ -20,7 +20,8 @@ const AppLayout = () => {
         <Outlet />
       </main>
       <Footer />
-      <QuickHelpButton variant='floating' />
+      <QuickHelpButton />
+      <QuickHelpModal />
     </div>
   );
 };
