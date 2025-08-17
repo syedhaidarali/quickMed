@@ -3,6 +3,7 @@ import React from "react";
 import {
   DEGREE_OPTIONS,
   GENDERS,
+  RELIGIONS,
   REGISTERED_HOSPITALS,
 } from "../../assets/dummy";
 import {
@@ -11,6 +12,7 @@ import {
   MultiSelectSpecialty,
   SearchableDropdown,
 } from "../formItems";
+import { useHospital } from "../../context";
 
 const DoctorFormFields = ({
   values = {},
@@ -24,10 +26,17 @@ const DoctorFormFields = ({
   options = {},
   include = {},
 }) => {
+  const { allPublicHospital } = useHospital();
   const opt = {
     degreeOptions: options.degreeOptions || DEGREE_OPTIONS,
     genders: options.genders || GENDERS,
-    hospitals: options.hospitals || REGISTERED_HOSPITALS,
+    religions: options.religions || RELIGIONS,
+    hospitals:
+      allPublicHospital
+        ?.map((h) => h.name)
+        .filter((name, index, arr) => arr.indexOf(name) === index) ||
+      options.hospitals ||
+      REGISTERED_HOSPITALS,
   };
 
   const show = {
@@ -108,6 +117,24 @@ const DoctorFormFields = ({
         )}
       </div>
 
+      {/* Religion */}
+      <div>
+        <label className='block text-emerald-700 font-medium mb-1'>
+          Religion
+        </label>
+        <Dropdown
+          options={opt.religions}
+          value={values.religion || ""}
+          onChange={(val) => onDropdownChange?.("religion", val)}
+          placeholder='Select Religion'
+        />
+        {errors.religion && (
+          <p className='text-red-500 text-xs mt-1'>
+            {errors.religion?.message || errors.religion}
+          </p>
+        )}
+      </div>
+
       {/* Main Degree */}
       <div>
         <label className='block text-emerald-700 font-medium mb-1'>
@@ -153,12 +180,12 @@ const DoctorFormFields = ({
         <div>
           <label className='block text-emerald-700 font-medium mb-1'>
             Hospital
-            {values.hospital && (
+            {values.hospital && values.hospitalVerified && (
               <span className='ml-2 text-xs text-emerald-600 bg-emerald-100 px-2 py-1 rounded'>
                 ✓ Verified
               </span>
             )}
-            {values.hospital && !values.hospital && (
+            {values.hospital && !values.hospitalVerified && (
               <span className='ml-2 text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded'>
                 ⚠ New Hospital
               </span>
@@ -168,7 +195,6 @@ const DoctorFormFields = ({
             options={opt.hospitals}
             value={values.hospital || ""}
             onChange={(val) => onHospitalChange?.(val)}
-            onVerificationChange={(v) => onHospitalVerification?.(v)}
             registeredOptions={opt.hospitals}
             placeholder='Search hospitals or add new one...'
             allowAddNew
@@ -231,6 +257,28 @@ const DoctorFormFields = ({
         min={0}
         onlyNumbers
       />
+
+      {/* Availability */}
+      <div className='flex items-center space-x-2'>
+        <input
+          type='checkbox'
+          id='availability'
+          name='availability'
+          checked={values.availability || false}
+          onChange={onInputChange?.("availability")}
+          className='h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded'
+        />
+        <label
+          htmlFor='availability'
+          className='text-emerald-700 font-medium'>
+          Available for Consultations
+        </label>
+      </div>
+      {errors.availability && (
+        <p className='text-red-500 text-xs mt-1'>
+          {errors.availability?.message || errors.availability}
+        </p>
+      )}
 
       {/* PMDC Number */}
       <InputField

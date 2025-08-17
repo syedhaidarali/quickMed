@@ -2,7 +2,7 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./layout/AppLayout.jsx";
-import AuthLayout from "./layout/AuthLayout.jsx"; // Create this if not present
+import AuthLayout from "./layout/AuthLayout.jsx";
 import {
   Home,
   Login,
@@ -31,6 +31,11 @@ import {
   UserProfile,
   CurrentDoctorProfile,
   HospitalProfile,
+  ForgotPassword,
+  ResetPassword,
+  ChangePassword,
+  CurrentHospital,
+  Chat,
 } from "./pages";
 import { useAdmin, useAuth, useDoctor } from "./context";
 
@@ -66,6 +71,14 @@ const AppRoutes = () => (
         element={<AllHospitals />}
       />
       <Route
+        path='/user/message'
+        element={<Chat />}
+      />
+      <Route
+        path='/doctor/messages'
+        element={<Chat />}
+      />
+      <Route
         path='/labs'
         element={<AllLabs />}
       />
@@ -92,6 +105,10 @@ const AppRoutes = () => (
       <Route
         path='/register/hospital'
         element={<JoinAsHospital />}
+      />
+      <Route
+        path='/hospital/profile'
+        element={<CurrentHospital />}
       />
       <Route
         path='/doctor/profile/'
@@ -174,6 +191,18 @@ const AppRoutes = () => (
       <Route
         path='/register'
         element={<Register />}
+      />
+      <Route
+        path='/forgot-password'
+        element={<ForgotPassword />}
+      />
+      <Route
+        path='/reset-password'
+        element={<ResetPassword />}
+      />
+      <Route
+        path='/change-password'
+        element={<ChangePassword />}
       />
     </Route>
   </Routes>

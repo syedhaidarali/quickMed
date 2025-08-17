@@ -41,10 +41,12 @@ export const doctorFormSchema = z
       .regex(phoneRegex, "Please provide a valid phone number")
       .length(11, "Phone number must be exactly 11 digits"),
 
-    gender: z.enum(["Male", "Female"], {
+    gender: z.enum(["Male", "Female", "Other"], {
       required_error: "Gender is required",
-      invalid_type_error: "Gender must be either Male or Female",
+      invalid_type_error: "Gender must be either Male, Female, or Other",
     }),
+
+    religion: z.string().min(1, "Religion is required").trim(),
 
     // Professional Information
     pmdcNumber: z
@@ -121,6 +123,7 @@ export const doctorFormSchema = z
 
     // Backend fields (won't be validated on frontend)
     hospitalVerified: z.boolean().default(false),
+    hospitalId: z.string().nullable().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -134,6 +137,7 @@ export const defaultValues = {
   speciality: [],
   phone: "",
   gender: undefined,
+  religion: "",
   pmdcNumber: "",
   mainDegree: "",
   fullAddress: "",
@@ -145,5 +149,6 @@ export const defaultValues = {
   confirmPassword: "",
   agreement: false,
   hospitalVerified: false,
+  hospitalId: null,
   fee: undefined,
 };

@@ -5,8 +5,10 @@ import { useAuth } from "../context";
 import { toast } from "sonner";
 import { formatCNIC } from "../helpers";
 import { InputField } from "../components/formItems";
+import { useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
+  const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,8 +34,6 @@ const UserProfile = () => {
 
   const handleSave = async () => {
     try {
-      // Here you would typically call an API to update user profile
-      // For now, we'll just show a success message
       toast.success("Profile updated successfully!");
       setIsEditing(false);
     } catch (error) {
@@ -51,7 +51,7 @@ const UserProfile = () => {
   };
 
   const handleLogout = () => {
-    signOut();
+    signOut(navigate);
   };
 
   if (!user) {

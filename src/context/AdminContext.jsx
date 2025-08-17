@@ -62,6 +62,7 @@ export const AdminProvider = ({ children }) => {
       navigate("/admin/dashboard");
       return res;
     } catch (err) {
+      toast.error(err.response.data.data);
       setErrorKey("login", err);
       throw err;
     } finally {
@@ -195,80 +196,123 @@ export const AdminProvider = ({ children }) => {
 
   // ---------------- ACTIONS ----------------
   const approveDoctor = async (doctorId) => {
-    await adminService.approveDoctor(doctorId);
-    toast.success("Doctor approved successfully");
-    await refreshAllData();
+    try {
+      await adminService.approveDoctor(doctorId);
+      toast.success("Doctor approved successfully");
+      await refreshAllData();
+    } catch (err) {
+      toast.error(err.response.data.data);
+    }
   };
 
   const approveHospital = async (hospitalId) => {
-    await adminService.approveHospital(hospitalId);
-    toast.success("Hospital approved successfully");
-    await refreshAllData();
+    try {
+      await adminService.approveHospital(hospitalId);
+      toast.success("Hospital approved successfully");
+      await refreshAllData();
+    } catch (err) {
+      toast.error(err.response.data.data);
+    }
   };
 
   const rejectDoctor = async (doctorId) => {
-    await adminService.rejectDoctor(doctorId);
-    toast.success("Doctor rejected successfully");
-    await refreshAllData();
+    try {
+      await adminService.rejectDoctor(doctorId);
+      toast.success("Doctor rejected successfully");
+      await refreshAllData();
+    } catch (err) {
+      toast.error(err.response.data.data);
+    }
   };
 
   const rejectHospital = async (hospitalId, reason) => {
-    await adminService.rejectHospital(hospitalId, reason);
-    toast.success("Hospital rejected successfully");
-    await refreshAllData();
+    try {
+      await adminService.rejectHospital(hospitalId, reason);
+      toast.success("Hospital rejected successfully");
+      await refreshAllData();
+    } catch (err) {
+      toast.error(err.response.data.data);
+    }
   };
 
   const doctorAction = async (doctorId, action) => {
-    await adminService.doctorAction(doctorId, action);
-    toast.success("Doctor action updated successfully");
+    try {
+      await adminService.doctorAction(doctorId, action);
+      toast.success("Doctor action updated successfully");
+    } catch (err) {
+      toast.error(err.response.data.data);
+    }
   };
 
   const HospitalAction = async (hospitalId, action) => {
-    await adminService.hospitalAction(hospitalId, action);
-    toast.success("Hospital action updated successfully");
+    try {
+      await adminService.hospitalAction(hospitalId, action);
+      toast.success("Hospital action updated successfully");
+    } catch (err) {
+      toast.error(err.response.data.data);
+    }
   };
 
   const DoctorDocumentUpload = async (formData, doctorId) => {
-    const res = await adminService.uploadDocuments(formData, doctorId);
-    toast.success("Doctor documents uploaded");
-    return res;
+    try {
+      const res = await adminService.uploadDocuments(formData, doctorId);
+      toast.success("Doctor documents uploaded");
+      return res;
+    } catch (err) {
+      toast.error(err.response.data.data);
+    }
   };
 
   const HospitalDocumentUpload = async (formData, hospitalId) => {
-    const res = await adminService.uploadHospitalsDocuments(
-      formData,
-      hospitalId
-    );
-    toast.success("Hospital documents uploaded");
-    return res;
+    try {
+      const res = await adminService.uploadHospitalsDocuments(
+        formData,
+        hospitalId
+      );
+      toast.success("Hospital documents uploaded");
+      return res;
+    } catch (err) {
+      toast.error(err.response.data.data);
+    }
   };
 
   const doctorProfilePicture = async (doctorId, formData) => {
-    await adminService.doctorProfilePicture(doctorId, formData);
-    toast.success("Doctor profile picture updated");
+    try {
+      await adminService.doctorProfilePicture(doctorId, formData);
+      toast.success("Doctor profile picture updated");
+    } catch (err) {
+      toast.error(err.response.data.data);
+    }
   };
 
   const hospitalProfilePicture = async (hospitalId, formData) => {
-    await adminService.hospitalProfilePicture(hospitalId, formData);
-    toast.success("Hospital profile picture updated");
+    try {
+      await adminService.hospitalProfilePicture(hospitalId, formData);
+      toast.success("Hospital profile picture updated");
+    } catch (err) {
+      toast.error(err.response.data.data);
+    }
   };
 
   const updateDoctorDetails = async (doctorId, data) => {
-    const res = await adminService.updateDoctorDetails(doctorId, data);
-    const updatedDoc = res?.data?.data?.doctor || {};
-    const mergeUpdate = (doc) => ({ ...doc, ...data, ...updatedDoc });
+    try {
+      const res = await adminService.updateDoctorDetails(doctorId, data);
+      const updatedDoc = res?.data?.data?.doctor || {};
+      const mergeUpdate = (doc) => ({ ...doc, ...data, ...updatedDoc });
 
-    setPendingDoctors((prev) =>
-      prev.map((doc) => (doc._id === doctorId ? mergeUpdate(doc) : doc))
-    );
-    setApprovedDoctors((prev) =>
-      prev.map((doc) => (doc._id === doctorId ? mergeUpdate(doc) : doc))
-    );
-    setRejectedDoctors((prev) =>
-      prev.map((doc) => (doc._id === doctorId ? mergeUpdate(doc) : doc))
-    );
-
-    toast.success("Doctor details updated");
+      setPendingDoctors((prev) =>
+        prev.map((doc) => (doc._id === doctorId ? mergeUpdate(doc) : doc))
+      );
+      setApprovedDoctors((prev) =>
+        prev.map((doc) => (doc._id === doctorId ? mergeUpdate(doc) : doc))
+      );
+      setRejectedDoctors((prev) =>
+        prev.map((doc) => (doc._id === doctorId ? mergeUpdate(doc) : doc))
+      );
+      toast.success("Doctor details updated");
+    } catch (err) {
+      toast.error(err.response.data.data);
+    }
   };
 
   // ---------------- INIT ----------------

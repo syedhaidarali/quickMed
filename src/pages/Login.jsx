@@ -115,6 +115,13 @@ const Login = () => {
             Register
           </Link>
         </div>
+        <div className='text-center'>
+          <Link
+            to='/forgot-password?type=auth'
+            className='ml-1 text-emerald-600 hover:underline font-medium'>
+            Forgot Password
+          </Link>
+        </div>
       </div>
       <Modal
         open={modalOpen}

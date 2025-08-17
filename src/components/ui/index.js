@@ -18,3 +18,21 @@ export {
   DialogTitle,
   DialogTrigger,
 } from "./dialog";
+export {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "./input-otp";
+export { Input } from "./input";
+export { ScrollArea, ScrollBar } from "./scroll-area";
+export { Avatar, AvatarFallback, AvatarImage } from "./avatar";
+export { Badge, badgeVariants } from "./badge";
+export {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./card";

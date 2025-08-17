@@ -28,3 +28,8 @@ export { default as AdminDashboard } from "./AdminDashboard.jsx";
 export { default as DoctorDocumentUpload } from "./DoctorDocumentUpload.jsx";
 export { default as CurrentDoctorProfile } from "./CurrentDoctorProfile.jsx";
 export { default as HospitalProfile } from "./HospitalProfile.jsx";
+export { default as ForgotPassword } from "./ForgotPassword.jsx";
+export { default as ResetPassword } from "./ResetPassword.jsx";
+export { default as ChangePassword } from "./ChangePassword.jsx";
+export { default as CurrentHospital } from "./CurrentHospital.jsx";
+export { default as Chat } from "./Chat.jsx";

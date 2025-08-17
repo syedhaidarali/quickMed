@@ -3,20 +3,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDoctor } from "../context";
+import { useDoctor, useHospital } from "../context";
 import { formatCNIC } from "../helpers";
 import { doctorFormSchema, defaultValues } from "../schemas/doctorFormSchema";
 
 export const useFormHandler = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const { DoctorSignUp, loading, error } = useDoctor();
+  const { allPublicHospital } = useHospital();
   const navigate = useNavigate();
   // Initialize React Hook Form with Zod resolver
   const form = useForm({
     resolver: zodResolver(doctorFormSchema),
     defaultValues,
-    mode: "onChange", // Validate on change for better UX
-    criteriaMode: "all", // Show all validation errors
+    mode: "onChange",
+    criteriaMode: "all",
   });
 
   const {
@@ -31,7 +32,6 @@ export const useFormHandler = () => {
     control, // Add control for better form management
   } = form;
 
-  // Watch form values for reactive updates
   const formValues = watch();
 
   // Specialized handlers for complex fields
@@ -50,6 +50,27 @@ export const useFormHandler = () => {
 
   const handleHospitalVerification = (isVerified) => {
     setValue("hospitalVerified", isVerified);
+  };
+
+  const handleHospitalSelection = (hospitalName) => {
+    // Get the hospital from allPublicHospital list
+    const selectedHospital = allPublicHospital?.find(
+      (h) => h.name === hospitalName
+    );
+
+    if (selectedHospital) {
+      // Hospital is from verified list
+      setValue("hospital", hospitalName, { shouldValidate: true });
+      setValue("hospitalId", selectedHospital._id);
+      setValue("hospitalVerified", true);
+      console.log("Set verified hospital:", selectedHospital._id);
+    } else {
+      // General/new hospital
+      setValue("hospital", hospitalName, { shouldValidate: true });
+      setValue("hospitalId", null);
+      setValue("hospitalVerified", false);
+      console.log("Set new hospital: null");
+    }
   };
 
   const handleDropdownChange = (fieldName, value) => {
@@ -79,6 +100,8 @@ export const useFormHandler = () => {
       fullAddress: backendData.fullAddress?.trim(),
       city: backendData.city?.trim() || "",
       hospital: backendData.hospital?.trim(),
+      hospitalId: backendData.hospitalId || null,
+      hospitalVerified: backendData.hospitalVerified || false,
       cnic: backendData.cnic?.trim(),
       experience: Number(backendData.experience),
       fee: Number(backendData.fee),
@@ -89,6 +112,8 @@ export const useFormHandler = () => {
   const onSubmit = async (formData) => {
     try {
       const backendData = prepareSubmissionData(formData);
+      console.log("Doctor Data", backendData);
+
       const result = await DoctorSignUp(backendData, navigate);
       if (result?.success) {
         setShowSuccess(true);
@@ -125,6 +150,7 @@ export const useFormHandler = () => {
     handleSpecialtyChange,
     handleHospitalChange,
     handleHospitalVerification,
+    handleHospitalSelection,
     handleDropdownChange,
     handleInputChange,
 

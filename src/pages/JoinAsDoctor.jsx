@@ -10,8 +10,7 @@ const JoinAsDoctor = () => {
     formValues,
     handleCnicChange,
     handleSpecialtyChange,
-    handleHospitalChange,
-    handleHospitalVerification,
+    handleHospitalSelection,
     handleDropdownChange,
     handleInputChange,
     resetForm,
@@ -73,8 +72,7 @@ const JoinAsDoctor = () => {
                   onInputChange={(field) => handleInputChange(field)}
                   onDropdownChange={handleDropdownChange}
                   onSpecialtyChange={handleSpecialtyChange}
-                  onHospitalChange={handleHospitalChange}
-                  onHospitalVerification={handleHospitalVerification}
+                  onHospitalChange={handleHospitalSelection}
                   onCnicChange={handleCnicChange}
                 />
               </div>

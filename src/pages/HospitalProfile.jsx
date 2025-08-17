@@ -10,7 +10,7 @@ const HospitalProfile = () => {
   const { slug } = useParams();
   useEffect(() => {
     if (allPublicHospital && allPublicHospital.length > 0) {
-      const hospitalId = slug.split("-").pop(); // Get the ID part from slug
+      const hospitalId = slug.split("-").pop();
       const foundHospital = allPublicHospital.find(
         (hos) => hos._id === hospitalId
       );

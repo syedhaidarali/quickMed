@@ -147,7 +147,7 @@ export const hospitalFormSchema = z
         "Only JPEG, PNG and JPG images are allowed"
       ),
 
-    image: z
+    documents: z
       .any()
       .refine((file) => file instanceof File, "Hospital documents is required")
       .refine(
@@ -159,7 +159,6 @@ export const hospitalFormSchema = z
           file && ["image/jpeg", "image/png", "image/jpg"].includes(file.type),
         "Only JPEG, PNG and JPG images are allowed"
       ),
-
     // Agreement
     agreement: z
       .boolean()

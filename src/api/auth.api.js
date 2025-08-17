@@ -13,5 +13,7 @@ export const authApi = {
 
   resetPassword: (data) => request.post("/auth/reset-password", data),
 
+  changePassword: (data) => request.put("/auth/change-password", data),
+
   singleUser: (userId) => request.get(`/auth/${userId}`),
 };

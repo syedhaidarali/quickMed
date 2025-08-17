@@ -73,8 +73,8 @@ export const useHospitalFormHandler = () => {
   const handleDocumentChange = (input) => {
     const file = input?.target?.files ? input.target.files[0] : input;
     if (file instanceof File) {
-      setValue("document", file, { shouldValidate: true });
-      clearErrors("image");
+      setValue("documents", file, { shouldValidate: true });
+      clearErrors("documents");
     }
   };
 
@@ -94,8 +94,7 @@ export const useHospitalFormHandler = () => {
   // Form submission handler
   const onSubmit = async (formData) => {
     // Remove confirmPassword before sending to backend
-    const { confirmPassword, documents, agreement, ...dataForBackend } =
-      formData;
+    const { confirmPassword, agreement, ...dataForBackend } = formData;
     await HospitalSignUp(dataForBackend, navigate);
   };
   // Reset form and success state

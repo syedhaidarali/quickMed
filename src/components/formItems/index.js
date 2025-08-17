@@ -10,3 +10,4 @@ export { default as Dropdown } from "./Dropdown";
 export { default as MultiSelectSpecialty } from "./MultiSelectSpecialty";
 export { default as SearchableDropdown } from "./SearchableDropdown";
 export { default as SearchBar } from "./SearchBar";
+export { default as OTPInput } from "./OTPInput";

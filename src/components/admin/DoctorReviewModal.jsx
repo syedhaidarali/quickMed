@@ -64,9 +64,9 @@ const DoctorReviewModal = ({
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
   const [error, setError] = useState("");
   const [documents, setDocuments] = useState(doctor.documents || []);
+  const [documentUploadLoading, setDocumentUploadLoading] = useState(false);
   const {
     DoctorDocumentUpload,
-    loading,
     doctorProfilePicture,
     updateDoctorDetails,
     doctorAction,
@@ -189,10 +189,17 @@ const DoctorReviewModal = ({
     event.preventDefault();
     const file = event.target.files[0];
     if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      const formData = new FormData();
-      formData.append("documents", file); // profile image
-      await DoctorDocumentUpload(formData, doctor._id);
+      setDocumentUploadLoading(true);
+      try {
+        const previewUrl = URL.createObjectURL(file);
+        const formData = new FormData();
+        formData.append("documents", file); // profile image
+        await DoctorDocumentUpload(formData, doctor._id);
+      } catch (error) {
+        console.error("Document upload failed:", error);
+      } finally {
+        setDocumentUploadLoading(false);
+      }
     }
   };
 
@@ -707,8 +714,8 @@ const DoctorReviewModal = ({
               onClick={() =>
                 fileInputRef.current && fileInputRef.current.click()
               }
-              disabled={loading}>
-              {loading ? "Uploading..." : "Add Documents"}
+              disabled={documentUploadLoading}>
+              {documentUploadLoading ? "Uploading..." : "Add Documents"}
             </button>
             {error && <p className='text-sm text-red-600'>{error}</p>}
           </div>

@@ -36,16 +36,20 @@ const FileUpload = ({
   };
 
   const handleFiles = (files) => {
-    const validFiles = files.filter(file => {
+    const validFiles = files.filter((file) => {
       if (file.size > maxSize) {
-        alert(`File ${file.name} is too large. Maximum size is ${maxSize / 1000000}MB`);
+        alert(
+          `File ${file.name} is too large. Maximum size is ${
+            maxSize / 1000000
+          }MB`
+        );
         return false;
       }
       return true;
     });
 
     if (multiple) {
-      setSelectedFiles(prev => [...prev, ...validFiles]);
+      setSelectedFiles((prev) => [...prev, ...validFiles]);
       onChange(validFiles);
     } else {
       setSelectedFiles(validFiles);
@@ -79,47 +83,46 @@ const FileUpload = ({
 
   const getFileIcon = (file) => {
     if (file.type.startsWith("image/")) {
-      return <Image className="w-4 h-4" />;
+      return <Image className='w-4 h-4' />;
     }
-    return <FileText className="w-4 h-4" />;
+    return <FileText className='w-4 h-4' />;
   };
 
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">
+    <div className='space-y-2'>
+      <label className='block text-sm font-medium text-gray-700'>
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className='text-red-500 ml-1'>*</span>}
       </label>
-      
+
       <div
-                 className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-           dragActive
-             ? "border-emerald-400 bg-emerald-50"
-             : "border-gray-300 hover:border-gray-400"
-         } ${error ? "border-red-300 bg-red-50" : ""}`}
+        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+          dragActive
+            ? "border-emerald-400 bg-emerald-50"
+            : "border-gray-300 hover:border-gray-400"
+        } ${error ? "border-red-300 bg-red-50" : ""}`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
-        onDrop={handleDrop}
-      >
+        onDrop={handleDrop}>
         <input
-          type="file"
+          type='file'
           name={name}
           onChange={handleFileSelect}
           accept={accept}
           multiple={multiple}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          className='absolute inset-0 w-full h-full opacity-0 cursor-pointer'
         />
-        
-        <div className="space-y-2">
-          <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
-          <div className="text-sm text-gray-600">
-            <span className="font-medium text-emerald-600 hover:text-emerald-500">
+
+        <div className='space-y-2'>
+          <UploadCloud className='mx-auto h-12 w-12 text-gray-400' />
+          <div className='text-sm text-gray-600'>
+            <span className='font-medium text-emerald-600 hover:text-emerald-500'>
               Click to upload
             </span>{" "}
             or drag and drop
           </div>
-          <p className="text-xs text-gray-500">
+          <p className='text-xs text-gray-500'>
             {accept !== "*/*" && `Accepted formats: ${accept}`}
             <br />
             Max size: {maxSize / 1000000}MB
@@ -127,37 +130,33 @@ const FileUpload = ({
         </div>
       </div>
 
-      {error && (
-        <p className="text-sm text-red-600">{error}</p>
-      )}
+      {error && <p className='text-sm text-red-600'>{error}</p>}
 
       {/* File Preview */}
       {selectedFiles.length > 0 && (
-        <div className="space-y-2">
-          <h4 className="text-sm font-medium text-gray-700">Selected Files:</h4>
-          <div className="space-y-2">
+        <div className='space-y-2'>
+          <h4 className='text-sm font-medium text-gray-700'>Selected Files:</h4>
+          <div className='space-y-2'>
             {selectedFiles.map((file, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-              >
-                <div className="flex items-center space-x-3">
+                className='flex items-center justify-between p-3 bg-gray-50 rounded-lg'>
+                <div className='flex items-center space-x-3'>
                   {getFileIcon(file)}
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className='text-sm font-medium text-gray-900'>
                       {file.name}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className='text-xs text-gray-500'>
                       {formatFileSize(file.size)}
                     </p>
                   </div>
                 </div>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => removeFile(index)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <X className="w-4 h-4" />
+                  className='text-red-500 hover:text-red-700'>
+                  <X className='w-4 h-4' />
                 </button>
               </div>
             ))}

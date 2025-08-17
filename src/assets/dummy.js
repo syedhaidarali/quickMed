@@ -654,6 +654,7 @@ export const HOSPITAL_CATEGORIES = [
 ];
 
 export const GENDERS = ["Male", "Female", "Other"];
+export const RELIGIONS = ["Islam", "Christianity", "Hinduism", "Sikhism", "Buddhism", "Other"];
 export const DEGREE_OPTIONS = ["MBBS", "BDS"];
 export const cityCoordsMap = {
   Karachi: [24.86, 67.01],

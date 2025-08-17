@@ -15,7 +15,8 @@ export const RatingProvider = ({ children }) => {
       console.log(response.data.data);
       setRatings(response.data.data);
     } catch (error) {
-      toast.error("Failed to fetch ratings");
+      console.log(error);
+      // toast.error("Failed to fetch ratings");
     }
   };
 
@@ -67,7 +68,7 @@ export const RatingProvider = ({ children }) => {
       // setRatings((prev) => [...prev, data]);
       toast.success("Rating Deleted !");
     } catch (error) {
-      toast.error("Failed to add rating");
+      toast.error(error.response.data.data);
     }
   };
   const deletePlatformRating = async () => {

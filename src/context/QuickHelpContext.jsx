@@ -74,7 +74,7 @@ export const QuickHelpProvider = ({ children }) => {
         "I apologize, but I'm having trouble processing your request right now. Please try again in a moment."
       );
       setMessages((prev) => [...prev, errorMessage]);
-      toast.error("Failed to get recommendations. Please try again.");
+      toast.error(error.response.data.data);
     } finally {
       setLoading(false);
     }

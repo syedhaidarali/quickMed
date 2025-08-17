@@ -212,7 +212,7 @@ const Header = () => {
         <NavLink
           href={isAuthenticated ? "#" : "/register/hospital"}
           label='Register Hospital'
-          className={`flex items-center gap-2 px-4 py-2 bg-[#004d71] text-white rounded border border-[#004d71] font-medium hover:bg-[#014e78] transition-colors duration-150 ${
+          className={`flex items-center gap-2 px-4 py-2 bg-[#004d71] text-white rounded border border-[#004d71] font-medium hover:bg-sky-500 transition-colors duration-150 ${
             isAuthenticated ? "pointer-events-none opacity-50" : ""
           }`}
         />

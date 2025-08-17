@@ -115,6 +115,13 @@ const DoctorLogin = () => {
             Register
           </Link>
         </div>
+        <div className='text-center'>
+          <Link
+            className='ml-1 text-emerald-600 hover:underline font-medium'
+            to='/forgot-password?type=doctor'>
+            Forgot Password
+          </Link>
+        </div>
       </div>
       <Modal
         open={modalOpen}

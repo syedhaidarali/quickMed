@@ -13,5 +13,7 @@ export const authService = {
 
   resetPassword: (data) => authApi.resetPassword(data),
 
+  changePassword: (data) => authApi.changePassword(data),
+
   singleUser: (userId) => authApi.singleUser(userId),
 };

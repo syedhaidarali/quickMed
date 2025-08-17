@@ -89,6 +89,13 @@ const HospitalLogin = () => {
             Register
           </Link>
         </div>
+        <div className='text-center'>
+          <Link
+            to='/forgot-password?type=hospital'
+            className='ml-1 text-emerald-600 hover:underline font-medium'>
+            Forgot Password
+          </Link>
+        </div>
       </div>
     </div>
   );

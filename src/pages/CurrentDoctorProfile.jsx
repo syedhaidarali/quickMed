@@ -14,13 +14,11 @@ const CurrentDoctorProfile = () => {
   const [isMoreModalVisible, setIsMoreModalVisible] = useState(false);
   const [consultationCode, setConsultationCode] = useState("");
   const [pendingConsultations, setPendingConsultations] = useState([]);
+
   const [profileData, setProfileData] = useState({
     phone: doctor?.phone || "",
-    availability: Array.isArray(doctor?.availability)
-      ? doctor.availability
-      : doctor?.availability
-      ? [doctor.availability]
-      : [],
+    availability:
+      typeof doctor?.availability === "boolean" ? doctor.availability : true,
     fee: doctor?.fee || "",
     fullAddress: doctor?.fullAddress || "",
     experience: doctor?.experience || "",
@@ -58,10 +56,6 @@ const CurrentDoctorProfile = () => {
       toast.error("Please enter a consultation code");
       return;
     }
-
-    // Navigate to doctor consultation page
-    // The route expects: /doctor/consultation/:meetingId/:patientId
-    // For doctor joining, we'll use the meetingId and a placeholder for patientId
     navigate(`/doctor/consultation/${consultationCode}/patient_waiting`);
   };
 
@@ -281,29 +275,24 @@ const CurrentDoctorProfile = () => {
               <label className='font-medium text-emerald-700 mb-1 block'>
                 Availability
               </label>
-              <div className='grid grid-cols-2 gap-2'>
-                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
-                  (day) => (
-                    <label
-                      key={day}
-                      className='flex items-center'>
-                      <input
-                        type='checkbox'
-                        checked={profileData.availability.includes(day)}
-                        onChange={(e) =>
-                          setProfileData((prev) => ({
-                            ...prev,
-                            availability: e.target.checked
-                              ? [...prev.availability, day]
-                              : prev.availability.filter((d) => d !== day),
-                          }))
-                        }
-                        className='mr-2'
-                      />
-                      {day}
-                    </label>
-                  )
-                )}
+              <div className='flex items-center space-x-2'>
+                <input
+                  type='checkbox'
+                  id='availability'
+                  checked={profileData.availability}
+                  onChange={(e) =>
+                    setProfileData((prev) => ({
+                      ...prev,
+                      availability: e.target.checked,
+                    }))
+                  }
+                  className='h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded'
+                />
+                <label
+                  htmlFor='availability'
+                  className='text-emerald-700 font-medium'>
+                  Available for Consultations
+                </label>
               </div>
             </div>
 
@@ -356,9 +345,14 @@ const CurrentDoctorProfile = () => {
               </p>
               <p className='text-gray-700 mb-1'>
                 <b>Availability:</b>{" "}
-                {Array.isArray(doctor.availability)
-                  ? doctor.availability.join(", ")
-                  : doctor.availability || "Not specified"}
+                <span
+                  className={`px-2 py-1 rounded text-xs ${
+                    doctor.availability
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                  }`}>
+                  {doctor.availability ? "Available" : "Not Available"}
+                </span>
               </p>
               <p className='text-gray-700 mb-1'>
                 <b>PMDC Number:</b> {doctor.pmdcNumber}

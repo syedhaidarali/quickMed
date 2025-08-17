@@ -9,6 +9,12 @@ export const doctorService = {
 
   login: (credentials) => doctorApi.login(credentials),
 
+  forgotPassword: (data) => doctorApi.forgotPassword(data),
+
+  resetPassword: (data) => doctorApi.resetPassword(data),
+
+  changePassword: (data) => doctorApi.changePassword(data),
+
   updateProfile: (formData) => doctorApi.updateProfile(formData),
 
   uploadDocuments: (formData) => doctorApi.uploadDocuments(formData),

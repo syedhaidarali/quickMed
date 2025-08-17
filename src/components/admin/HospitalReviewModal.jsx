@@ -59,6 +59,7 @@ const HospitalReviewModal = ({
   const profileImageInputRef = React.useRef();
   const [profilePreviewUrl, setProfilePreviewUrl] = useState(null);
 
+  console.log(hospital, "hossssssssssssssssspital");
   React.useEffect(() => {
     setDocuments(hospital.documents || []);
   }, [hospital.documents, hospital]);
@@ -340,7 +341,7 @@ const HospitalReviewModal = ({
           </div>
 
           {/* Documents */}
-          <div className='space-y-4'>
+          {/* <div className='space-y-4'>
             <h3 className='text-lg font-semibold text-gray-900 border-b pb-2'>
               Documents ({documents?.length || 0})
             </h3>
@@ -399,7 +400,7 @@ const HospitalReviewModal = ({
               {loading ? "Uploading..." : "Add Documents"}
             </button>
             {error && <p className='text-sm text-red-600'>{error}</p>}
-          </div>
+          </div> */}
 
           {renderInfoSection("Timestamps", timestampFields)}
           {renderInfoSection("Rating", ratingFields)}

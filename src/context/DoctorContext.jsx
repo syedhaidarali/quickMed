@@ -68,19 +68,67 @@ export const DoctorProvider = ({ children }) => {
     }
   };
 
+  const DoctorForgotPassword = async (credentials, navigate) => {
+    console.log(credentials, "credentials");
+    setLoading(true);
+    try {
+      const { data } = await doctorService.forgotPassword(credentials);
+      toast.success("Password reset email sent");
+      if (navigate) {
+        navigate("/doctor/reset-password");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.data || "Failed to send reset email");
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const DoctorResetPassword = async (credentials, navigate) => {
+    console.log(credentials, "credentials");
+    setLoading(true);
+    try {
+      const { data } = await doctorService.resetPassword(credentials);
+      toast.success("Password reset successful");
+      if (navigate) {
+        navigate("/doctor/login");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.data || "Password reset failed");
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const DoctorChangePassword = async (credentials, navigate) => {
+    setLoading(true);
+    try {
+      const { data } = await doctorService.changePassword(credentials);
+      toast.success("Password changed successfully");
+      if (navigate) {
+        navigate("/doctor/profile");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.data || "Password change failed");
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const UpdateProfilePic = async (data) => {
     try {
       const result = await doctorService.updateProfile(data);
       toast.success(result.data.data.message);
       return result;
     } catch (err) {
-      console.log(err, "profile err");
-      toast.error(err?.message || "Update failed");
+      toast.error(err.response.data.data);
     }
   };
 
   const DoctorDocumentUpload = async (formData, navigate) => {
-    console.log("formdata", formData);
     setLoading(true);
     try {
       const result = await doctorService.uploadDocuments(formData);
@@ -90,22 +138,19 @@ export const DoctorProvider = ({ children }) => {
       toast.success("Documents Uploaded");
       return result;
     } catch (err) {
-      toast.error(err?.data || "Upload failed");
+      toast.error(err.response.data.data);
     } finally {
       setLoading(false);
     }
   };
 
   const DoctorProfileUpdate = async (data) => {
-    console.log(data);
     try {
       const result = await doctorService.updateDoctorProfile(data);
-      console.log(result);
-      toast.success(result.data.data.message);
+      toast.success("Doctor Profile Updated Successfully");
       return result;
     } catch (err) {
-      console.log(err, "profile err");
-      toast.error(err?.message || "Update failed");
+      toast.error(err.response.data.data);
     }
   };
 
@@ -116,16 +161,6 @@ export const DoctorProvider = ({ children }) => {
       return result;
     } catch (err) {
       console.log(err);
-    }
-  };
-
-  const DoctorRecommendationsApiSearch = async (prompt) => {
-    try {
-      const res = await doctorService.recommendationsApiSearch(prompt);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -143,12 +178,14 @@ export const DoctorProvider = ({ children }) => {
         error,
         DoctorLogin,
         DoctorSignUp,
+        DoctorForgotPassword,
+        DoctorResetPassword,
+        DoctorChangePassword,
         UpdateProfilePic,
         DoctorProfileUpdate,
         DoctorDocumentUpload,
         logout,
         allDoctors,
-        DoctorRecommendationsApiSearch,
       }}>
       {children}
     </DoctorContext.Provider>

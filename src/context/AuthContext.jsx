@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
         navigate("/");
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed");
+      toast.error(err.response?.data?.data || "Login failed");
       setError(err);
     } finally {
       setLoading(false);
@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }) => {
         navigate("/login");
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Signup failed");
+      toast.error(err?.response?.data?.data || "Signup failed");
       setError(err);
     } finally {
       setLoading(false);
@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
         navigate("/reset-password");
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to send reset email");
+      toast.error(err.response?.data?.data || "Failed to send reset email");
       setError(err);
     } finally {
       setLoading(false);
@@ -97,7 +97,23 @@ export const AuthProvider = ({ children }) => {
         navigate("/login");
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Password reset failed");
+      toast.error(err.response?.data?.data || "Password reset failed");
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const ChangePassword = async (credentials, navigate) => {
+    setLoading(true);
+    try {
+      const { data } = await authService.changePassword(credentials);
+      toast.success("Password changed successfully");
+      if (navigate) {
+        navigate("/profile");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.data || "Password change failed");
       setError(err);
     } finally {
       setLoading(false);
@@ -111,9 +127,7 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setIsAuthenticated(false);
       toast.success("Logged out successfully");
-      if (navigate) {
-        navigate("/");
-      }
+      navigate("/login");
     } catch (error) {
       console.error("Sign Out Error:", error);
     } finally {
@@ -128,7 +142,7 @@ export const AuthProvider = ({ children }) => {
       setSingleUserData(data.data.user);
       return data.data.user;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to fetch user");
+      toast.error(err.response?.data?.data || "Failed to fetch user");
       setError(err);
     } finally {
       setLoading(false);
@@ -148,6 +162,7 @@ export const AuthProvider = ({ children }) => {
         error,
         ForgotPassword,
         ResetPassword,
+        ChangePassword,
         isAuthLoading,
         validateSession,
         singleUser,

@@ -18,6 +18,12 @@ export const hospitalApi = {
     return request.post("/hospital/login", credentials);
   },
 
+  forgotPassword: (data) => request.post("/hospital/forgot-password", data),
+
+  resetPassword: (data) => request.post("/hospital/reset-password", data),
+
+  changePassword: (data) => request.put("/hospital/change-password", data),
+
   updateProfile: (hospitalId, profileData) =>
     request.put(`/hospital/profile/${hospitalId}`, profileData),
 
