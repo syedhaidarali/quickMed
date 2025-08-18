@@ -3,7 +3,7 @@
 import axios from "axios";
 
 const request = axios.create({
-  baseURL: "https://quickmedpk-87e7d3c6e100.herokuapp.com",
+  baseURL: import.meta.env.VITE_BASE_API_KEY,
   headers: {
     "Content-Type": "application/json",
   },

@@ -19,7 +19,7 @@ export const HospitalProvider = ({ children }) => {
       console.log(data, "data");
       setHospital(data.data);
     } catch (err) {
-      console.log("errrrrrrrrrrrrrrrrrrrrr", err);
+      console.log(err);
     } finally {
       setLoading(false);
     }

@@ -5,10 +5,8 @@ import axios from "axios";
 export const VIDEOSDK_CONFIG = {
   API_KEY: import.meta.env.VITE_VIDEOSDK_API_KEY,
   SECRET_KEY: import.meta.env.VITE_VIDEOSDK_SECRET_KEY,
-  API_BASE_URL: "https://api.videosdk.live/v2",
-  // Development token (expires 1 month from creation)
-  TEMP_TOKEN:
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiJkYWMxNjRkNi0yZGQ3LTQyMzItYjZiMS0wNWNkMWEwZWRiODMiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTc1NDk5MjEyMSwiZXhwIjoxNzU3NTg0MTIxfQ.kplefvdyD8APGCFxaIMWvMItwhqgVKiALU3f4EulMtg",
+  API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+  TEMP_TOKEN: import.meta.env.VITE_TEMP_TOKEN,
 };
 
 // Generate Authentication Token - Frontend Only

@@ -37,13 +37,69 @@ import {
   CurrentHospital,
   Chat,
 } from "./pages";
-import { useAdmin, useAuth, useDoctor } from "./context";
+import { useAdmin, useAuth, useDoctor, useHospital } from "./context";
 
+// Protected Route Components
 const ProtectedAdminRoute = ({ children }) => {
   const { admin } = useAdmin();
+  if (!admin) {
+    return (
+      <Navigate
+        to='/admin/login'
+        replace
+      />
+    );
+  }
+  return children;
+};
+
+const ProtectedUserRoute = ({ children }) => {
+  const { user } = useAuth();
+  if (!user) {
+    return (
+      <Navigate
+        to='/login'
+        replace
+      />
+    );
+  }
+  return children;
+};
+
+const ProtectedDoctorRoute = ({ children }) => {
+  const { doctor, pendingValidation } = useDoctor();
+  if (!doctor && !pendingValidation) {
+    return (
+      <Navigate
+        to='/doctor/login'
+        replace
+      />
+    );
+  }
+  return children;
+};
+
+const ProtectedHospitalRoute = ({ children }) => {
+  const { hospital } = useHospital();
+  if (!hospital) {
+    return (
+      <Navigate
+        to='/hospital/login'
+        replace
+      />
+    );
+  }
+  return children;
+};
+
+const ProtectedAuthRoute = ({ children }) => {
   const { user } = useAuth();
   const { doctor } = useDoctor();
-  if (!admin) {
+  const { hospital } = useHospital();
+  const { admin } = useAdmin();
+
+  // If any user is logged in, redirect to home
+  if (user || doctor || hospital || admin) {
     return (
       <Navigate
         to='/'
@@ -71,14 +127,6 @@ const AppRoutes = () => (
         element={<AllHospitals />}
       />
       <Route
-        path='/user/message'
-        element={<Chat />}
-      />
-      <Route
-        path='/doctor/messages'
-        element={<Chat />}
-      />
-      <Route
         path='/labs'
         element={<AllLabs />}
       />
@@ -99,34 +147,6 @@ const AppRoutes = () => (
         element={<LabDetail />}
       />
       <Route
-        path='/register/doctor'
-        element={<JoinAsDoctor />}
-      />
-      <Route
-        path='/register/hospital'
-        element={<JoinAsHospital />}
-      />
-      <Route
-        path='/hospital/profile'
-        element={<CurrentHospital />}
-      />
-      <Route
-        path='/doctor/profile/'
-        element={<CurrentDoctorProfile />}
-      />
-      <Route
-        path='/doctor/profile/:slug'
-        element={<DoctorProfile />}
-      />
-      <Route
-        path='/hospital/profile/:slug'
-        element={<HospitalProfile />}
-      />
-      <Route
-        path='/doctor/book/:slug'
-        element={<BookNow />}
-      />
-      <Route
         path='/doctor/:slug'
         element={<DoctorDetail />}
       />
@@ -138,9 +158,55 @@ const AppRoutes = () => (
         path='/hospitals/:slug/book'
         element={<BookAppointmentHospital />}
       />
+
+      {/* Protected Routes */}
+      <Route
+        path='/user/message'
+        element={
+          <ProtectedUserRoute>
+            <Chat />
+          </ProtectedUserRoute>
+        }
+      />
+      <Route
+        path='/doctor/messages'
+        element={
+          <ProtectedDoctorRoute>
+            <Chat />
+          </ProtectedDoctorRoute>
+        }
+      />
       <Route
         path='/profile'
-        element={<UserProfile />}
+        element={
+          <ProtectedUserRoute>
+            <UserProfile />
+          </ProtectedUserRoute>
+        }
+      />
+      <Route
+        path='/doctor/profile/'
+        element={
+          <ProtectedDoctorRoute>
+            <CurrentDoctorProfile />
+          </ProtectedDoctorRoute>
+        }
+      />
+      <Route
+        path='/hospital/profile'
+        element={
+          <ProtectedHospitalRoute>
+            <CurrentHospital />
+          </ProtectedHospitalRoute>
+        }
+      />
+      <Route
+        path='/doctor/book/:slug'
+        element={
+          <ProtectedUserRoute>
+            <BookNow />
+          </ProtectedUserRoute>
+        }
       />
       <Route
         path='/admin/dashboard'
@@ -159,52 +225,119 @@ const AppRoutes = () => (
     />
     <Route
       path='/doctor/consultation/:meetingId/:patientId'
-      element={<DoctorConsultation />}
+      element={
+        <ProtectedDoctorRoute>
+          <DoctorConsultation />
+        </ProtectedDoctorRoute>
+      }
     />
     <Route
       path='/doctor/consultation/new/:patientId'
-      element={<DoctorConsultation />}
+      element={
+        <ProtectedDoctorRoute>
+          <DoctorConsultation />
+        </ProtectedDoctorRoute>
+      }
     />
 
     {/* Auth layout for login/register */}
     <Route element={<AuthLayout />}>
+      {/* Public auth routes */}
+      <Route
+        path='/register/doctor'
+        element={<JoinAsDoctor />}
+      />
+      <Route
+        path='/register/hospital'
+        element={<JoinAsHospital />}
+      />
+
+      {/* Protected auth routes - redirect if already logged in */}
       <Route
         path='/login'
-        element={<Login />}
+        element={
+          <ProtectedAuthRoute>
+            <Login />
+          </ProtectedAuthRoute>
+        }
       />
       <Route
         path='/hospital/login'
-        element={<HospitalLogin />}
+        element={
+          <ProtectedAuthRoute>
+            <HospitalLogin />
+          </ProtectedAuthRoute>
+        }
       />
       <Route
         path='/doctor/login'
-        element={<DoctorLogin />}
-      />
-      <Route
-        path='/doctor/upload-documents'
-        element={<DoctorDocumentUpload />}
+        element={
+          <ProtectedAuthRoute>
+            <DoctorLogin />
+          </ProtectedAuthRoute>
+        }
       />
       <Route
         path='/admin/login'
-        element={<AdminLogin />}
+        element={
+          <ProtectedAuthRoute>
+            <AdminLogin />
+          </ProtectedAuthRoute>
+        }
       />
       <Route
         path='/register'
-        element={<Register />}
+        element={
+          <ProtectedAuthRoute>
+            <Register />
+          </ProtectedAuthRoute>
+        }
       />
       <Route
         path='/forgot-password'
-        element={<ForgotPassword />}
+        element={
+          <ProtectedAuthRoute>
+            <ForgotPassword />
+          </ProtectedAuthRoute>
+        }
       />
       <Route
         path='/reset-password'
-        element={<ResetPassword />}
+        element={
+          <ProtectedAuthRoute>
+            <ResetPassword />
+          </ProtectedAuthRoute>
+        }
       />
+
+      {/* Protected routes that require specific user types */}
       <Route
         path='/change-password'
-        element={<ChangePassword />}
+        element={
+          <ProtectedUserRoute>
+            <ChangePassword />
+          </ProtectedUserRoute>
+        }
+      />
+      <Route
+        path='/doctor/upload-documents'
+        element={
+          <ProtectedDoctorRoute>
+            <DoctorDocumentUpload />
+          </ProtectedDoctorRoute>
+        }
       />
     </Route>
+
+    {/* Public profile routes */}
+    <Route
+      path='/doctor/profile/:slug'
+      element={<DoctorProfile />}
+    />
+    <Route
+      path='/hospital/profile/:slug'
+      element={<HospitalProfile />}
+    />
   </Routes>
 );
 
