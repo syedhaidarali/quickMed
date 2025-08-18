@@ -19,7 +19,7 @@ const Chat = () => {
     stopPolling,
     currentThread,
   } = useChat();
-  const { user } = useAuth();
+  const { user, allUsers } = useAuth();
   const location = useLocation();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,7 +48,7 @@ const Chat = () => {
       startPolling(existingThread._id);
     } else {
       // Clear messages for new conversation
-      setMessages([]);
+      // messages are managed in ChatContext; no direct reset here
       stopPolling();
     }
   };
@@ -92,6 +92,7 @@ const Chat = () => {
       <div className='w-80 bg-white border-r'>
         <ConversationList
           allDoctors={allDoctors}
+          allUsers={allUsers}
           threads={threads}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
@@ -116,7 +117,11 @@ const Chat = () => {
           loading={loading}
           currentThread={currentThread}
           allDoctors={allDoctors}
+          allUsers={allUsers}
           user={user}
+          participants={
+            threads.find((t) => t._id === currentThread)?.participants || []
+          }
         />
       </div>
     </div>

@@ -15,5 +15,5 @@ export const authApi = {
 
   changePassword: (data) => request.post("/auth/change-password", data),
 
-  singleUser: (userId) => request.get(`/auth/${userId}`),
+  allUsers: () => request.get(`/auth/users`),
 };

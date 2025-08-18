@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [allUsers, setAllUsers] = useState([]);
   const [error, setError] = useState(null);
+  console.log(allUsers);
   const validateSession = async () => {
     try {
       const { data } = await authService.validateToken();
@@ -31,6 +32,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     validateSession();
+    getAllUsers();
   }, []);
 
   const signIn = async (credentials, navigate) => {
@@ -134,12 +136,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const singleUser = async (userId) => {
+  const getAllUsers = async () => {
     setLoading(true);
     try {
-      const { data } = await authService.singleUser(userId);
-      setSingleUserData(data.data.user);
-      return data.data.user;
+      const { data } = await authService.allUsers();
+      setAllUsers(data.data);
+      return data.data;
     } catch (err) {
       toast.error(err.response?.data?.data || "Failed to fetch user");
       setError(err);
@@ -164,7 +166,7 @@ export const AuthProvider = ({ children }) => {
         ChangePassword,
         isAuthLoading,
         validateSession,
-        singleUser,
+        allUsers,
       }}>
       {children}
     </AuthContext.Provider>

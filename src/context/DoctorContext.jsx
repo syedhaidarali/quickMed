@@ -1,6 +1,7 @@
 /** @format */
 
 // context/DoctorContext.jsx
+import { data, useNavigate } from "react-router-dom";
 import { removeHeaders, setHeaders } from "../helpers";
 import { doctorService } from "../services";
 import React, { createContext, useContext, useEffect, useState } from "react";
@@ -16,6 +17,9 @@ export const DoctorProvider = ({ children }) => {
   const [doctorId, setDoctorId] = useState(null);
   const [allDoctors, setAllDoctors] = useState([]);
   const [pendingValidation, setPendingValidation] = useState(false);
+  const [doctorDocumentsPending, setDoctorDocumentsPending] = useState(false);
+  const navigate = useNavigate();
+
   const validateSession = async () => {
     setLoading(true);
     try {
@@ -31,8 +35,12 @@ export const DoctorProvider = ({ children }) => {
         toast.error(
           "Your Request is in pending once it complete then you will receive an email"
         );
-      } else {
-        console.log(err);
+      } else if (
+        err.response.data.data ===
+        "Please upload your documents and profile picture for verification."
+      ) {
+        setDoctorDocumentsPending(true);
+        navigate("/doctor/upload-documents");
       }
     } finally {
       setLoading(false);
@@ -49,16 +57,19 @@ export const DoctorProvider = ({ children }) => {
     setError(null);
     try {
       const doctorData = await doctorService.login(credentials);
-      setDoctor(doctorData.data.data.user);
+      console.log(doctorData.data.data.user);
       setHeaders(doctorData.data.data.token);
       if (!doctorData.data.data.user.hasDocuments) {
+        setDoctorDocumentsPending(true);
         navigate("/doctor/upload-documents");
       } else {
+        setDoctor(doctorData.data.data.user);
         navigate("/");
       }
       toast.success("Login Successfully");
       return doctorData.response.data.message;
     } catch (err) {
+      console.log(err);
       toast.error(err.response.data.data);
     } finally {
       setLoading(false);
@@ -209,6 +220,7 @@ export const DoctorProvider = ({ children }) => {
         allDoctors,
         updateDoctorRating,
         pendingValidation,
+        doctorDocumentsPending,
       }}>
       {children}
     </DoctorContext.Provider>

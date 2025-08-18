@@ -39,7 +39,6 @@ import {
 } from "./pages";
 import { useAdmin, useAuth, useDoctor, useHospital } from "./context";
 
-// Protected Route Components
 const ProtectedAdminRoute = ({ children }) => {
   const { admin } = useAdmin();
   if (!admin) {
@@ -98,8 +97,20 @@ const ProtectedAuthRoute = ({ children }) => {
   const { hospital } = useHospital();
   const { admin } = useAdmin();
 
-  // If any user is logged in, redirect to home
   if (user || doctor || hospital || admin) {
+    return (
+      <Navigate
+        to='/'
+        replace
+      />
+    );
+  }
+  return children;
+};
+
+const ProtectedDoctorUploadRoute = ({ children }) => {
+  const { doctorDocumentsPending } = useDoctor();
+  if (!doctorDocumentsPending) {
     return (
       <Navigate
         to='/'
@@ -322,9 +333,9 @@ const AppRoutes = () => (
       <Route
         path='/doctor/upload-documents'
         element={
-          <ProtectedDoctorRoute>
+          <ProtectedDoctorUploadRoute>
             <DoctorDocumentUpload />
-          </ProtectedDoctorRoute>
+          </ProtectedDoctorUploadRoute>
         }
       />
     </Route>

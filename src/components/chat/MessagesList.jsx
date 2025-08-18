@@ -3,12 +3,15 @@ import React, { useEffect, useRef } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-const MessagesList = ({ messages = [], user, allDoctors = [] }) => {
+const MessagesList = ({
+  messages = [],
+  user,
+  allDoctors = [],
+  allUsers = [],
+  participants = [],
+  otherParticipant = null,
+}) => {
   const endRef = useRef(null);
-
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
 
   if (!messages || messages.length === 0) {
     return (
@@ -22,19 +25,164 @@ const MessagesList = ({ messages = [], user, allDoctors = [] }) => {
   }
 
   // helper to resolve sender profile
-  const getSenderProfile = (message) => {
-    if (String(message.userId) === String(user?._id)) return user;
+  const getSenderId = (message) => {
+    const normalize = (val) => {
+      if (!val) return null;
+      if (typeof val === "string") return val;
+      if (typeof val === "object") return val._id || val.id || null;
+      return null;
+    };
 
-    const found = allDoctors?.find(
-      (d) => String(d._id) === String(message.userId)
+    return (
+      normalize(message.userId) ||
+      normalize(message.senderId) ||
+      normalize(message.sender) ||
+      normalize(message.user) ||
+      normalize(message.from) ||
+      normalize(message.by) ||
+      normalize(message.authorId) ||
+      normalize(message.createdBy) ||
+      null
     );
+  };
+
+  const getSenderProfile = (message) => {
+    const senderId = getSenderId(message);
+    if (String(senderId) === String(user?._id)) return user;
+
+    // Try to resolve from current thread participants (covers non-doctor users)
+    const participant = participants?.find((p) => {
+      const participantId =
+        (p.userId && (p.userId._id || p.userId.id || p.userId)) ||
+        p._id ||
+        p.id;
+      return String(participantId) === String(senderId);
+    });
+    if (participant) {
+      const nestedUser =
+        participant.userId && typeof participant.userId === "object"
+          ? participant.userId
+          : null;
+
+      const baseId =
+        (nestedUser && (nestedUser._id || nestedUser.id)) ||
+        participant.userId ||
+        participant._id ||
+        participant.id;
+
+      // Try to enrich from doctors/users when participant lacks name/avatar
+      const doctorMatch = allDoctors?.find(
+        (d) => String(d._id) === String(baseId)
+      );
+      const userMatch = allUsers?.find((u) => String(u._id) === String(baseId));
+
+      const nameCandidate =
+        participant.name ||
+        participant.displayName ||
+        participant.fullName ||
+        (participant.firstName && participant.lastName
+          ? `${participant.firstName} ${participant.lastName}`
+          : null) ||
+        participant.username ||
+        participant.userName ||
+        (nestedUser &&
+          (nestedUser.name ||
+            nestedUser.fullName ||
+            (nestedUser.firstName && nestedUser.lastName
+              ? `${nestedUser.firstName} ${nestedUser.lastName}`
+              : null) ||
+            nestedUser.username ||
+            nestedUser.userName)) ||
+        doctorMatch?.name ||
+        userMatch?.name ||
+        "Unknown";
+
+      const avatarCandidate =
+        participant.avatar ||
+        participant.profileImage ||
+        participant.avatarUrl ||
+        participant.photo ||
+        (nestedUser &&
+          (nestedUser.avatar ||
+            nestedUser.profileImage ||
+            nestedUser.avatarUrl ||
+            nestedUser.photo)) ||
+        doctorMatch?.profileImage ||
+        userMatch?.profileImage ||
+        null;
+
+      return {
+        _id: baseId,
+        name: nameCandidate,
+        profileImage: avatarCandidate,
+      };
+    }
+
+    // Fallback to known doctors list
+    const found = allDoctors?.find((d) => String(d._id) === String(senderId));
     if (found) return found;
 
-    return {
-      _id: message.userId,
-      name: message.senderName || message.name || "Unknown",
-      profileImage: message.avatar || message.profileImage || null,
+    // Fallback to known users list
+    const foundUser = allUsers?.find((u) => String(u._id) === String(senderId));
+    if (foundUser) {
+      return {
+        _id: foundUser._id,
+        name: foundUser.name,
+        profileImage: foundUser.profileImage || foundUser.avatar || null,
+      };
+    }
+
+    // If 1-to-1 chat and we couldn't resolve by id, fall back to the selected other participant
+    if (otherParticipant && String(senderId) !== String(user?._id)) {
+      return {
+        _id: otherParticipant._id,
+        name: otherParticipant.name || "Unknown",
+        profileImage:
+          otherParticipant.profileImage || otherParticipant.avatar || null,
+      };
+    }
+
+    // Final fallback to any name/avatar present on the message itself
+    const final = {
+      _id: senderId,
+      name:
+        message.sender?.name ||
+        message.senderName ||
+        message.name ||
+        message.sender?.fullName ||
+        message.user?.name ||
+        (message.user?.firstName && message.user?.lastName
+          ? `${message.user.firstName} ${message.user.lastName}`
+          : null) ||
+        "Unknown",
+      profileImage:
+        message.sender?.avatar ||
+        message.sender?.profileImage ||
+        message.sender?.avatarUrl ||
+        message.user?.avatar ||
+        message.user?.profileImage ||
+        message.avatar ||
+        message.profileImage ||
+        null,
     };
+
+    // If this message is not mine and the senderId matches the selected other participant, use it
+    if (
+      String(senderId) !== String(user?._id) &&
+      otherParticipant &&
+      String(otherParticipant._id) === String(senderId)
+    ) {
+      return {
+        _id: otherParticipant._id,
+        name: otherParticipant.name || final.name,
+        profileImage:
+          otherParticipant.profileImage ||
+          otherParticipant.avatar ||
+          final.profileImage,
+      };
+    }
+
+    return final;
   };
 
   // helper to pull text from many possible fields
@@ -71,7 +219,7 @@ const MessagesList = ({ messages = [], user, allDoctors = [] }) => {
         <div className='flex flex-col px-4 py-4 gap-4'>
           {messages.map((message) => {
             const sender = getSenderProfile(message);
-            const isMine = String(message.userId) === String(user?._id);
+            const isMine = String(getSenderId(message)) === String(user?._id);
             const text = getMessageText(message);
 
             return (

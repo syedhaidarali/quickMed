@@ -18,19 +18,19 @@ function App() {
   return (
     <AdminProvider>
       <HospitalProvider>
-        <DoctorProvider>
-          <AuthProvider>
-            <ChatProvider>
-              <RatingProvider>
-                <QuickHelpProvider>
-                  <BrowserRouter basename='/quickMed'>
+        <BrowserRouter basename='/quickMed'>
+          <DoctorProvider>
+            <AuthProvider>
+              <ChatProvider>
+                <RatingProvider>
+                  <QuickHelpProvider>
                     <AppRoutes />
-                  </BrowserRouter>
-                </QuickHelpProvider>
-              </RatingProvider>
-            </ChatProvider>
-          </AuthProvider>
-        </DoctorProvider>
+                  </QuickHelpProvider>
+                </RatingProvider>
+              </ChatProvider>
+            </AuthProvider>
+          </DoctorProvider>
+        </BrowserRouter>
       </HospitalProvider>
     </AdminProvider>
   );

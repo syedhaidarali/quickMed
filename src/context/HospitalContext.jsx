@@ -154,6 +154,7 @@ export const HospitalProvider = ({ children }) => {
         HospitalResetPassword,
         HospitalChangePassword,
         HospitalProfile,
+        setHospital,
       }}>
       {children}
     </HospitalContext.Provider>

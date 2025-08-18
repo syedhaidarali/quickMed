@@ -159,7 +159,7 @@ const Header = () => {
         )}
 
         {/* Messages button for Doctor */}
-        {isDoctorOrPending && (
+        {doctor && (
           <NavLink
             href='/doctor/messages'
             label='Messages'

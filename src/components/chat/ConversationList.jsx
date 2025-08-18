@@ -7,6 +7,7 @@ import { Search, MessageCircle } from "lucide-react";
 
 const ConversationList = ({
   allDoctors,
+  allUsers = [],
   threads,
   searchQuery,
   setSearchQuery,
@@ -38,6 +39,16 @@ const ConversationList = ({
     // try to find a doctor record
     const doctor = allDoctors.find((d) => d._id === participantId);
     if (doctor) return doctor;
+
+    const userMatch = allUsers.find((u) => u._id === participantId);
+    if (userMatch) {
+      return {
+        _id: userMatch._id,
+        name: userMatch.name,
+        profileImage: userMatch.profileImage || userMatch.avatar || null,
+        specialty: "",
+      };
+    }
 
     // fallback: build a lightweight object from participant/thread data so we can still render UI
     const fallbackName =

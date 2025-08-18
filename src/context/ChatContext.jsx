@@ -106,6 +106,7 @@ export const ChatProvider = ({ children }) => {
         setChats,
         currentThread,
         messages,
+        setMessages,
         threads,
         loading,
         sendMessage,

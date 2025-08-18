@@ -12,10 +12,6 @@ import {
 } from "lucide-react";
 import MessagesList from "./MessagesList";
 
-/**
- * ChatWindow - gives the window a fixed height so it doesn't overflow to footer.
- * Adjust h-[80vh] / max-h-[760px] to fit your page layout.
- */
 const ChatWindow = ({
   selectedDoctor,
   messages = [],
@@ -25,21 +21,12 @@ const ChatWindow = ({
   loading,
   currentThread,
   allDoctors = [],
+  allUsers = [],
   user,
+  participants = [],
 }) => {
   const messagesEndRef = useRef(null);
   const [isFocused, setIsFocused] = useState(false);
-
-  // scrollToBottom is still kept but MessagesList also auto-scrolls for redundancy
-  const scrollToBottom = () => {
-    const el =
-      document.getElementById("messages-end") || messagesEndRef.current;
-    el?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   const handleSend = () => {
     if (!newMessage?.trim() || loading) return;
@@ -110,6 +97,9 @@ const ChatWindow = ({
           messages={messages}
           user={user}
           allDoctors={allDoctors}
+          allUsers={allUsers}
+          participants={participants}
+          otherParticipant={selectedDoctor}
         />
         <div
           ref={messagesEndRef}

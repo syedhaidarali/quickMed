@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import React from "react";
 
 const CurrentHospital = () => {
-  const { hospital } = useHospital();
+  const { hospital, setHospital } = useHospital();
   const navigate = useNavigate();
 
   if (!hospital) {
@@ -37,6 +37,7 @@ const CurrentHospital = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    setHospital(null);
     navigate("/");
   };
 
