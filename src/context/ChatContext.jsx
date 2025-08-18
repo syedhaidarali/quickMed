@@ -16,6 +16,8 @@ export const ChatProvider = ({ children }) => {
   const [currentThread, setCurrentThread] = useState(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [threadsLoading, setThreadsLoading] = useState(false);
+  const [messagesLoading, setMessagesLoading] = useState(false);
   const [threads, setThreads] = useState([]);
   const intervalRef = useRef(null);
 
@@ -38,9 +40,9 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
-  const getAllThreads = async () => {
+  const getAllThreads = async ({ showLoading = true } = {}) => {
     try {
-      setLoading(true);
+      if (showLoading) setThreadsLoading(true);
       const response = await chatService.getAllThreads();
 
       if (response.status === "success") {
@@ -52,12 +54,16 @@ export const ChatProvider = ({ children }) => {
       console.error("ChatContext - getAllThreads error:", error);
       throw error;
     } finally {
-      setLoading(false);
+      if (showLoading) setThreadsLoading(false);
     }
   };
 
-  const getMessageOfSingleThread = async (threadId) => {
+  const getMessageOfSingleThread = async (
+    threadId,
+    { showLoading = true } = {}
+  ) => {
     try {
+      if (showLoading) setMessagesLoading(true);
       const response = await chatService.getMessageOfSingleThread(threadId);
 
       if (response.status === "success") {
@@ -69,6 +75,8 @@ export const ChatProvider = ({ children }) => {
     } catch (error) {
       console.error("ChatContext - getMessageOfSingleThread error:", error);
       throw error;
+    } finally {
+      if (showLoading) setMessagesLoading(false);
     }
   };
 
@@ -80,7 +88,8 @@ export const ChatProvider = ({ children }) => {
     // Start polling every 5 seconds
     intervalRef.current = setInterval(async () => {
       if (threadId) {
-        await getMessageOfSingleThread(threadId);
+        // avoid flicker during background refreshes
+        await getMessageOfSingleThread(threadId, { showLoading: false });
       }
     }, 5000);
   };
@@ -109,6 +118,8 @@ export const ChatProvider = ({ children }) => {
         setMessages,
         threads,
         loading,
+        threadsLoading,
+        messagesLoading,
         sendMessage,
         getAllThreads,
         getMessageOfSingleThread,

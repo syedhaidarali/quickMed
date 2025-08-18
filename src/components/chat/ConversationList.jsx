@@ -2,6 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "../ui/card";
 import { Input } from "../ui/input";
+import { Skeleton } from "../ui";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Search, MessageCircle } from "lucide-react";
 
@@ -9,6 +10,7 @@ const ConversationList = ({
   allDoctors,
   allUsers = [],
   threads,
+  threadsLoading = false,
   searchQuery,
   setSearchQuery,
   selectedDoctor,
@@ -38,7 +40,11 @@ const ConversationList = ({
 
     // try to find a doctor record
     const doctor = allDoctors.find((d) => d._id === participantId);
-    if (doctor) return doctor;
+    if (doctor)
+      return {
+        ...doctor,
+        isDoctor: true,
+      };
 
     const userMatch = allUsers.find((u) => u._id === participantId);
     if (userMatch) {
@@ -47,6 +53,7 @@ const ConversationList = ({
         name: userMatch.name,
         profileImage: userMatch.profileImage || userMatch.avatar || null,
         specialty: "",
+        isDoctor: false,
       };
     }
 
@@ -67,6 +74,7 @@ const ConversationList = ({
       name: fallbackName,
       profileImage: fallbackAvatar,
       specialty: participant?.role || thread?.subtitle || "",
+      isDoctor: false,
     };
   };
 
@@ -98,8 +106,25 @@ const ConversationList = ({
         </div>
       </div>
 
+      {/* Threads Skeleton */}
+      {threadsLoading && (
+        <div className='flex-1 overflow-y-auto p-3 space-y-3'>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className='flex items-center gap-3'>
+              <Skeleton className='h-12 w-12 rounded-full' />
+              <div className='flex-1 space-y-2'>
+                <Skeleton className='h-4 w-2/3' />
+                <Skeleton className='h-3 w-1/2' />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Existing Threads */}
-      {threads.length > 0 && (
+      {!threadsLoading && threads.length > 0 && (
         <div className='flex-1 overflow-y-auto'>
           <div className='p-3 border-b bg-gray-50'>
             <h3 className='text-sm font-medium text-gray-600'>Recent Chats</h3>
@@ -143,7 +168,9 @@ const ConversationList = ({
                   <div className='flex-1 min-w-0'>
                     <div className='flex items-center justify-between'>
                       <h4 className='font-medium text-gray-900 truncate'>
-                        {doctorOrParticipant.name}
+                        {doctorOrParticipant.isDoctor
+                          ? `Dr ${doctorOrParticipant.name}`
+                          : doctorOrParticipant.name}
                       </h4>
                       <span className='text-xs text-gray-500'>
                         {thread.updatedAt
@@ -165,7 +192,7 @@ const ConversationList = ({
       )}
 
       {/* Available Doctors */}
-      {searchQuery && (
+      {!threadsLoading && searchQuery && (
         <div className='flex-1 overflow-y-auto'>
           <div className='p-3 border-b bg-gray-50'>
             <h3 className='text-sm font-medium text-gray-600'>
@@ -190,7 +217,7 @@ const ConversationList = ({
                 </Avatar>
                 <div className='flex-1 min-w-0'>
                   <h4 className='font-medium text-gray-900 truncate'>
-                    {doctor.name}
+                    {`Dr ${doctor.name}`}
                   </h4>
                   <p className='text-sm text-gray-500 truncate'>
                     {doctor.specialty}

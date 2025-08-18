@@ -1,6 +1,7 @@
 /** @format */
 
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { citiesMap, cityCoordsMap, specialities } from "../../assets/dummy";
 import { Map, Search } from "../../assets/svg";
 import Dropdown from "./Dropdown";
@@ -10,6 +11,7 @@ const SearchBar = ({ onCitySelect }) => {
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const cityInputRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -43,6 +45,28 @@ const SearchBar = ({ onCitySelect }) => {
     if (e.key === "Enter") {
       const matched = suggestions[0] || (citiesMap.includes(city) && city);
       matched && selectCity(matched);
+    }
+  };
+
+  const slugifySpecialty = (value) =>
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/\//g, "-")
+      .replace(/&/g, "and");
+
+  const handleSpecialtySelect = (item) => {
+    setSearch(item);
+    if (!city) return; // require city first
+
+    const specialtyEn =
+      typeof item === "string" && item.includes(" - ")
+        ? item.split(" - ")[0]
+        : item;
+    const slug = slugifySpecialty(specialtyEn || "");
+    if (slug) {
+      navigate(`/doctor/${slug}?city=${encodeURIComponent(city)}`);
     }
   };
 
@@ -84,7 +108,7 @@ const SearchBar = ({ onCitySelect }) => {
           <Dropdown
             options={specialities}
             value={search}
-            onChange={setSearch}
+            onChange={handleSpecialtySelect}
             placeholder='Search by Doctors'
             showUrdu={true}
             inputStyle='text-[12px]'

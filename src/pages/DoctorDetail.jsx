@@ -1,7 +1,7 @@
 /** @format */
 
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { useDoctor } from "../context";
 import { specialitiesEnglish } from "../assets/dummy";
 import { DoctorCard } from "../components/cards";
@@ -9,6 +9,9 @@ import { DoctorCard } from "../components/cards";
 const DoctorDetail = () => {
   const { allDoctors } = useDoctor();
   const { slug } = useParams();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const filterCity = (params.get("city") || "").toLowerCase();
 
   // Create a mapping between URL slugs and specialty names
   const createSlugToSpecialtyMap = () => {
@@ -50,6 +53,20 @@ const DoctorDetail = () => {
       return false;
     }) || [];
 
+  // Apply city filter if provided
+  const filteredByCity = filterCity
+    ? filteredDoctors.filter((doctor) => {
+        const docCity = (doctor.city || doctor.fullAddress || "")
+          .toString()
+          .toLowerCase();
+        if (doctor.city) {
+          return doctor.city.toLowerCase() === filterCity;
+        }
+        // Fallback: try to match city within fullAddress substring
+        return docCity.includes(filterCity);
+      })
+    : filteredDoctors;
+
   console.log("Filtered Doctors:", filteredDoctors);
 
   if (!targetSpecialty) {
@@ -67,7 +84,7 @@ const DoctorDetail = () => {
     );
   }
 
-  if (filteredDoctors.length === 0) {
+  if (filteredByCity.length === 0) {
     return (
       <div className='min-h-[60vh] flex items-center justify-center bg-emerald-50'>
         <div className='bg-white rounded-xl shadow-md p-8 max-w-lg w-full text-center'>
@@ -75,7 +92,8 @@ const DoctorDetail = () => {
             No Doctors Found
           </h1>
           <p className='text-emerald-700 text-lg'>
-            No doctors found for {targetSpecialty}.
+            No doctors found for {targetSpecialty}
+            {filterCity ? ` in ${params.get("city")}` : ""}.
           </p>
           <p className='text-emerald-600 text-sm mt-2'>
             Please check back later or contact us for assistance.
@@ -91,11 +109,12 @@ const DoctorDetail = () => {
         {targetSpecialty} Doctors
       </h1>
       <p className='text-center text-emerald-600 mb-8'>
-        Found {filteredDoctors.length} doctor
-        {filteredDoctors.length !== 1 ? "s" : ""} in {targetSpecialty}
+        Found {filteredByCity.length} doctor
+        {filteredByCity.length !== 1 ? "s" : ""} in {targetSpecialty}
+        {filterCity ? `, City: ${params.get("city")}` : ""}
       </p>
       <div className='max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8'>
-        {filteredDoctors.map((doctor, idx) => (
+        {filteredByCity.map((doctor, idx) => (
           <DoctorCard
             key={doctor._id || idx}
             doctor={doctor}

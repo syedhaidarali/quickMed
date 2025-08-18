@@ -11,6 +11,7 @@ export const HospitalProvider = ({ children }) => {
   const [allPublicHospital, setAllPublicHospital] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [hospitalPending, setHospitalPending] = useState(false);
 
   const validateSession = async () => {
     setLoading(true);
@@ -36,7 +37,7 @@ export const HospitalProvider = ({ children }) => {
       const { data } = await hospitalService.login(credentials);
       console.log(data.data.token);
       localStorage.setItem("token", data.data.token);
-      setHospital(data.data.user);
+      setHospital(data.data.hospital);
       toast.success("Login Successfully");
       navigate("/hospital/profile");
       return data.data.message;

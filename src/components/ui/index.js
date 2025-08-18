@@ -28,6 +28,7 @@ export { Input } from "./input";
 export { ScrollArea, ScrollBar } from "./scroll-area";
 export { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 export { Badge, badgeVariants } from "./badge";
+export { Skeleton } from "./skeleton";
 export {
   Card,
   CardContent,

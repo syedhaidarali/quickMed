@@ -18,6 +18,8 @@ const Chat = () => {
     startPolling,
     stopPolling,
     currentThread,
+    threadsLoading,
+    messagesLoading,
   } = useChat();
   const { user, allUsers } = useAuth();
   const location = useLocation();
@@ -30,7 +32,7 @@ const Chat = () => {
   const isUserRoute = location.pathname === "/user/message";
 
   useEffect(() => {
-    getAllThreads();
+    getAllThreads({ showLoading: true });
   }, []);
 
   const handleDoctorSelect = async (doctor) => {
@@ -44,7 +46,7 @@ const Chat = () => {
 
     if (existingThread) {
       // Load existing messages for this thread
-      await getMessageOfSingleThread(existingThread._id);
+      await getMessageOfSingleThread(existingThread._id, { showLoading: true });
       startPolling(existingThread._id);
     } else {
       // Clear messages for new conversation
@@ -56,7 +58,7 @@ const Chat = () => {
   const handleThreadSelect = async (thread, doctor) => {
     setSelectedDoctor(doctor);
     setNewMessage("");
-    await getMessageOfSingleThread(thread._id);
+    await getMessageOfSingleThread(thread._id, { showLoading: true });
     startPolling(thread._id);
   };
 
@@ -68,7 +70,7 @@ const Chat = () => {
       setNewMessage("");
 
       // After sending, refresh threads and start polling for new messages
-      await getAllThreads();
+      await getAllThreads({ showLoading: false });
 
       // Find the new thread and start polling
       const newThread = threads.find((thread) =>
@@ -77,7 +79,7 @@ const Chat = () => {
 
       if (newThread) {
         startPolling(newThread._id);
-        await getMessageOfSingleThread(newThread._id);
+        await getMessageOfSingleThread(newThread._id, { showLoading: true });
       }
 
       console.log("Message sent successfully to:", selectedDoctor.name);
@@ -94,6 +96,7 @@ const Chat = () => {
           allDoctors={allDoctors}
           allUsers={allUsers}
           threads={threads}
+          threadsLoading={threadsLoading}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           selectedDoctor={selectedDoctor}
@@ -115,6 +118,7 @@ const Chat = () => {
           setNewMessage={setNewMessage}
           onSendMessage={handleSendMessage}
           loading={loading}
+          messagesLoading={messagesLoading}
           currentThread={currentThread}
           allDoctors={allDoctors}
           allUsers={allUsers}

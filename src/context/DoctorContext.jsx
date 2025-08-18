@@ -24,7 +24,6 @@ export const DoctorProvider = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await doctorService.validateToken();
-      console.log(data);
       setDoctor(data.data);
     } catch (err) {
       if (
@@ -35,6 +34,7 @@ export const DoctorProvider = ({ children }) => {
         toast.error(
           "Your Request is in pending once it complete then you will receive an email"
         );
+        navigate("/doctor/profile");
       } else if (
         err.response.data.data ===
         "Please upload your documents and profile picture for verification."
@@ -57,7 +57,6 @@ export const DoctorProvider = ({ children }) => {
     setError(null);
     try {
       const doctorData = await doctorService.login(credentials);
-      console.log(doctorData.data.data.user);
       setHeaders(doctorData.data.data.token);
       if (!doctorData.data.data.user.hasDocuments) {
         setDoctorDocumentsPending(true);
