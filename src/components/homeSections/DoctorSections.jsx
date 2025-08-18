@@ -5,7 +5,18 @@ import { useDoctor } from "../../context";
 import DoctorCard from "../cards/DoctorCards";
 
 const DoctorSections = () => {
-  const { allDoctors, loading } = useDoctor();
+  const { allDoctors = [], loading } = useDoctor();
+
+  const getAvg = (d) => {
+    const r = d?.rating;
+    if (!r) return 0;
+    return typeof r === "object" ? Number(r.average || 0) : Number(r || 0);
+  };
+
+  const top4 = allDoctors
+    .slice()
+    .sort((a, b) => getAvg(b) - getAvg(a))
+    .slice(0, 4);
 
   if (loading) {
     return (
@@ -19,13 +30,13 @@ const DoctorSections = () => {
           </p>
         </div>
         <div className='flex justify-center'>
-          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500'></div>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500' />
         </div>
       </div>
     );
   }
 
-  if (!allDoctors || allDoctors.length === 0) {
+  if (!top4.length) {
     return (
       <div className='mx-auto px-4 sm:px-6 lg:px-8 pb-5'>
         <div className='text-center mb-12'>
@@ -53,8 +64,9 @@ const DoctorSections = () => {
           Consult with Pakistan's best doctors from the comfort of your home
         </p>
       </div>
+
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
-        {allDoctors.map((doctor) => (
+        {top4.map((doctor) => (
           <DoctorCard
             key={doctor._id}
             doctor={doctor}

@@ -12,19 +12,25 @@ const DoctorProfile = () => {
 
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
-  const { allDoctors, loading } = useDoctor();
+  const {
+    allDoctors,
+    loading,
+    updateDoctorRating: updateDoctorRatingInContext,
+  } = useDoctor();
   const [doctor, setDoctor] = useState(null);
   const [openRatingModal, setOpenRatingModal] = useState(false);
   const [consultationType, setConsultationType] = useState("video");
-  const { addDoctorRating, updateDoctorRating, deleteDoctorRating } =
-    useRating();
+  const {
+    addDoctorRating,
+    updateDoctorRating: rateApiUpdate,
+    deleteDoctorRating,
+  } = useRating();
 
   useEffect(() => {
     window.requestAnimationFrame(() => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
   }, [slug]);
-  // Extract doctor ID from slug and find the doctor
   useEffect(() => {
     if (allDoctors && allDoctors.length > 0) {
       const doctorId = slug.split("-").pop(); // Get the ID part from slug
@@ -40,17 +46,29 @@ const DoctorProfile = () => {
   };
 
   const handleRatingOnly = ({ rating }) => {
-    addDoctorRating({ rating: rating }, doctor._id);
+    const onLocalUpdate = (serverRating) => {
+      setDoctor((prev) => ({ ...prev, rating: serverRating }));
+      updateDoctorRatingInContext(doctor._id, serverRating);
+    };
+    addDoctorRating({ rating }, doctor._id, onLocalUpdate);
     setOpenRatingModal(false);
   };
 
   const handleUpdateRating = ({ rating }) => {
-    updateDoctorRating({ rating: rating }, doctor._id);
+    const onLocalUpdate = (serverRating) => {
+      setDoctor((prev) => ({ ...prev, rating: serverRating }));
+      updateDoctorRatingInContext(doctor._id, serverRating);
+    };
+    rateApiUpdate({ rating }, doctor._id, onLocalUpdate);
     setOpenRatingModal(false);
   };
 
   const handleDeleteRating = () => {
-    deleteDoctorRating(doctor._id);
+    const onLocalUpdate = (serverRating) => {
+      setDoctor((prev) => ({ ...prev, rating: serverRating }));
+      updateDoctorRatingInContext(doctor._id, serverRating);
+    };
+    deleteDoctorRating(doctor._id, onLocalUpdate);
     setOpenRatingModal(false);
   };
 

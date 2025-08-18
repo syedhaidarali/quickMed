@@ -17,7 +17,6 @@ export const AuthProvider = ({ children }) => {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [allUsers, setAllUsers] = useState([]);
   const [error, setError] = useState(null);
-  console.log(user);
   const validateSession = async () => {
     try {
       const { data } = await authService.validateToken();

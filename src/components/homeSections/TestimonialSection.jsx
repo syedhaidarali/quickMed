@@ -25,7 +25,6 @@ const TestimonialSection = () => {
   const { admin } = useAdmin();
   const { doctor } = useDoctor();
   const [openRatingModal, setOpenRatingModal] = useState(false);
-  console.log(ratings, "ratings");
 
   const handleAddRating = async ({ rating, review }) => {
     await addPlatformRating({ rating: rating, description: review });

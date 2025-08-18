@@ -90,11 +90,18 @@ const UserProfile = () => {
                   </button>
                 </>
               ) : (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className='px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors'>
-                  Edit Profile
-                </button>
+                <>
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className='px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors'>
+                    Edit Profile
+                  </button>
+                  <button
+                    onClick={() => navigate("/change-password?type=user")}
+                    className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'>
+                    Change Password
+                  </button>
+                </>
               )}
               <button
                 onClick={handleLogout}

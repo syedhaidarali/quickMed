@@ -19,7 +19,7 @@ const CurrentHospital = () => {
   }
 
   const handleChangePassword = () => {
-    navigate("/change-password");
+    navigate("/change-password?type=hospital");
   };
 
   const getStatusColor = (status) => {

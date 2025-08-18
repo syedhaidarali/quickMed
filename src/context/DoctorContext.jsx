@@ -103,6 +103,7 @@ export const DoctorProvider = ({ children }) => {
   };
 
   const DoctorChangePassword = async (credentials, navigate) => {
+    console.log(credentials, "credentials");
     setLoading(true);
     try {
       const { data } = await doctorService.changePassword(credentials);
@@ -164,6 +165,14 @@ export const DoctorProvider = ({ children }) => {
     }
   };
 
+  const updateDoctorRating = (doctorId, updatedRating) => {
+    setAllDoctors((prev) =>
+      prev.map((doc) =>
+        doc._id === doctorId ? { ...doc, rating: updatedRating } : doc
+      )
+    );
+  };
+
   const logout = (navigate) => {
     navigate("/doctor/login");
     removeHeaders();
@@ -186,6 +195,7 @@ export const DoctorProvider = ({ children }) => {
         DoctorDocumentUpload,
         logout,
         allDoctors,
+        updateDoctorRating,
       }}>
       {children}
     </DoctorContext.Provider>

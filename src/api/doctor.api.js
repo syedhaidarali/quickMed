@@ -13,7 +13,7 @@ export const doctorApi = {
 
   resetPassword: (data) => request.post("/doctor/reset-password", data),
 
-  changePassword: (data) => request.put("/doctor/change-password", data),
+  changePassword: (data) => request.post("/doctor/change-password", data),
 
   updateProfile: (data) => {
     return request.post("/doctor/picture", data, {

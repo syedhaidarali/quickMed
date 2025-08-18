@@ -5,6 +5,5 @@ export * from "./doctor.api";
 export * from "./hospital.api";
 export * from "./admin.api";
 export * from "./rating.api";
-export * from "./user.api";
 export * from "./aiRecommendation.api";
 export * from "./chat.api";

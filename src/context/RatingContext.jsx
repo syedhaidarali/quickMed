@@ -12,68 +12,79 @@ export const RatingProvider = ({ children }) => {
   const getPlatformRatings = async () => {
     try {
       const response = await ratingService.getPlatformRatings();
-      console.log(response.data.data);
       setRatings(response.data.data);
     } catch (error) {
       console.log(error);
-      // toast.error("Failed to fetch ratings");
     }
   };
 
-  const addDoctorRating = async (newRating, doctorId) => {
-    console.log(newRating, doctorId);
+  const addDoctorRating = async (newRating, doctorId, onLocalUpdate) => {
     try {
       const response = await ratingService.addDoctorRating(newRating, doctorId);
-      console.log(response, "response");
+      const serverRating = response?.data?.data?.rating ?? null;
+      if (onLocalUpdate && serverRating !== null) {
+        onLocalUpdate(serverRating);
+      }
+
       toast.success("Rating added!");
     } catch (error) {
-      if (error.response.data.data === "You have already rated this doctor") {
+      if (error.response?.data?.data === "You have already rated this doctor") {
         toast.error(
-          "You’ve already rated this doctor. Update or delete instead."
+          "You've already rated this doctor. Update or delete instead."
         );
       }
     }
   };
   const addPlatformRating = async (newRating) => {
     try {
-      const response = await ratingService.addPlatformRating(newRating);
+      await ratingService.addPlatformRating(newRating);
       toast.success("Rating added!");
     } catch (error) {
       toast.error(error.response.data.data);
     }
   };
-  const updateDoctorRating = async (newRating, doctorId) => {
+  const updateDoctorRating = async (newRating, doctorId, onLocalUpdate) => {
     try {
       const response = await ratingService.updateDoctorRating(
         doctorId,
         newRating
       );
-      console.log(response, "response");
+      const serverRating = response?.data?.data?.rating ?? null;
+
+      if (onLocalUpdate && serverRating !== null) {
+        onLocalUpdate(serverRating);
+      }
+
       toast.success("Rating Updated Successfully!");
     } catch (error) {
-      toast.error(error.response.data.data);
+      toast.error(error.response?.data?.data);
     }
   };
+
   const updatePlatformRating = async (newRating) => {
     try {
-      const response = await ratingService.updatePlatformRating(newRating);
+      await ratingService.updatePlatformRating(newRating);
       toast.success("Platform Rating Updated Successfully!");
     } catch (error) {
       toast.error(error.response.data.data);
     }
   };
-  const deleteDoctorRating = async (doctorId) => {
+  const deleteDoctorRating = async (doctorId, onLocalUpdate) => {
     try {
       const response = await ratingService.deleteDoctorRating(doctorId);
-      // setRatings((prev) => [...prev, data]);
+      const serverRating = response?.data?.data?.rating ?? null;
+      if (onLocalUpdate && serverRating !== null) {
+        onLocalUpdate(serverRating);
+      }
+
       toast.success("Rating Deleted !");
     } catch (error) {
-      toast.error(error.response.data.data);
+      toast.error(error.response?.data?.data);
     }
   };
   const deletePlatformRating = async () => {
     try {
-      const response = await ratingService.deletePlatformRating();
+      await ratingService.deletePlatformRating();
       toast.success("Rating Deleted Successfully");
     } catch (error) {
       toast.error(err.response.data.data);

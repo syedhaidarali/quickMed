@@ -144,38 +144,49 @@ const CurrentDoctorProfile = () => {
   return (
     <div className='min-h-[60vh] bg-emerald-50 py-16 px-4 flex justify-center'>
       <div className='bg-white rounded-xl shadow-md p-8 max-w-2xl w-full'>
-        <div className='flex justify-between items-center mb-6'>
-          <h1 className='text-3xl font-bold text-emerald-800'>
-            Doctor Profile
-          </h1>
-          <div className='flex gap-3 items-center'>
-            {/* Notification Badge for Pending Consultations */}
-            {pendingConsultations.length > 0 && (
-              <div className='relative'>
-                <button
-                  onClick={() => {
-                    // Scroll to consultation section
-                    document
-                      .querySelector("[data-consultation-section]")
-                      ?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className='bg-red-100 text-red-700 px-3 py-2 rounded-lg hover:bg-red-200 transition-colors relative'>
-                  <span className='font-medium'>Pending Consultations</span>
-                  <span className='absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center'>
-                    {pendingConsultations.length}
-                  </span>
-                </button>
-              </div>
-            )}
+        <div className='mb-6'>
+          <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4'>
+            <h1 className='text-3xl font-bold text-emerald-800'>
+              Doctor Profile
+            </h1>
 
+            {/* Top Row Buttons */}
+            <div className='flex flex-wrap gap-2 justify-center sm:justify-end'>
+              {pendingConsultations.length > 0 && (
+                <div className='relative'>
+                  <button
+                    onClick={() => {
+                      document
+                        .querySelector("[data-consultation-section]")
+                        ?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                    className='bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200 transition-colors relative font-medium'>
+                    <span>Pending Consultations</span>
+                    <span className='absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold'>
+                      {pendingConsultations.length}
+                    </span>
+                  </button>
+                </div>
+              )}
+
+              <button
+                onClick={() => setIsEditing(!isEditing)}
+                className='bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium'>
+                {isEditing ? "Cancel" : "Edit"}
+              </button>
+            </div>
+          </div>
+
+          {/* Bottom Row Buttons */}
+          <div className='flex flex-wrap gap-2 justify-center sm:justify-end'>
             <button
-              onClick={() => setIsEditing(!isEditing)}
-              className='bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700'>
-              {isEditing ? "Cancel" : "Edit"}
+              onClick={() => navigate("/change-password?type=doctor")}
+              className='bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium'>
+              Change Password
             </button>
             <button
               onClick={handleLogout}
-              className='bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700'>
+              className='bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium'>
               Logout
             </button>
           </div>

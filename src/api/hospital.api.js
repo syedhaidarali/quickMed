@@ -22,7 +22,7 @@ export const hospitalApi = {
 
   resetPassword: (data) => request.post("/hospital/reset-password", data),
 
-  changePassword: (data) => request.put("/hospital/change-password", data),
+  changePassword: (data) => request.post("/hospital/change-password", data),
 
   updateProfile: (hospitalId, profileData) =>
     request.put(`/hospital/profile/${hospitalId}`, profileData),
