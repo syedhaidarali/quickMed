@@ -33,11 +33,16 @@ const Header = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const { admin } = useAdmin();
   const menuRef = useRef(null);
-  const { doctor } = useDoctor();
+  const { doctor, pendingValidation } = useDoctor();
   const { hospital, allPublicHospital } = useHospital();
   const { user } = useAuth();
 
-  const isAuthenticated = admin || doctor || hospital || user;
+  // treat pendingValidation like doctor for header UI
+  const isDoctorOrPending = Boolean(doctor || pendingValidation);
+
+  // include pendingValidation in authenticated checks so buttons disable consistently
+  const isAuthenticated =
+    admin || doctor || pendingValidation || hospital || user;
 
   const handleRoute = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -125,10 +130,17 @@ const Header = () => {
           className='ml-2'
           disabled={isAuthenticated}
         />
+        {/* Disable Doctor button when already doctor or pending validation */}
         <NavLink
           href={isAuthenticated ? "#" : "/doctor/login"}
           label='Doctor'
-          className={isAuthenticated ? "pointer-events-none opacity-50" : ""}
+          className={
+            isDoctorOrPending
+              ? "pointer-events-none opacity-50"
+              : isAuthenticated
+              ? "pointer-events-none opacity-50"
+              : ""
+          }
         />
         <NavLink
           href={isAuthenticated ? "#" : "/hospital/login"}
@@ -138,12 +150,14 @@ const Header = () => {
 
         {renderAdminButton(false)}
 
-        {doctor && (
+        {/* show My Profile for doctor OR pendingValidation */}
+        {isDoctorOrPending && (
           <NavLink
             href='/doctor/profile'
             label='My Profile'
           />
         )}
+
         {hospital && (
           <NavLink
             href='/doctor/profile'
@@ -203,11 +217,18 @@ const Header = () => {
           className='mt-2'
           disabled={isAuthenticated}
         />
+        {/* Doctor button disabled for doctor OR pendingValidation */}
         <NavLink
           href={isAuthenticated ? "#" : "/doctor/login"}
           label='Doctor'
           onClick={handleCloseMenu}
-          className={isAuthenticated ? "pointer-events-none opacity-50" : ""}
+          className={
+            isDoctorOrPending
+              ? "pointer-events-none opacity-50"
+              : isAuthenticated
+              ? "pointer-events-none opacity-50"
+              : ""
+          }
         />
         <NavLink
           href={isAuthenticated ? "#" : "/register/hospital"}
@@ -218,22 +239,27 @@ const Header = () => {
         />
         {renderAdminButton(true)}
 
-        {doctor && (
+        {/* show My Profile for doctor OR pendingValidation (mobile) */}
+        {isDoctorOrPending && (
           <NavLink
             href='/doctor/profile'
             label='My Profile'
+            onClick={handleCloseMenu}
           />
         )}
+
         {hospital && (
           <NavLink
             href='/doctor/profile'
             label='My Hospital Profile'
+            onClick={handleCloseMenu}
           />
         )}
         {user && (
           <NavLink
             href='/profile'
             label='My Profile'
+            onClick={handleCloseMenu}
           />
         )}
       </nav>
