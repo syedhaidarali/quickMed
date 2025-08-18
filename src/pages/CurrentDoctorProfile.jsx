@@ -8,7 +8,13 @@ import { InputField } from "../components/formItems";
 import { Modal } from "../modals";
 
 const CurrentDoctorProfile = () => {
-  const { doctor, logout, DoctorProfileUpdate, UpdateProfilePic } = useDoctor();
+  const {
+    doctor,
+    logout,
+    DoctorProfileUpdate,
+    UpdateProfilePic,
+    pendingValidation,
+  } = useDoctor();
   const [isEditing, setIsEditing] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
   const [isMoreModalVisible, setIsMoreModalVisible] = useState(false);
@@ -81,7 +87,7 @@ const CurrentDoctorProfile = () => {
     logout(navigate);
   };
 
-  if (!doctor) {
+  if (!doctor && !pendingValidation) {
     return (
       <div className='min-h-[60vh] flex items-center justify-center bg-emerald-50'>
         <h2 className='text-2xl text-emerald-700 font-semibold'>
@@ -92,7 +98,7 @@ const CurrentDoctorProfile = () => {
   }
 
   // Check if doctor status is pending
-  if (doctor.status === "pending") {
+  if (pendingValidation) {
     return (
       <div className='min-h-[60vh] flex items-center justify-center bg-emerald-50 p-4'>
         <div className='bg-white rounded-xl shadow-md p-8 max-w-2xl w-full text-center'>
@@ -123,11 +129,11 @@ const CurrentDoctorProfile = () => {
                 <strong>Current Status:</strong> Pending Verification
               </p>
               <p className='text-sm text-yellow-800 mt-1'>
-                <strong>Name:</strong> {doctor.name}
+                <strong>Name:</strong> {doctor?.name}
               </p>
               <p className='text-sm text-yellow-800 mt-1'>
                 <strong>Speciality:</strong>{" "}
-                {doctor.speciality?.join(", ") || "Not specified"}
+                {doctor?.speciality?.join(", ") || "Not specified"}
               </p>
               <button
                 onClick={handleLogout}

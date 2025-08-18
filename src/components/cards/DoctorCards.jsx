@@ -66,6 +66,14 @@ const DoctorCard = ({ doctor }) => {
           </div>
         </div>
 
+        <div className='flex items-center justify-between gap-7 text-sm'>
+          <div className='flex items-center gap-1 text-gray-500 text-xs'>
+            {doctor.hospitalVerified === true
+              ? "Member of Registered Hospital"
+              : "Not Member of Registered Hospital"}
+          </div>
+        </div>
+
         <div className='flex items-center justify-between text-sm'>
           <span className='text-gray-600'>Location:</span>
           <div className='flex items-center gap-1 text-gray-500 text-xs'>

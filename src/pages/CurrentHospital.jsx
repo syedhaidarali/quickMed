@@ -42,9 +42,9 @@ const CurrentHospital = () => {
           {/* Header */}
           <div className='text-center mb-6'>
             <div className='w-24 h-24 mx-auto mb-4 rounded-full bg-emerald-100 flex items-center justify-center'>
-              {currentHospital.profilePicture || currentHospital.image ? (
+              {hospital.profilePicture || hospital.image ? (
                 <img
-                  src={currentHospital.profilePicture || currentHospital.image}
+                  src={hospital.profilePicture || hospital.image}
                   alt='Hospital'
                   className='w-24 h-24 rounded-full object-cover'
                 />
@@ -53,14 +53,14 @@ const CurrentHospital = () => {
               )}
             </div>
             <h1 className='text-2xl font-bold text-gray-900'>
-              {currentHospital.name}
+              {hospital.name}
             </h1>
             <span
               className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-2 ${getStatusColor(
-                currentHospital.status
+                hospital.status
               )}`}>
-              {currentHospital.status?.charAt(0).toUpperCase() +
-                currentHospital.status?.slice(1) || "Unknown"}
+              {hospital.status?.charAt(0).toUpperCase() +
+                hospital.status?.slice(1) || "Unknown"}
             </span>
           </div>
 
@@ -69,24 +69,22 @@ const CurrentHospital = () => {
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div className='bg-gray-50 p-3 rounded-lg'>
                 <p className='text-sm text-gray-500'>Email</p>
-                <p className='font-medium'>{currentHospital.email}</p>
+                <p className='font-medium'>{hospital.email}</p>
               </div>
               <div className='bg-gray-50 p-3 rounded-lg'>
                 <p className='text-sm text-gray-500'>Phone</p>
                 <p className='font-medium'>
-                  {currentHospital.phone || "Not provided"}
+                  {hospital.phone || "Not provided"}
                 </p>
               </div>
               <div className='bg-gray-50 p-3 rounded-lg'>
                 <p className='text-sm text-gray-500'>City</p>
-                <p className='font-medium'>
-                  {currentHospital.city || "Not provided"}
-                </p>
+                <p className='font-medium'>{hospital.city || "Not provided"}</p>
               </div>
               <div className='bg-gray-50 p-3 rounded-lg'>
                 <p className='text-sm text-gray-500'>Type</p>
                 <p className='font-medium'>
-                  {currentHospital.hospitalType || "Not specified"}
+                  {hospital.hospitalType || "Not specified"}
                 </p>
               </div>
             </div>
@@ -94,7 +92,7 @@ const CurrentHospital = () => {
             <div className='bg-gray-50 p-3 rounded-lg'>
               <p className='text-sm text-gray-500'>Address</p>
               <p className='font-medium'>
-                {currentHospital.address || "Not provided"}
+                {hospital.address || "Not provided"}
               </p>
             </div>
           </div>
@@ -109,7 +107,7 @@ const CurrentHospital = () => {
           </div>
 
           {/* Status Message */}
-          {currentHospital.status === "pending" && (
+          {hospital.status === "pending" && (
             <div className='mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg'>
               <p className='text-yellow-800 text-sm text-center'>
                 Your profile is currently under review. You'll be notified once

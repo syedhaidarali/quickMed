@@ -3,7 +3,7 @@
 import request from "../helpers/request";
 
 export const hospitalApi = {
-  validateToken: () => request.post("/hospital/me", formData),
+  validateToken: () => request.get("/hospital/me"),
 
   signUp: (formData) => {
     return request.post("/hospital/signup", formData, {
@@ -14,7 +14,6 @@ export const hospitalApi = {
   },
 
   login: (credentials) => {
-    console.log(credentials, "sssssssssssssssss");
     return request.post("/hospital/login", credentials);
   },
 

@@ -15,13 +15,25 @@ export const DoctorProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [doctorId, setDoctorId] = useState(null);
   const [allDoctors, setAllDoctors] = useState([]);
+  const [pendingValidation, setPendingValidation] = useState(false);
   const validateSession = async () => {
     setLoading(true);
     try {
       const { data } = await doctorService.validateToken();
+      console.log(data);
       setDoctor(data.data);
     } catch (err) {
-      console.log(err);
+      if (
+        err.response?.data?.data ===
+        "Your documents have been uploaded. Please wait until verification is complete or contact support at <b> quickmed0023.info@gmail.com </b>"
+      ) {
+        setPendingValidation(true);
+        toast.error(
+          "Your Request is in pending once it complete then you will receive an email"
+        );
+      } else {
+        console.log(err);
+      }
     } finally {
       setLoading(false);
     }
@@ -196,6 +208,7 @@ export const DoctorProvider = ({ children }) => {
         logout,
         allDoctors,
         updateDoctorRating,
+        pendingValidation,
       }}>
       {children}
     </DoctorContext.Provider>

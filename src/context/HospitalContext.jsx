@@ -16,9 +16,10 @@ export const HospitalProvider = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await hospitalService.validateToken();
+      console.log(data, "data");
       setHospital(data.data);
     } catch (err) {
-      // console.log("errrrrrrrrrrrrr", err);
+      console.log("errrrrrrrrrrrrrrrrrrrrr", err);
     } finally {
       setLoading(false);
     }
