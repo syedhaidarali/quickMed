@@ -1,6 +1,6 @@
 /** @format */
 import { useHospital } from "../context";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import React from "react";
 
 const CurrentHospital = () => {
@@ -35,10 +35,22 @@ const CurrentHospital = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
   return (
     <div className='min-h-screen bg-emerald-50 py-8 px-4'>
       <div className='max-w-2xl mx-auto'>
         <div className='bg-white rounded-xl shadow-lg p-6'>
+          <div className='flex justify-end'>
+            <button
+              onClick={handleLogout}
+              className='px-4 ms-auto py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors'>
+              Logout
+            </button>
+          </div>
           {/* Header */}
           <div className='text-center mb-6'>
             <div className='w-24 h-24 mx-auto mb-4 rounded-full bg-emerald-100 flex items-center justify-center'>
@@ -97,8 +109,21 @@ const CurrentHospital = () => {
             </div>
           </div>
 
-          {/* Action Button */}
-          <div className='text-center'>
+          {/* Actions */}
+          <div className='flex items-center justify-center gap-3'>
+            {hospital && (
+              <Link
+                to={`/hospitals/${`${hospital.name
+                  ?.toLowerCase()
+                  .replace(/\s+/g, "-")
+                  .replace(/[^a-z0-9-]/g, "")}-${hospital._id}`}/doctors`}
+                className='px-6 py-2 border border-emerald-600 text-emerald-600 rounded-lg hover:bg-emerald-50 transition-colors'>
+                View Doctors
+                {Array.isArray(hospital?.doctors)
+                  ? ` (${hospital.doctors.length})`
+                  : ""}
+              </Link>
+            )}
             <button
               onClick={handleChangePassword}
               className='px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors'>

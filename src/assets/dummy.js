@@ -192,34 +192,34 @@ export const navLinks = [
     dropdown: [],
   },
 
-  {
-    label: "Medicines",
-    dropdown: [
-      { label: "All Medicines", href: "/medicines" },
-      {
-        label: "Medicine Delivery",
-        href: "/medicine/delivery",
-      },
-    ],
-  },
-  {
-    // label: "Labs",
-    // dropdown: [
-    //   {
-    //     label: "Chughtai Lab",
-    //     href: "/lab/chughtai-lab",
-    //   },
-    //   {
-    //     label: "Dr. Essa’s Laboratory & Diagnostic Center",
-    //     href: "/lab/dr-essa-s-laboratory-diagnostic-center",
-    //   },
-    //   {
-    //     label: "Excel Labs",
-    //     href: "/lab/excel-labs",
-    //   },
-    //   { label: "All Labs", href: "/labs" },
-    // ],
-  },
+  // {
+  //   label: "Medicines",
+  //   dropdown: [
+  //     { label: "All Medicines", href: "/medicines" },
+  //     {
+  //       label: "Medicine Delivery",
+  //       href: "/medicine/delivery",
+  //     },
+  //   ],
+  // },
+  // {
+  // label: "Labs",
+  // dropdown: [
+  //   {
+  //     label: "Chughtai Lab",
+  //     href: "/lab/chughtai-lab",
+  //   },
+  //   {
+  //     label: "Dr. Essa’s Laboratory & Diagnostic Center",
+  //     href: "/lab/dr-essa-s-laboratory-diagnostic-center",
+  //   },
+  //   {
+  //     label: "Excel Labs",
+  //     href: "/lab/excel-labs",
+  //   },
+  //   { label: "All Labs", href: "/labs" },
+  // ],
+  // },
   // { label: "Doctor", href: "/register/doctor" },
 ];
 
@@ -654,7 +654,14 @@ export const HOSPITAL_CATEGORIES = [
 ];
 
 export const GENDERS = ["Male", "Female", "Other"];
-export const RELIGIONS = ["Islam", "Christianity", "Hinduism", "Sikhism", "Buddhism", "Other"];
+export const RELIGIONS = [
+  "Islam",
+  "Christianity",
+  "Hinduism",
+  "Sikhism",
+  "Buddhism",
+  "Other",
+];
 export const DEGREE_OPTIONS = ["MBBS", "BDS"];
 export const cityCoordsMap = {
   Karachi: [24.86, 67.01],

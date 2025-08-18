@@ -19,7 +19,6 @@ const HospitalProfile = () => {
       }
     }
   }, [allPublicHospital, slug]);
-
   return (
     <div className='min-h-[60vh] bg-emerald-50 py-16 px-4'>
       <div className='max-w-5xl mx-auto'>
@@ -132,6 +131,9 @@ const HospitalProfile = () => {
                   to={`/hospitals/${slug}/doctors`}
                   className='px-5 py-2 border border-emerald-600 text-emerald-600 rounded-md hover:bg-emerald-50 transition-colors duration-200 font-medium text-center'>
                   View Doctors
+                  {Array.isArray(hospital?.doctors)
+                    ? ` (${hospital.doctors.length})`
+                    : ""}
                 </Link>
               </div>
             </div>

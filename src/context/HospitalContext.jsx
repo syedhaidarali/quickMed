@@ -16,7 +16,7 @@ export const HospitalProvider = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await hospitalService.validateToken();
-      console.log(data, "data");
+      console.log(data.data, "data");
       setHospital(data.data);
     } catch (err) {
       console.log(err);
@@ -34,14 +34,15 @@ export const HospitalProvider = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await hospitalService.login(credentials);
-      console.log(data.data.hospital.status === "rejected");
+      console.log(data.data.token);
       localStorage.setItem("token", data.data.token);
-      setHospital(data.data.hospital);
+      setHospital(data.data.user);
       toast.success("Login Successfully");
       navigate("/hospital/profile");
       return data.data.message;
     } catch (err) {
       toast.error(err.response.data.data || "Login failed");
+      console.log(err);
       setError(err);
     } finally {
       setLoading(false);

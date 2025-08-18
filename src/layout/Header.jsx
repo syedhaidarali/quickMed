@@ -158,9 +158,17 @@ const Header = () => {
           />
         )}
 
+        {/* Messages button for Doctor */}
+        {isDoctorOrPending && (
+          <NavLink
+            href='/doctor/messages'
+            label='Messages'
+          />
+        )}
+
         {hospital && (
           <NavLink
-            href='/doctor/profile'
+            href='/hospital/profile'
             label='My Hospital Profile'
           />
         )}
@@ -168,6 +176,14 @@ const Header = () => {
           <NavLink
             href='/profile'
             label='My Profile'
+          />
+        )}
+
+        {/* Messages button for User */}
+        {user && (
+          <NavLink
+            href='/user/message'
+            label='Messages'
           />
         )}
       </div>
@@ -248,6 +264,15 @@ const Header = () => {
           />
         )}
 
+        {/* Messages button for Doctor (mobile) */}
+        {isDoctorOrPending && (
+          <NavLink
+            href='/doctor/messages'
+            label='Messages'
+            onClick={handleCloseMenu}
+          />
+        )}
+
         {hospital && (
           <NavLink
             href='/doctor/profile'
@@ -259,6 +284,15 @@ const Header = () => {
           <NavLink
             href='/profile'
             label='My Profile'
+            onClick={handleCloseMenu}
+          />
+        )}
+
+        {/* Messages button for User (mobile) */}
+        {user && (
+          <NavLink
+            href='/user/message'
+            label='Messages'
             onClick={handleCloseMenu}
           />
         )}
