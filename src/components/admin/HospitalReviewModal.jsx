@@ -3,6 +3,7 @@ import { useAdmin } from "../../context";
 import { toast } from "sonner";
 
 import React, { useState } from "react";
+import { formatDateTime } from "../../helpers/date.helper";
 
 // Reusable InfoRow
 const InfoRow = ({ label, value }) => (
@@ -89,20 +90,7 @@ const HospitalReviewModal = ({
 
   if (!isOpen || !hospital) return null;
 
-  const formatDate = (date) => {
-    if (!date) return "Not available";
-    try {
-      return new Date(date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch {
-      return "Invalid date";
-    }
-  };
+  const formatDate = (date) => formatDateTime(date, "LLL");
 
   const openImageViewer = (imageUrl) => {
     if (!imageUrl) {

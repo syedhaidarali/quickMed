@@ -402,7 +402,9 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
                         {msg.senderName || "Unknown"}
                       </span>
                       <span className='text-gray-400 text-xs'>
-                        {new Date(msg.timestamp).toLocaleTimeString()}
+                        {msg.timestamp
+                          ? new Date(msg.timestamp).toLocaleTimeString()
+                          : ""}
                       </span>
                     </div>
                     <p className='text-sm text-white'>{msg.message}</p>

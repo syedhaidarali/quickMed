@@ -5,6 +5,7 @@ import { Input } from "../ui/input";
 import { Skeleton } from "../ui";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Search, MessageCircle } from "lucide-react";
+import { formatDate } from "../../helpers/date.helper";
 
 const ConversationList = ({
   allDoctors,
@@ -173,9 +174,7 @@ const ConversationList = ({
                           : doctorOrParticipant.name}
                       </h4>
                       <span className='text-xs text-gray-500'>
-                        {thread.updatedAt
-                          ? new Date(thread.updatedAt).toLocaleDateString()
-                          : ""}
+                        {formatDate(thread.updatedAt)}
                       </span>
                     </div>
 

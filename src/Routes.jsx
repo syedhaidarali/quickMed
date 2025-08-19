@@ -24,7 +24,6 @@ import {
   DoctorProfile,
   BookNow,
   HospitalDoctors,
-  BookAppointmentHospital,
   DoctorDocumentUpload,
   Consultation,
   DoctorConsultation,
@@ -164,10 +163,6 @@ const AppRoutes = () => (
       <Route
         path='/hospitals/:slug/doctors'
         element={<HospitalDoctors />}
-      />
-      <Route
-        path='/hospitals/:slug/book'
-        element={<BookAppointmentHospital />}
       />
 
       {/* Protected Routes */}

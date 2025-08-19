@@ -2,15 +2,28 @@
 
 import React, { useState } from "react";
 import { useAuth } from "../context";
+import { useAppointments } from "../context";
 import { toast } from "sonner";
 import { formatCNIC } from "../helpers";
 import { InputField } from "../components/formItems";
 import { useNavigate } from "react-router-dom";
+import { AppointmentCard } from "../components/cards";
 
 const UserProfile = () => {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const {
+    usersAppointments,
+    loading: apptLoading,
+    userAppointments,
+    userCancelAppointment,
+  } = useAppointments();
+
+  React.useEffect(() => {
+    userAppointments().catch(() => {});
+  }, []);
+
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
@@ -177,28 +190,42 @@ const UserProfile = () => {
                     Member Since
                   </label>
                   <p className='text-gray-900'>
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {user.createdAt
+                      ? new Date(user.createdAt).toLocaleDateString()
+                      : ""}
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Consultation History */}
+          {/* Appointments */}
           <div className='mt-12'>
             <h2 className='text-xl font-semibold text-emerald-700 border-b border-emerald-200 pb-2 mb-6'>
-              Consultation History
+              Your Appointments
             </h2>
-
-            <div className='bg-gray-50 p-6 rounded-lg text-center'>
-              <p className='text-gray-600 mb-4'>
-                Your consultation history will appear here
-              </p>
-              <p className='text-sm text-gray-500'>
-                Start your first consultation by booking an appointment with a
-                doctor
-              </p>
-            </div>
+            {apptLoading?.userAppointments ? (
+              <div className='text-gray-600'>Loading your appointments...</div>
+            ) : usersAppointments?.length ? (
+              <div className='space-y-3'>
+                {usersAppointments.map((a) => (
+                  <AppointmentCard
+                    key={a._id}
+                    appointment={a}
+                    role='user'
+                    showCancel={a.status !== "cancelled"}
+                    onCancel={() => userCancelAppointment(a._id)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className='bg-gray-50 p-6 rounded-lg text-center'>
+                <p className='text-gray-600 mb-1'>No appointments yet.</p>
+                <p className='text-sm text-gray-500'>
+                  Book your first appointment from the doctor page.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

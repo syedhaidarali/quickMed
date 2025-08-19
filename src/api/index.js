@@ -7,3 +7,4 @@ export * from "./admin.api";
 export * from "./rating.api";
 export * from "./aiRecommendation.api";
 export * from "./chat.api";
+export * from "./appointments.api";

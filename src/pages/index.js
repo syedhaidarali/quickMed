@@ -19,7 +19,6 @@ export { default as HospitalDoctors } from "./HospitalDoctors.jsx";
 export { default as LabDetail } from "./LabDetail.jsx";
 export { default as MedicineDetail } from "./MedicineDetail.jsx";
 export { default as BookNow } from "./BookNow.jsx";
-export { default as BookAppointmentHospital } from "./BookAppointmentHospital.jsx";
 export { default as UserProfile } from "./UserProfile.jsx";
 export { default as Consultation } from "./Consultation.jsx";
 export { default as DoctorConsultation } from "./DoctorConsultation.jsx";

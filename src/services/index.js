@@ -8,3 +8,4 @@ export * from "./ratingService";
 export * from "./aiRecommendationService";
 export * from "./quickHelpService";
 export * from "./chatServices";
+export * from "./AppointmentsService";

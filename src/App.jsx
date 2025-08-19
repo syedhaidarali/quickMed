@@ -11,6 +11,7 @@ import {
   RatingProvider,
   QuickHelpProvider,
   ChatProvider,
+  AppointmentsProvider,
 } from "./context";
 import AppRoutes from "./Routes";
 
@@ -19,17 +20,19 @@ function App() {
     <AdminProvider>
       <HospitalProvider>
         <BrowserRouter basename='/quickMed'>
-          <DoctorProvider>
-            <AuthProvider>
-              <ChatProvider>
-                <RatingProvider>
-                  <QuickHelpProvider>
-                    <AppRoutes />
-                  </QuickHelpProvider>
-                </RatingProvider>
-              </ChatProvider>
-            </AuthProvider>
-          </DoctorProvider>
+          <AppointmentsProvider>
+            <DoctorProvider>
+              <AuthProvider>
+                <ChatProvider>
+                  <RatingProvider>
+                    <QuickHelpProvider>
+                      <AppRoutes />
+                    </QuickHelpProvider>
+                  </RatingProvider>
+                </ChatProvider>
+              </AuthProvider>
+            </DoctorProvider>
+          </AppointmentsProvider>
         </BrowserRouter>
       </HospitalProvider>
     </AdminProvider>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth, useDoctor } from "../context";
+import { useAppointments } from "../context";
 import { toast } from "sonner";
 import { ConsultationLauncher } from "../components/videoChat";
 
@@ -11,7 +12,12 @@ const BookNow = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const { allDoctors, loading } = useDoctor();
-  const [form, setForm] = useState({ name: "", date: "", time: "" });
+  const [form, setForm] = useState({
+    date: "",
+    time: "",
+    symptoms: "",
+    notes: "",
+  });
   const [submitted, setSubmitted] = useState(false);
   const [consultationType, setConsultationType] = useState("in-person"); // "in-person" or "video"
   const [doctor, setDoctor] = useState(null);
@@ -38,14 +44,48 @@ const BookNow = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const {
+    checkDoctorAvailabilitySlots,
+    loading: apptLoading,
+    userBookingAppointments,
+    slots,
+  } = useAppointments();
+
+  useEffect(() => {
+    if (doctor?._id && form.date) {
+      checkDoctorAvailabilitySlots(doctor._id, form.date).catch(() => {});
+    }
+  }, [doctor?._id, form.date]);
+
+  const formatTo12Hour = (time24) => {
+    if (!time24 || typeof time24 !== "string") return time24 || "";
+    const parts = time24.split(":");
+    const h = parseInt(parts[0], 10);
+    const m = parts[1] || "00";
+    if (Number.isNaN(h)) return time24;
+    const ampm = h >= 12 ? "PM" : "AM";
+    const hour12 = h % 12 === 0 ? 12 : h % 12;
+    return `${hour12}:${m} ${ampm}`;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isAuthenticated) {
       toast.error("Please login to book an appointment");
       navigate("/login");
       return;
     }
-    setSubmitted(true);
+    try {
+      await userBookingAppointments({
+        doctorId: doctor._id,
+        date: form.date,
+        time: form.time,
+        fee: doctor.fee,
+        symptoms: form.symptoms,
+        notes: form.notes,
+      });
+      setSubmitted(true);
+    } catch (err) {}
   };
 
   const handleVideoConsultation = () => {
@@ -205,22 +245,28 @@ const BookNow = () => {
                   <form
                     onSubmit={handleSubmit}
                     className='space-y-4'>
-                    <input
-                      name='name'
-                      value={form.name}
-                      onChange={handleChange}
-                      required
-                      placeholder='Your Name'
-                      className='w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500'
-                    />
-                    <input
-                      name='date'
-                      type='date'
-                      value={form.date}
-                      onChange={handleChange}
-                      required
-                      className='w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500'
-                    />
+                    <div className='flex gap-2 items-center'>
+                      <input
+                        name='date'
+                        type='date'
+                        value={form.date}
+                        onChange={handleChange}
+                        required
+                        className='w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500'
+                      />
+                      <button
+                        type='button'
+                        onClick={() =>
+                          doctor?._id &&
+                          form.date &&
+                          checkDoctorAvailabilitySlots(doctor._id, form.date)
+                        }
+                        className='whitespace-nowrap px-3 py-2 rounded bg-emerald-600 text-white hover:bg-emerald-700 text-sm'>
+                        {apptLoading?.checkDoctorAvailabilitySlots
+                          ? "Checking..."
+                          : "Check Availability"}
+                      </button>
+                    </div>
                     <input
                       name='time'
                       type='time'
@@ -229,10 +275,66 @@ const BookNow = () => {
                       required
                       className='w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500'
                     />
+                    {form.date && (
+                      <div className='space-y-2'>
+                        <div className='text-sm font-medium text-emerald-700'>
+                          Available Slots
+                        </div>
+                        {apptLoading?.checkDoctorAvailabilitySlots ? (
+                          <div className='text-gray-600 text-sm'>
+                            Loading slots...
+                          </div>
+                        ) : Array.isArray(slots) && slots.length > 0 ? (
+                          <div className='flex flex-wrap gap-2'>
+                            {slots.map((s, i) => {
+                              const raw =
+                                typeof s === "string"
+                                  ? s
+                                  : s?.time || s?.start || s?.slot || "";
+                              return (
+                                <button
+                                  type='button'
+                                  key={`${raw}-${i}`}
+                                  onClick={() =>
+                                    setForm({ ...form, time: raw })
+                                  }
+                                  className={`px-3 py-1 rounded border text-sm transition-colors ${
+                                    form.time === raw
+                                      ? "bg-emerald-600 text-white border-emerald-600"
+                                      : "bg-white text-gray-700 hover:bg-emerald-50 border-gray-300"
+                                  }`}>
+                                  {formatTo12Hour(raw)}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <div className='text-gray-600 text-sm'>
+                            No slots available for the selected date.
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    <textarea
+                      name='symptoms'
+                      placeholder='Describe your symptoms (optional)'
+                      value={form.symptoms}
+                      onChange={handleChange}
+                      className='w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500'
+                    />
+                    <textarea
+                      name='notes'
+                      placeholder='Additional notes (optional)'
+                      value={form.notes}
+                      onChange={handleChange}
+                      className='w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500'
+                    />
                     <button
                       type='submit'
                       className='w-full bg-emerald-600 text-white py-2 rounded hover:bg-emerald-700 transition-colors'>
-                      Book Appointment
+                      {apptLoading?.userBookingAppointments
+                        ? "Booking..."
+                        : "Book Appointment"}
                     </button>
                   </form>
                 )}

@@ -1,14 +1,10 @@
 /** @format */
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { formatTime } from "../../helpers/date.helper";
 
 const Message = ({ message, isOwnMessage, senderProfile }) => {
-  const formatTime = (timestamp) => {
-    return new Date(timestamp).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  const formatMessageTime = (timestamp) => formatTime(timestamp);
 
   return (
     <div className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}>
@@ -33,7 +29,7 @@ const Message = ({ message, isOwnMessage, senderProfile }) => {
             className={`text-xs mt-1 ${
               isOwnMessage ? "text-green-100" : "text-gray-500"
             }`}>
-            {formatTime(message.createdAt)}
+            {formatMessageTime(message.createdAt)}
           </p>
         </div>
       </div>

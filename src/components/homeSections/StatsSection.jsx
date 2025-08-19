@@ -1,10 +1,11 @@
 /** @format */
 import React from "react";
-import { useDoctor, useHospital } from "../../context";
+import { useAuth, useDoctor, useHospital } from "../../context";
 
 const StatsSection = () => {
   const { allDoctors } = useDoctor();
   const { allPublicHospital } = useHospital();
+  const { allUsers } = useAuth();
 
   const dynamicStats = [
     {
@@ -13,7 +14,7 @@ const StatsSection = () => {
       description: "PMC verified doctors across Pakistan",
     },
     {
-      number: "1M+", // keep static
+      number: allUsers.length || 0, // keep static
       label: "Happy Patients",
       description: "Patients served nationwide",
     },

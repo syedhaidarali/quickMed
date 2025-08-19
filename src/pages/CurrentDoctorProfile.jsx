@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDoctor } from "../context";
+import { useAppointments } from "../context";
 import { toast } from "sonner";
 import { InputField } from "../components/formItems";
 import { Modal } from "../modals";
+import { AppointmentCard } from "../components/cards";
 
 const CurrentDoctorProfile = () => {
   const {
@@ -20,24 +22,34 @@ const CurrentDoctorProfile = () => {
   const [isMoreModalVisible, setIsMoreModalVisible] = useState(false);
   const [consultationCode, setConsultationCode] = useState("");
   const [pendingConsultations, setPendingConsultations] = useState([]);
+  const [scheduleForm, setScheduleForm] = useState({
+    workingDays: [],
+    startTime: "09:00",
+    endTime: "17:00",
+    appointmentDuration: 30,
+  });
 
   const [profileData, setProfileData] = useState({
     phone: doctor?.phone || "",
-    availability:
-      typeof doctor?.availability === "boolean" ? doctor.availability : true,
+    availability: true,
     fee: doctor?.fee || "",
     fullAddress: doctor?.fullAddress || "",
     experience: doctor?.experience || "",
   });
   const navigate = useNavigate();
+  const {
+    doctorsAppointments,
+    loading: apptLoading,
+    doctorAppointments,
+    appointmentStatus,
+    doctorAppointmentsCancel,
+    getSchedule,
+    doctorAppointmentsSchedule,
+  } = useAppointments();
 
-  // Simulate checking for pending consultations
   useEffect(() => {
-    // In a real app, this would fetch from an API
     const checkPendingConsultations = () => {
-      // Mock data - replace with actual API call
       const mockConsultations = [
-        // Example consultation for demonstration
         {
           patientName: "John Doe",
           date: new Date(),
@@ -56,6 +68,24 @@ const CurrentDoctorProfile = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Load doctor appointments and current schedule
+  useEffect(() => {
+    doctorAppointments().catch(() => {});
+    if (doctor?._id) {
+      getSchedule(doctor._id)
+        .then((s) => {
+          if (!s) return;
+          setScheduleForm({
+            workingDays: s.workingDays || [],
+            startTime: s.startTime || "09:00",
+            endTime: s.endTime || "17:00",
+            appointmentDuration: s.appointmentDuration || 30,
+          });
+        })
+        .catch(() => {});
+    }
+  }, [doctor?._id]);
+
   // Handle consultation joining
   const handleJoinConsultation = () => {
     if (!consultationCode.trim()) {
@@ -63,6 +93,11 @@ const CurrentDoctorProfile = () => {
       return;
     }
     navigate(`/doctor/consultation/${consultationCode}/patient_waiting`);
+  };
+
+  // Handle Confirm Appointments
+  const handleConfirmAppointment = (appointmentsId) => {
+    appointmentStatus(appointmentsId);
   };
 
   // Handle form submission
@@ -86,6 +121,61 @@ const CurrentDoctorProfile = () => {
   const handleLogout = () => {
     logout(navigate);
   };
+
+  const toggleWorkingDay = (day) => {
+    setScheduleForm((prev) => {
+      const has = prev.workingDays?.includes(day);
+      const workingDays = has
+        ? prev.workingDays.filter((d) => d !== day)
+        : [...(prev.workingDays || []), day];
+      return { ...prev, workingDays };
+    });
+  };
+
+  const handleSaveSchedule = async (e) => {
+    e?.preventDefault?.();
+    const mapDay = (abbr) => {
+      switch (abbr) {
+        case "Mon":
+          return "monday";
+        case "Tue":
+          return "tuesday";
+        case "Wed":
+          return "wednesday";
+        case "Thu":
+          return "thursday";
+        case "Fri":
+          return "friday";
+        case "Sat":
+          return "saturday";
+        case "Sun":
+          return "sunday";
+        default:
+          return null;
+      }
+    };
+
+    const selectedSet = new Set(scheduleForm.workingDays || []);
+    const payload = {
+      workingDays: {
+        monday: selectedSet.has("Mon"),
+        tuesday: selectedSet.has("Tue"),
+        wednesday: selectedSet.has("Wed"),
+        thursday: selectedSet.has("Thu"),
+        friday: selectedSet.has("Fri"),
+        saturday: selectedSet.has("Sat"),
+        sunday: selectedSet.has("Sun"),
+      },
+      startTime: scheduleForm.startTime,
+      endTime: scheduleForm.endTime,
+      appointmentDuration: Number(scheduleForm.appointmentDuration) || 30,
+    };
+
+    await doctorAppointmentsSchedule(payload);
+    if (doctor?._id) await getSchedule(doctor._id);
+  };
+
+  // unified time formatting handled via AppointmentCard where rendered
 
   if (!doctor && !pendingValidation) {
     return (
@@ -287,32 +377,6 @@ const CurrentDoctorProfile = () => {
               }
               placeholder='Enter full address'
             />
-
-            <div>
-              <label className='font-medium text-emerald-700 mb-1 block'>
-                Availability
-              </label>
-              <div className='flex items-center space-x-2'>
-                <input
-                  type='checkbox'
-                  id='availability'
-                  checked={profileData.availability}
-                  onChange={(e) =>
-                    setProfileData((prev) => ({
-                      ...prev,
-                      availability: e.target.checked,
-                    }))
-                  }
-                  className='h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded'
-                />
-                <label
-                  htmlFor='availability'
-                  className='text-emerald-700 font-medium'>
-                  Available for Consultations
-                </label>
-              </div>
-            </div>
-
             <div className='flex justify-between'>
               <button
                 type='button'
@@ -449,15 +513,21 @@ const CurrentDoctorProfile = () => {
               </p>
               <p className='text-gray-700 mb-1'>
                 <b>Payment Completed:</b>{" "}
-                {new Date(doctor.PaymentCompleted).toLocaleDateString()}
+                {doctor.PaymentCompleted
+                  ? new Date(doctor.PaymentCompleted).toLocaleDateString()
+                  : ""}
               </p>
               <p className='text-gray-700 mb-1'>
                 <b>Created:</b>{" "}
-                {new Date(doctor.createdAt).toLocaleDateString()}
+                {doctor.createdAt
+                  ? new Date(doctor.createdAt).toLocaleDateString()
+                  : ""}
               </p>
               <p className='text-gray-700 mb-1'>
                 <b>Last Updated:</b>{" "}
-                {new Date(doctor.updatedAt).toLocaleDateString()}
+                {doctor.updatedAt
+                  ? new Date(doctor.updatedAt).toLocaleDateString()
+                  : ""}
               </p>
             </div>
 
@@ -486,128 +556,124 @@ const CurrentDoctorProfile = () => {
                   Start New Consultation
                 </button>
               </div>
+            </div>
 
-              <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
-                <h4 className='font-semibold text-blue-800 mb-3'>
-                  Join Existing Consultation
-                </h4>
-                <p className='text-blue-700 text-sm mb-3'>
-                  A patient has started a video consultation and is waiting for
-                  you to join. Enter the consultation code below to join the
-                  session.
-                </p>
-
-                {/* Example Section */}
-                {pendingConsultations.length > 0 && (
-                  <div className='mb-4 p-3 bg-blue-100 border border-blue-300 rounded-lg'>
-                    <p className='text-blue-800 text-sm font-medium mb-2'>
-                      💡 Example Consultation Code:
-                    </p>
-                    <div className='flex items-center gap-2'>
-                      <code className='bg-blue-200 px-2 py-1 rounded text-sm font-mono'>
-                        {pendingConsultations[0].meetingId}
-                      </code>
-                      <button
-                        onClick={() =>
-                          setConsultationCode(pendingConsultations[0].meetingId)
-                        }
-                        className='text-blue-600 hover:text-blue-800 text-sm underline'>
-                        Use this code
-                      </button>
-                    </div>
+            {/* Appointments Management */}
+            <div className='mt-8 border-t pt-6'>
+              <h3 className='text-lg font-semibold text-emerald-800 mb-4'>
+                Appointments
+              </h3>
+              <div className='bg-gray-50 border border-gray-200 rounded-lg p-4'>
+                {apptLoading?.doctorAppointments ? (
+                  <div className='text-gray-600 text-sm'>
+                    Loading appointments...
+                  </div>
+                ) : doctorsAppointments?.length ? (
+                  <div className='space-y-3'>
+                    {doctorsAppointments.map((a) => (
+                      <AppointmentCard
+                        key={a._id}
+                        appointment={a}
+                        role='doctor'
+                        showConfirm={a.status !== "confirmed"}
+                        showCancel={a.status !== "cancelled"}
+                        onConfirm={() => handleConfirmAppointment(a._id)}
+                        onCancel={() => doctorAppointmentsCancel(a._id)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className='text-gray-600 text-sm'>
+                    No appointments yet.
                   </div>
                 )}
-
-                <div className='flex gap-3'>
-                  <input
-                    type='text'
-                    value={consultationCode}
-                    onChange={(e) => setConsultationCode(e.target.value)}
-                    placeholder='Enter consultation code (e.g., lssf-npyx-3zzd)'
-                    className='flex-1 px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-                  />
-                  <button
-                    onClick={handleJoinConsultation}
-                    className='bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium'>
-                    Join Now
-                  </button>
-                </div>
-                <div className='mt-3 text-xs text-blue-600'>
-                  <p>• Make sure you have a stable internet connection</p>
-                  <p>• Allow camera and microphone access when prompted</p>
-                  <p>• Find a quiet, private space for the consultation</p>
-                  <p>
-                    • Enter the meeting code provided by the patient or from
-                    your dashboard
-                  </p>
-                </div>
               </div>
             </div>
 
-            {/* Pending Consultations Section */}
-            <div className='mt-6'>
-              <h3 className='text-lg font-semibold text-emerald-800 mb-3'>
-                Consultation Status
+            {/* Schedule Editor */}
+            <div className='mt-8 border-t pt-6'>
+              <h3 className='text-lg font-semibold text-emerald-800 mb-4'>
+                Weekly Schedule
               </h3>
-              <div className='bg-gray-50 border border-gray-200 rounded-lg p-4'>
-                <div className='text-gray-600 text-sm'>
-                  {pendingConsultations && pendingConsultations.length > 0 ? (
-                    <>
-                      <span className='font-medium text-yellow-700'>
-                        You have {pendingConsultations.length} pending
-                        consultation(s).
-                      </span>
-                      <ul className='list-disc list-inside text-sm text-gray-700 mt-2'>
-                        {pendingConsultations.map((consultation, index) => (
-                          <li
-                            key={index}
-                            className='flex items-center justify-between mb-2 p-2 bg-white rounded border'>
-                            <div className='flex-1'>
-                              <span className='font-medium'>
-                                Patient: {consultation.patientName}
-                              </span>
-                              <br />
-                              <span className='text-sm text-gray-600'>
-                                Date:{" "}
-                                {new Date(
-                                  consultation.date
-                                ).toLocaleDateString()}
-                              </span>
-                              <br />
-                              <span className='text-sm text-gray-600'>
-                                Meeting ID: {consultation.meetingId}
-                              </span>
-                              {consultation.symptoms && (
-                                <>
-                                  <br />
-                                  <span className='text-sm text-gray-600'>
-                                    Symptoms: {consultation.symptoms}
-                                  </span>
-                                </>
-                              )}
-                            </div>
-                            <button
-                              onClick={() => {
-                                setConsultationCode(consultation.meetingId);
-                                // Auto-scroll to consultation section
-                                document
-                                  .querySelector("[data-consultation-section]")
-                                  ?.scrollIntoView({ behavior: "smooth" });
-                              }}
-                              className='bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors ml-3'>
-                              Quick Join
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  ) : (
-                    <span className='text-green-600'>
-                      No pending consultations at the moment.
-                    </span>
+              <form
+                onSubmit={handleSaveSchedule}
+                className='space-y-3'>
+                <div className='grid grid-cols-2 sm:grid-cols-3 gap-2'>
+                  {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
+                    (d) => (
+                      <label
+                        key={d}
+                        className='flex items-center gap-2 text-sm'>
+                        <input
+                          type='checkbox'
+                          checked={scheduleForm.workingDays?.includes(d)}
+                          onChange={() => toggleWorkingDay(d)}
+                        />
+                        <span>{d}</span>
+                      </label>
+                    )
                   )}
                 </div>
-              </div>
+                <div className='grid grid-cols-1 sm:grid-cols-3 gap-3'>
+                  <div>
+                    <label className='block text-xs text-gray-600 mb-1'>
+                      Start Time
+                    </label>
+                    <input
+                      type='time'
+                      value={scheduleForm.startTime}
+                      onChange={(e) =>
+                        setScheduleForm((p) => ({
+                          ...p,
+                          startTime: e.target.value,
+                        }))
+                      }
+                      className='w-full border rounded px-2 py-1'
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-xs text-gray-600 mb-1'>
+                      End Time
+                    </label>
+                    <input
+                      type='time'
+                      value={scheduleForm.endTime}
+                      onChange={(e) =>
+                        setScheduleForm((p) => ({
+                          ...p,
+                          endTime: e.target.value,
+                        }))
+                      }
+                      className='w-full border rounded px-2 py-1'
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-xs text-gray-600 mb-1'>
+                      Duration (minutes)
+                    </label>
+                    <input
+                      type='number'
+                      min='5'
+                      step='5'
+                      value={scheduleForm.appointmentDuration}
+                      onChange={(e) =>
+                        setScheduleForm((p) => ({
+                          ...p,
+                          appointmentDuration: Number(e.target.value) || 30,
+                        }))
+                      }
+                      className='w-full border rounded px-2 py-1'
+                    />
+                  </div>
+                </div>
+                <div className='flex justify-end'>
+                  <button
+                    type='submit'
+                    className='bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700'>
+                    Save Schedule
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

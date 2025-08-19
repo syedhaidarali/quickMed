@@ -1,6 +1,7 @@
 /** @format */
 import React, { useEffect, useRef } from "react";
 import { ScrollArea } from "../ui/scroll-area";
+import { formatTime } from "../../helpers/date.helper";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const MessagesList = ({
@@ -288,9 +289,7 @@ const MessagesList = ({
                       isMine ? "justify-end" : "justify-start"
                     }`}>
                     <span className='text-[11px] text-gray-400'>
-                      {message.createdAt
-                        ? new Date(message.createdAt).toLocaleTimeString()
-                        : ""}
+                      {formatTime(message.createdAt)}
                     </span>
                   </div>
                 </div>

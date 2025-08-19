@@ -7,3 +7,4 @@ export { default as TestimonialCard } from "./testimonialCard";
 // export { default as StatsCard } from "./StatsCard";
 export { default as LabCard } from "./LabCard";
 export { default as MedicineCard } from "./MedicineCard";
+export { default as AppointmentCard } from "./AppointmentCard";

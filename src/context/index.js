@@ -7,3 +7,4 @@ export * from "./AdminContext";
 export * from "./RatingContext";
 export * from "./QuickHelpContext";
 export * from "./ChatContext";
+export * from "./AppointmentsContext";
