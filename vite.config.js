@@ -1,10 +1,20 @@
 /** @format */
 
-// vite.config.js
 import { defineConfig } from "vite";
-import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import fs from "fs";
+import path from "path";
 
 export default defineConfig({
-  base: "/quickMed/", // replace with your actual repo name
-  plugins: [tailwindcss()],
+  plugins: [
+    react(),
+    {
+      name: "copy-index-to-404",
+      closeBundle() {
+        const distDir = path.resolve(__dirname, "dist");
+        fs.copyFileSync(`${distDir}/index.html`, `${distDir}/404.html`);
+      },
+    },
+  ],
+  base: "/quickMed/", // change this
 });
