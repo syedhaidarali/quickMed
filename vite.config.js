@@ -16,5 +16,5 @@ export default defineConfig({
       },
     },
   ],
-  base: "/quickMed/", // change this
+  base: "/quickMed/",
 });
