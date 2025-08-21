@@ -11,6 +11,14 @@ import {
   CarouselPrevious,
 } from "../ui/carousel";
 import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import { Link } from "react-router-dom";
 import { TestimonialCard } from "../cards";
 
 const TestimonialSection = () => {
@@ -25,6 +33,15 @@ const TestimonialSection = () => {
   const { admin } = useAdmin();
   const { doctor } = useDoctor();
   const [openRatingModal, setOpenRatingModal] = useState(false);
+  const [openLoginModal, setOpenLoginModal] = useState(false);
+
+  const handleRateClick = () => {
+    if (user || admin || doctor) {
+      setOpenRatingModal(true);
+    } else {
+      setOpenLoginModal(true);
+    }
+  };
 
   const handleAddRating = async ({ rating, review }) => {
     await addPlatformRating({ rating: rating, description: review });
@@ -102,17 +119,16 @@ const TestimonialSection = () => {
 
         {/* Platform Rating Button */}
         <div className='text-center'>
+          <Button
+            onClick={handleRateClick}
+            variant='default'
+            size='lg'
+            className='bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300'>
+            Rate Our Platform
+          </Button>
+
+          {/* Rating Modal (opens only when authenticated) */}
           <ReviewModal
-            trigger={
-              (user || admin || doctor) && (
-                <Button
-                  variant='default'
-                  size='lg'
-                  className='bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300'>
-                  Rate Our Platform
-                </Button>
-              )
-            }
             open={openRatingModal}
             onOpenChange={setOpenRatingModal}
             mode='rating-and-review'
@@ -123,6 +139,46 @@ const TestimonialSection = () => {
             description='Your feedback helps us improve QuickMed for everyone. Rate your overall experience with our healthcare platform, including ease of use, features, and service quality.'
             submitLabel='Submit Rating'
           />
+
+          {/* Login Prompt Modal (opens when not authenticated) */}
+          <Dialog
+            open={openLoginModal}
+            onOpenChange={setOpenLoginModal}>
+            <DialogContent className='max-w-md'>
+              <DialogHeader>
+                <DialogTitle>Login Required</DialogTitle>
+                <DialogDescription>
+                  Please log in to rate our platform. Choose your login type
+                  below.
+                </DialogDescription>
+              </DialogHeader>
+              <div className='mt-2 grid gap-3'>
+                <Link
+                  to='/login'
+                  onClick={() => setOpenLoginModal(false)}>
+                  <Button className='w-full'>Login as User</Button>
+                </Link>
+                <Link
+                  to='/doctor/login'
+                  onClick={() => setOpenLoginModal(false)}>
+                  <Button
+                    variant='outline'
+                    className='w-full'>
+                    Login as Doctor
+                  </Button>
+                </Link>
+                <Link
+                  to='/admin/login'
+                  onClick={() => setOpenLoginModal(false)}>
+                  <Button
+                    variant='secondary'
+                    className='w-full'>
+                    Login as Admin
+                  </Button>
+                </Link>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </section>
