@@ -7,6 +7,16 @@ import fs from "fs";
 import path from "path";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    {
+      name: "copy-index-to-404",
+      closeBundle() {
+        const distDir = path.resolve(__dirname, "dist");
+        fs.copyFileSync(`${distDir}/index.html`, `${distDir}/404.html`);
+      },
+    },
+  ],
   base: "/quickMed/",
 });
