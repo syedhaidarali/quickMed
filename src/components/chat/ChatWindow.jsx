@@ -131,7 +131,7 @@ const ChatWindow = ({
               <MessageSquareText className='h-10 w-10 text-green-500' />
             </div>
             <h2 className='text-lg font-semibold text-gray-700'>
-              Welcome to Chat
+              Welcome to qukMed Chat
             </h2>
             <p className='text-sm text-gray-500 mt-1'>
               Select a doctor from the sidebar to start chatting.

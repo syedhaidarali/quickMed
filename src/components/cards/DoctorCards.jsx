@@ -42,7 +42,9 @@ const DoctorCard = ({ doctor }) => {
           {doctor.name}
         </h3>
         <p className='inline-block bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded-full mb-1'>
-          {doctor.speciality}
+          {Array.isArray(doctor.speciality)
+            ? doctor.speciality.filter(Boolean).join(", ")
+            : doctor.speciality || "General Medicine"}
         </p>
         <p className='text-sm text-gray-500'>
           {doctor.experience || 0} years experience

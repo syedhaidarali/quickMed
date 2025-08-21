@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { citiesMap, cityCoordsMap, specialities } from "../../assets/dummy";
 import { Map, Search } from "../../assets/svg";
 import Dropdown from "./Dropdown";
+import { useDoctor } from "../../context";
 
 const SearchBar = ({ onCitySelect }) => {
   const [city, setCity] = useState("");
@@ -12,11 +13,23 @@ const SearchBar = ({ onCitySelect }) => {
   const [suggestions, setSuggestions] = useState([]);
   const cityInputRef = useRef(null);
   const navigate = useNavigate();
+  const { allDoctors } = useDoctor();
+
+  // Doctor name search
+  const [doctorQuery, setDoctorQuery] = useState("");
+  const [doctorSuggestions, setDoctorSuggestions] = useState([]);
+  const doctorInputRef = useRef(null);
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (cityInputRef.current && !cityInputRef.current.contains(e.target)) {
         setSuggestions([]);
+      }
+      if (
+        doctorInputRef.current &&
+        !doctorInputRef.current.contains(e.target)
+      ) {
+        setDoctorSuggestions([]);
       }
     };
 
@@ -70,6 +83,54 @@ const SearchBar = ({ onCitySelect }) => {
     }
   };
 
+  // Generate same slug format used in DoctorCard for profile route
+  const generateDoctorSlug = (name, id) => {
+    const nameSlug = (name || "")
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
+    return `${nameSlug}-${id}`;
+  };
+
+  // Filter doctor suggestions by name (and city if selected)
+  const handleDoctorInputChange = (e) => {
+    const value = e.target.value;
+    setDoctorQuery(value);
+    if (!value) {
+      setDoctorSuggestions([]);
+      return;
+    }
+    const lower = value.toLowerCase();
+    const filtered = (allDoctors || [])
+      .filter((doc) => (doc?.name || "").toLowerCase().includes(lower))
+      .filter((doc) => {
+        if (!city) return true;
+        const docCity = (doc.city || doc.fullAddress || "")
+          .toString()
+          .toLowerCase();
+        return doc.city
+          ? doc.city.toLowerCase() === city.toLowerCase()
+          : docCity.includes(city.toLowerCase());
+      })
+      .slice(0, 20);
+    setDoctorSuggestions(filtered);
+  };
+
+  const handleDoctorKeyDown = (e) => {
+    if (e.key === "Enter" && doctorSuggestions.length > 0) {
+      const doc = doctorSuggestions[0];
+      const slug = generateDoctorSlug(doc.name, doc._id);
+      navigate(`/doctor/profile/${slug}`);
+    }
+  };
+
+  const selectDoctor = (doc) => {
+    const slug = generateDoctorSlug(doc.name, doc._id);
+    setDoctorQuery("");
+    setDoctorSuggestions([]);
+    navigate(`/doctor/profile/${slug}`);
+  };
+
   return (
     <div className='p-6 max-w-4xl mx-auto mb-6 mt-10'>
       <div className='flex flex-col md:flex-row justify-center gap-4'>
@@ -119,6 +180,42 @@ const SearchBar = ({ onCitySelect }) => {
           <div className='absolute right-0 top-0 h-full w-10 flex items-center justify-center bg-[#f2fafe] border-l border-gray-300 rounded-e-md pointer-events-none'>
             <Search />
           </div>
+        </div>
+      </div>
+      {/* Doctor name search (on next line) */}
+      <div className='mt-3'>
+        <div
+          className='relative w-full'
+          ref={doctorInputRef}>
+          <input
+            type='text'
+            value={doctorQuery}
+            placeholder='Search doctor by name'
+            onChange={handleDoctorInputChange}
+            onKeyDown={handleDoctorKeyDown}
+            autoComplete='off'
+            className='w-full h-11 border bg-white px-3 pr-12 py-2 rounded-md text-gray-700 font-medium border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'
+          />
+          <div className='absolute right-0 top-0 h-full w-10 flex items-center justify-center bg-[#f2fafe] border-l border-gray-300 rounded-e-md pointer-events-none'>
+            <Search />
+          </div>
+          {doctorSuggestions.length > 0 && (
+            <div className='absolute left-0 mt-1 w-full max-h-40 overflow-y-auto bg-white border border-gray-200 rounded shadow z-50'>
+              {doctorSuggestions.map((doc) => (
+                <div
+                  key={doc._id}
+                  onMouseDown={() => selectDoctor(doc)}
+                  className='px-4 py-2 cursor-pointer hover:bg-blue-100 text-gray-700 font-medium flex items-center justify-between'>
+                  <span>{doc.name}</span>
+                  <span className='text-xs text-gray-500'>
+                    {(Array.isArray(doc.speciality)
+                      ? doc.speciality[0]
+                      : doc.speciality) || ""}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
