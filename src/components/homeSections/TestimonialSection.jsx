@@ -167,15 +167,6 @@ const TestimonialSection = () => {
                     Login as Doctor
                   </Button>
                 </Link>
-                <Link
-                  to='/admin/login'
-                  onClick={() => setOpenLoginModal(false)}>
-                  <Button
-                    variant='secondary'
-                    className='w-full'>
-                    Login as Admin
-                  </Button>
-                </Link>
               </div>
             </DialogContent>
           </Dialog>
