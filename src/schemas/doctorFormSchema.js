@@ -123,7 +123,7 @@ export const doctorFormSchema = z
 
     // Backend fields (won't be validated on frontend)
     hospitalVerified: z.boolean().default(false),
-    hospitalId: z.string().nullable().optional(),
+    hospitalId: z.string().nullable().optional().or(z.undefined()),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -149,6 +149,6 @@ export const defaultValues = {
   confirmPassword: "",
   agreement: false,
   hospitalVerified: false,
-  hospitalId: "",
+  hospitalId: undefined,
   fee: undefined,
 };

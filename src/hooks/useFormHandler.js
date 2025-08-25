@@ -87,6 +87,15 @@ export const useFormHandler = () => {
   const prepareSubmissionData = (formData) => {
     const { confirmPassword, agreement, ...backendData } = formData;
 
+    // Remove hospitalId if it's null, undefined, or empty string
+    if (
+      !backendData.hospitalId ||
+      backendData.hospitalId === "" ||
+      backendData.hospitalId === null
+    ) {
+      delete backendData.hospitalId;
+    }
+
     return {
       ...backendData,
       name: backendData.name?.trim(),
@@ -98,7 +107,6 @@ export const useFormHandler = () => {
       fullAddress: backendData.fullAddress?.trim(),
       city: backendData.city?.trim() || "",
       hospital: backendData.hospital?.trim(),
-      hospitalId: backendData.hospitalId || "",
       hospitalVerified: backendData.hospitalVerified || false,
       cnic: backendData.cnic?.trim(),
       experience: Number(backendData.experience),
