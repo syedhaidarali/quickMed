@@ -36,7 +36,6 @@ export const AdminProvider = ({ children }) => {
     try {
       const { data } = await adminService.validateToken();
       const user = data?.data;
-      console.log(user);
       setAdmin(user);
       // fetch data only if role is admin
       if (user?.role === "admin") {

@@ -35,7 +35,6 @@ export const ChatProvider = ({ children }) => {
 
       return response;
     } catch (error) {
-      console.log(error, "errrrrrrrrrrr");
       toast.error("Failed to send message");
     } finally {
       setLoading(false);
@@ -102,7 +101,6 @@ export const ChatProvider = ({ children }) => {
       // Refresh threads to show the new messages
       await getAllThreads();
     } catch (error) {
-      console.error("Failed to confirm consultation:", error);
       toast.error(error.message || "Failed to confirm consultation");
     } finally {
       setLoading(false);
@@ -129,7 +127,6 @@ export const ChatProvider = ({ children }) => {
       // Refresh threads to show the new message
       await getAllThreads();
     } catch (error) {
-      console.error("Failed to cancel consultation:", error);
       toast.error("Failed to cancel consultation");
     } finally {
       setLoading(false);
@@ -147,7 +144,7 @@ export const ChatProvider = ({ children }) => {
 
       return response;
     } catch (error) {
-      console.error("ChatContext - getAllThreads error:", error);
+      toast.error(error.response.data.data);
       throw error;
     } finally {
       if (showLoading) setThreadsLoading(false);
@@ -169,7 +166,7 @@ export const ChatProvider = ({ children }) => {
 
       return response;
     } catch (error) {
-      console.error("ChatContext - getMessageOfSingleThread error:", error);
+      toast.error(error.response.data.data);
       throw error;
     } finally {
       if (showLoading) setMessagesLoading(false);

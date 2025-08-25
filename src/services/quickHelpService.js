@@ -1,6 +1,7 @@
 /** @format */
 
 import { aiRecommendationService } from "./index";
+import { toast } from "sonner";
 
 export const quickHelpService = {
   getDoctorRecommendations: async (symptoms) => {
@@ -10,10 +11,7 @@ export const quickHelpService = {
       );
       return response;
     } catch (error) {
-      console.error(
-        "Error in quickHelpService.getDoctorRecommendations:",
-        error
-      );
+      toast.error(error.response.data.data);
       throw error;
     }
   },

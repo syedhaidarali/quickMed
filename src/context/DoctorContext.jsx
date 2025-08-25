@@ -68,7 +68,6 @@ export const DoctorProvider = ({ children }) => {
       toast.success("Login Successfully");
       return doctorData.response.data.message;
     } catch (err) {
-      console.log(err);
       toast.error(err.response.data.data);
     } finally {
       setLoading(false);
@@ -83,7 +82,6 @@ export const DoctorProvider = ({ children }) => {
       toast.success("Form Submitted Successfully");
       navigate("/doctor/login");
     } catch (err) {
-      console.log(err);
       toast.error(err.response.data.data);
     } finally {
       setLoading(false);
@@ -91,7 +89,6 @@ export const DoctorProvider = ({ children }) => {
   };
 
   const DoctorForgotPassword = async (credentials, navigate) => {
-    console.log(credentials, "credentials");
     setLoading(true);
     try {
       const { data } = await doctorService.forgotPassword(credentials);
@@ -108,7 +105,6 @@ export const DoctorProvider = ({ children }) => {
   };
 
   const DoctorResetPassword = async (credentials, navigate) => {
-    console.log(credentials, "credentials");
     setLoading(true);
     try {
       const { data } = await doctorService.resetPassword(credentials);
@@ -125,7 +121,6 @@ export const DoctorProvider = ({ children }) => {
   };
 
   const DoctorChangePassword = async (credentials, navigate) => {
-    console.log(credentials, "credentials");
     setLoading(true);
     try {
       const { data } = await doctorService.changePassword(credentials);
@@ -155,8 +150,6 @@ export const DoctorProvider = ({ children }) => {
     setLoading(true);
     try {
       const result = await doctorService.uploadDocuments(formData);
-      console.log("document", result);
-      console.log(result.data.data.documents[0].documentUrl);
       navigate(``);
       toast.success("Documents Uploaded");
       return result;
@@ -183,7 +176,7 @@ export const DoctorProvider = ({ children }) => {
       setAllDoctors(result.data.data.doctors);
       return result;
     } catch (err) {
-      console.log(err);
+      toast.error(err.response.data.data);
     }
   };
 

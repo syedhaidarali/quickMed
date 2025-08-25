@@ -17,14 +17,12 @@ export const AuthProvider = ({ children }) => {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [allUsers, setAllUsers] = useState([]);
   const [error, setError] = useState(null);
-  console.log(allUsers);
   const validateSession = async () => {
     try {
       const { data } = await authService.validateToken();
       setUser(data.data);
       setIsAuthenticated(true);
     } catch (err) {
-      console.log(err);
     } finally {
       setIsAuthLoading(false);
     }
@@ -55,7 +53,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signUpFun = async (credentials, navigate) => {
-    console.log(credentials);
     setLoading(true);
     try {
       const { data } = await authService.signUpRequest(credentials);
@@ -130,7 +127,7 @@ export const AuthProvider = ({ children }) => {
       toast.success("Logged out successfully");
       navigate("/login");
     } catch (error) {
-      console.error("Sign Out Error:", error);
+      toast.error(error.response.data.data);
     } finally {
       setLoading(false);
     }

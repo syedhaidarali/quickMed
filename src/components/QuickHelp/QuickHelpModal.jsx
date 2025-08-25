@@ -87,17 +87,7 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
       const response = await aiRecommendationService.getDoctorRecommendations(
         inputMessage
       );
-      console.log("Full API response:", response);
       const recommendations = response?.data?.data;
-      console.log("aiRecommendationService", response);
-
-      // Debug: Log the structure to understand the data
-      console.log("API Response data:", response?.data);
-      console.log(
-        "Total doctors analyzed:",
-        response?.data?.totalDoctorsAnalyzed
-      );
-      console.log("Recommendations data:", recommendations);
 
       const botResponse = {
         id: Date.now() + 1,
@@ -111,7 +101,6 @@ const QuickHelpModal = ({ isOpen, onClose }) => {
 
       setMessages((prev) => [...prev, botResponse]);
     } catch (error) {
-      console.error("Error getting recommendations:", error);
       const errorMessage = {
         id: Date.now() + 1,
         type: "bot",

@@ -17,10 +17,9 @@ export const HospitalProvider = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await hospitalService.validateToken();
-      console.log(data.data, "data");
       setHospital(data.data);
     } catch (err) {
-      console.log(err);
+      toast.error(err.response.data.data);
     } finally {
       setLoading(false);
     }
@@ -35,7 +34,6 @@ export const HospitalProvider = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await hospitalService.login(credentials);
-      console.log(data.data.token);
       localStorage.setItem("token", data.data.token);
       setHospital(data.data.hospital);
       toast.success("Login Successfully");
@@ -43,7 +41,6 @@ export const HospitalProvider = ({ children }) => {
       return data.data.message;
     } catch (err) {
       toast.error(err.response.data.data || "Login failed");
-      console.log(err);
       setError(err);
     } finally {
       setLoading(false);
@@ -51,7 +48,6 @@ export const HospitalProvider = ({ children }) => {
   };
 
   const HospitalSignUp = async (formData, navigate) => {
-    console.log("hospital SignUp", formData);
     setLoading(true);
     setError(null);
     try {
@@ -59,7 +55,6 @@ export const HospitalProvider = ({ children }) => {
       toast.success("Form Submitted Successfully");
       navigate("/hospital/login");
     } catch (err) {
-      console.log("err", err.response.data.data);
       toast.error(err.response.data.data);
     } finally {
       setLoading(false);
@@ -136,7 +131,7 @@ export const HospitalProvider = ({ children }) => {
       const res = await hospitalService.getAllPublicHospital();
       setAllPublicHospital(res.data.data.hospitals);
     } catch (err) {
-      console.log(err.response.data.data);
+      toast.error(err.response.data.data);
     } finally {
       setLoading(false);
     }

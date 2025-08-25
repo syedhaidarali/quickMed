@@ -4,7 +4,6 @@ import request from "../helpers/request";
 
 export const chatApi = {
   sendMessage: async (receiverId, message) => {
-    console.log("Sending message to:", receiverId, "Message:", message);
     const response = await request.post(`/chat/send/${receiverId}`, {
       message: message,
     });

@@ -42,17 +42,14 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
         onLeave();
       },
       onParticipantJoined: (participant) => {
-        console.log("Participant joined:", participant);
         toast.info(
           `${participant.displayName || "Someone"} joined the meeting`
         );
       },
       onParticipantLeft: (participant) => {
-        console.log("Participant left:", participant);
         toast.info(`${participant.displayName || "Someone"} left the meeting`);
       },
       onError: (error) => {
-        console.error("Meeting error:", error);
         toast.error("Meeting error occurred");
       },
     });
@@ -83,7 +80,6 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
       if (enableWebcam) {
         await enableWebcam(customTrack);
         setHdTrackEnabled(true);
-        console.log("Published custom HD webcam track");
         toast.success("HD camera enabled");
       }
     } catch (err) {
@@ -94,7 +90,7 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
           await enableWebcam();
         }
       } catch (fallbackErr) {
-        console.error("Failed to enable default webcam:", fallbackErr);
+        toast.error(fallbackErr.response.data.data);
       }
     }
   };
@@ -308,12 +304,6 @@ const VideoChat = ({
         setLoading(true);
         setError(null);
 
-        console.log("Initializing meeting...", {
-          meetingId,
-          isDoctor,
-          participantName,
-        });
-
         // Generate auth token
         const token = await generateAuthToken(
           currentUser?._id || userId,
@@ -366,7 +356,6 @@ const VideoChat = ({
           setFinalMeetingId(meetingId);
         }
       } catch (error) {
-        console.error("Failed to initialize meeting:", error);
         setError(error.message || "Failed to initialize meeting");
         toast.error(error.message || "Failed to initialize meeting");
       } finally {

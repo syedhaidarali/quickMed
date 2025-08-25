@@ -60,7 +60,6 @@ const HospitalReviewModal = ({
   const profileImageInputRef = React.useRef();
   const [profilePreviewUrl, setProfilePreviewUrl] = useState(null);
 
-  console.log(hospital, "hossssssssssssssssspital");
   React.useEffect(() => {
     setDocuments(hospital.documents || []);
   }, [hospital.documents, hospital]);
@@ -94,7 +93,7 @@ const HospitalReviewModal = ({
 
   const openImageViewer = (imageUrl) => {
     if (!imageUrl) {
-      console.error("No image URL provided");
+      toast.error("No image URL provided");
       return;
     }
     setSelectedImage(imageUrl);

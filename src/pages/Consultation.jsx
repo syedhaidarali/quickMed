@@ -47,7 +47,6 @@ const Consultation = () => {
 
       setIsInConsultation(true);
     } catch (error) {
-      console.error("Failed to initialize consultation:", error);
       toast.error("Failed to start consultation");
       navigate("/");
     } finally {

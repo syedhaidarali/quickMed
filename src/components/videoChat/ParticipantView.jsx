@@ -4,6 +4,7 @@
 import React, { useRef, useEffect } from "react";
 import { useParticipant } from "@videosdk.live/react-sdk";
 import { MicOffIcon, VideoOffIcon } from "../../assets/svg";
+import { toast } from "sonner";
 
 const ParticipantView = ({ participantId, mirror = false }) => {
   const micRef = useRef(null);
@@ -20,9 +21,9 @@ const ParticipantView = ({ participantId, mirror = false }) => {
         videoRef.current.srcObject = mediaStream;
         videoRef.current
           .play()
-          .catch((error) => console.error("Video play failed:", error));
+          .catch((error) => toast.error(error.response.data.data));
       } catch (e) {
-        console.error("Failed to add track to MediaStream:", e);
+        toast.error(e.response.data.data);
       }
     } else if (videoRef.current) {
       videoRef.current.srcObject = null;
@@ -39,9 +40,9 @@ const ParticipantView = ({ participantId, mirror = false }) => {
         micRef.current.srcObject = mediaStream;
         micRef.current
           .play()
-          .catch((error) => console.error("Audio play failed", error));
+          .catch((error) => toast.error(error.response.data.data));
       } catch (e) {
-        console.error("Failed to add mic track to MediaStream:", e);
+        toast.error(e.response.data.data);
       }
     } else {
       micRef.current.srcObject = null;
@@ -62,10 +63,8 @@ const ParticipantView = ({ participantId, mirror = false }) => {
               ? { transform: "scaleX(-1)" }
               : { transform: "none" }
           }
-          onLoadedMetadata={() =>
-            console.log("Video metadata loaded for:", displayName)
-          }
-          onError={(e) => console.error("Video error for:", displayName, e)}
+          onLoadedMetadata={() => {}}
+          onError={(e) => toast.error(e.response.data.data)}
         />
       );
     }

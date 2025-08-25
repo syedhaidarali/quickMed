@@ -156,7 +156,7 @@ const DoctorReviewModal = ({
       updateDoctorDetails(doctor._id, updatedData);
       setIsEditMode(false);
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to save changes");
     } finally {
       setSaveLoading(false);
     }
@@ -197,7 +197,7 @@ const DoctorReviewModal = ({
         formData.append("documents", file); // profile image
         await DoctorDocumentUpload(formData, doctor._id);
       } catch (error) {
-        console.error("Document upload failed:", error);
+        toast.error(error.response.data.data);
       } finally {
         setDocumentUploadLoading(false);
       }
@@ -207,7 +207,6 @@ const DoctorReviewModal = ({
   // Handler for toggling active status
   const handleToggleActive = async () => {
     if (doctor.isActive) {
-      console.log(doctor.isActive);
       await doctorAction(doctor._id, { action: false });
     } else {
       await doctorAction(doctor._id, { action: true });
@@ -231,17 +230,12 @@ const DoctorReviewModal = ({
   const formatDate = (date) => formatDateTime(date, "LLL");
 
   const openImageViewer = (imageUrl) => {
-    console.log("openImageViewer called with:", imageUrl);
     if (!imageUrl) {
-      console.error("No image URL provided");
+      toast.error("No image URL provided");
       return;
     }
     setSelectedImage(imageUrl);
     setIsImageViewerOpen(true);
-    console.log("Image viewer state set:", {
-      selectedImage: imageUrl,
-      isOpen: true,
-    });
   };
 
   const closeImageViewer = () => {

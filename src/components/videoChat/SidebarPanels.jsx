@@ -37,7 +37,6 @@ const ChatPanel = ({ meetingId, localParticipant, isVisible }) => {
       setNewMessage("");
       // Don't show toast for own messages to avoid spam
     } catch (error) {
-      console.error("Failed to send message:", error);
       toast.error("Failed to send message. Please try again.");
     }
   };

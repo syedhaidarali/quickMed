@@ -63,13 +63,11 @@ export const useFormHandler = () => {
       setValue("hospital", hospitalName, { shouldValidate: true });
       setValue("hospitalId", selectedHospital._id);
       setValue("hospitalVerified", true);
-      console.log("Set verified hospital:", selectedHospital._id);
     } else {
       // General/new hospital
       setValue("hospital", hospitalName, { shouldValidate: true });
       setValue("hospitalId", null);
       setValue("hospitalVerified", false);
-      console.log("Set new hospital: null");
     }
   };
 
@@ -112,7 +110,6 @@ export const useFormHandler = () => {
   const onSubmit = async (formData) => {
     try {
       const backendData = prepareSubmissionData(formData);
-      console.log("Doctor Data", backendData);
 
       const result = await DoctorSignUp(backendData, navigate);
       if (result?.success) {

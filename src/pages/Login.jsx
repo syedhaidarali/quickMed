@@ -33,7 +33,6 @@ const Login = () => {
       navigate
     );
     if (msg) {
-      console.log(msg);
       setModalOpen(true);
       setLoginMessage(msg);
     }

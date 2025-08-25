@@ -67,8 +67,6 @@ const DoctorDetail = () => {
       })
     : filteredDoctors;
 
-  console.log("Filtered Doctors:", filteredDoctors);
-
   if (!targetSpecialty) {
     return (
       <div className='min-h-[60vh] flex items-center justify-center bg-emerald-50'>

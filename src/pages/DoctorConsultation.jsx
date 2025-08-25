@@ -22,11 +22,6 @@ const DoctorConsultation = () => {
       return;
     }
 
-    if (!meetingId || meetingId === "new") {
-      // This is fine - doctor can create new meetings
-      console.log("Doctor creating new consultation");
-    }
-
     // Initialize consultation
     initializeConsultation();
   }, [meetingId, isAuthenticated]);
@@ -47,7 +42,6 @@ const DoctorConsultation = () => {
 
       setIsInConsultation(true);
     } catch (error) {
-      console.error("Failed to initialize consultation:", error);
       toast.error("Failed to start consultation");
       navigate("/");
     } finally {

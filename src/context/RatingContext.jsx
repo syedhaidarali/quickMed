@@ -14,7 +14,7 @@ export const RatingProvider = ({ children }) => {
       const response = await ratingService.getPlatformRatings();
       setRatings(response.data.data);
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.data);
     }
   };
 

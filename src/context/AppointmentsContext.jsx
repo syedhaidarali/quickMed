@@ -80,7 +80,6 @@ export const AppointmentsProvider = ({ children }) => {
     setLoadingKey("userAppointments", true);
     try {
       const response = await AppointmentsService.userAppointments();
-      console.log("user appointments ", response);
       const data = response?.data?.data || response?.data || [];
       setUsersAppointments(Array.isArray(data) ? data : []);
       return data;
@@ -109,7 +108,6 @@ export const AppointmentsProvider = ({ children }) => {
     setLoadingKey("doctorAppointments", true);
     try {
       const response = await AppointmentsService.doctorAppointments();
-      console.log("Appointments Response", response);
       const data = response?.data?.data || response?.data || [];
       setDoctorsAppointments(Array.isArray(data) ? data : []);
       return data;

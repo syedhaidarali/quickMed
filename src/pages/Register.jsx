@@ -8,6 +8,7 @@ import { useAuth } from "../context";
 import { InputField } from "../components/formItems";
 import { formatCNIC } from "../helpers";
 import { userFormSchema } from "../schemas";
+import { toast } from "sonner";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ const Register = () => {
     try {
       await signUpFun(data, navigate);
     } catch (error) {
-      console.error("Registration error:", error);
+      toast.error(error.response.data.data);
     }
   };
 

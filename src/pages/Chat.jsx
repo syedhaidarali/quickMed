@@ -5,6 +5,7 @@ import { useChat } from "../context/ChatContext";
 import { useAuth } from "../context/AuthContext";
 import { useLocation } from "react-router-dom";
 import { ConversationList, ChatWindow } from "../components/chat";
+import { toast } from "sonner";
 
 const Chat = () => {
   const { allDoctors, doctor } = useDoctor();
@@ -171,10 +172,8 @@ const Chat = () => {
           localStorage.setItem("chat:lastThreadId", newThread._id);
         } catch (e) {}
       }
-
-      console.log("Message sent successfully to:", selectedDoctor.name);
     } catch (error) {
-      console.error("Error sending message:", error);
+      toast.error(error.response.data.data);
     }
   };
 

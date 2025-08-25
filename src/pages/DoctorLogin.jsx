@@ -33,7 +33,6 @@ const DoctorLogin = () => {
       navigate
     );
     if (msg) {
-      console.log(msg);
       setModalOpen(true);
       setLoginMessage(msg);
     }

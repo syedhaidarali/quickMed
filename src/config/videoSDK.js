@@ -18,10 +18,8 @@ export const generateAuthToken = async (
 ) => {
   try {
     // For now, always use development token since we're handling everything in frontend
-    console.log("✅ Using development token for:", userType, participantName);
     return VIDEOSDK_CONFIG.TEMP_TOKEN;
   } catch (error) {
-    console.error("Error generating auth token:", error);
     throw new Error("Failed to generate authentication token");
   }
 };
@@ -53,8 +51,6 @@ export const createMeeting = async (token, config = {}) => {
       createdAt: new Date().toISOString(),
     };
   } catch (error) {
-    console.error("Error creating meeting:", error);
-
     if (error.response?.status === 401) {
       throw new Error("Invalid authentication token");
     }

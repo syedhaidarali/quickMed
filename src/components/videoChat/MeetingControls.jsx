@@ -35,7 +35,7 @@ const MeetingControls = ({
       await toggleMic();
       setIsMicOn((prev) => !prev);
     } catch (error) {
-      console.error("Failed to toggle microphone:", error);
+      toast.error(error.response.data.data);
     } finally {
       setIsToggling((prev) => ({ ...prev, mic: false }));
     }
@@ -51,7 +51,7 @@ const MeetingControls = ({
       await toggleWebcam();
       setIsWebcamOn((prev) => !prev);
     } catch (error) {
-      console.error("Failed to toggle webcam:", error);
+      toast.error(error.response.data.data);
     } finally {
       setIsToggling((prev) => ({ ...prev, webcam: false }));
     }
@@ -62,7 +62,7 @@ const MeetingControls = ({
       await leave();
       if (onLeave) onLeave();
     } catch (error) {
-      console.error("Error leaving meeting:", error);
+      toast.error(error.response.data.data);
       if (onLeave) onLeave(); // Still call onLeave even if leave fails
     }
   };

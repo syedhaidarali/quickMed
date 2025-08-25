@@ -48,7 +48,6 @@ const ConsultationLauncher = ({ doctorId, doctorName, isDoctor = false }) => {
         throw new Error("Failed to create meeting");
       }
     } catch (error) {
-      console.error("Failed to start consultation:", error);
       toast.error("Failed to start consultation. Please try again.");
     } finally {
       setIsCreating(false);
@@ -78,7 +77,6 @@ const ConsultationLauncher = ({ doctorId, doctorName, isDoctor = false }) => {
 
       toast.success("Joining consultation...");
     } catch (error) {
-      console.error("Failed to join consultation:", error);
       toast.error("Failed to join consultation");
     } finally {
       setIsJoining(false);

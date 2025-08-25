@@ -58,7 +58,6 @@ export const QuickHelpProvider = ({ children }) => {
       const response = await quickHelpService.getDoctorRecommendations(
         inputMessage
       );
-      console.log("Full API response:", response);
       const recommendations = response?.data?.data;
 
       const botResponse = quickHelpService.createBotMessage(
@@ -69,7 +68,6 @@ export const QuickHelpProvider = ({ children }) => {
 
       setMessages((prev) => [...prev, botResponse]);
     } catch (error) {
-      console.error("Error getting recommendations:", error);
       const errorMessage = quickHelpService.createErrorMessage(
         "I apologize, but I'm having trouble processing your request right now. Please try again in a moment."
       );
