@@ -251,10 +251,64 @@ const MessagesList = ({
     return m ? m[1] : null;
   };
 
+  // Extract a meeting id from free-form text when doctor shares only the code
+  const extractMeetingIdFromText = (text) => {
+    if (!text || typeof text !== "string") return null;
+    // Common explicit patterns
+    const explicit = text.match(/meeting\s*id\s*[:\-]?\s*([A-Za-z0-9\-]{6,})/i);
+    if (explicit && explicit[1]) return explicit[1];
+    const code = text.match(/code\s*[:\-]?\s*([A-Za-z0-9\-]{6,})/i);
+    if (code && code[1]) return code[1];
+    // If the entire message looks like a single code/token
+    const trimmed = text.trim();
+    if (
+      /^[A-Za-z0-9\-]{6,}$/.test(trimmed) &&
+      trimmed.split(/\s+/).length === 1
+    )
+      return trimmed;
+    return null;
+  };
+
   const renderMessageBody = (text) => {
     const joinPath = extractJoinPath(text);
     if (!joinPath) {
-      return <div className='whitespace-pre-wrap'>{text}</div>;
+      // Auto-linkify bare meeting id shared in chat
+      const detectedMeetingId = extractMeetingIdFromText(text);
+      if (!detectedMeetingId) {
+        return <div className='whitespace-pre-wrap'>{text}</div>;
+      }
+
+      const handleDirectJoin = (e) => {
+        e.preventDefault();
+        let targetPath;
+        const meetingId = detectedMeetingId;
+        if (isDoctorRoute) {
+          const patientId = getOtherParticipantId();
+          targetPath = patientId
+            ? `/doctor/consultation/${meetingId}/${patientId}`
+            : `/doctor/consultation/${meetingId}`;
+        } else {
+          const doctorId = getOtherParticipantId();
+          targetPath = doctorId
+            ? `/consultation/${meetingId}/${doctorId}`
+            : `/consultation/${meetingId}`;
+        }
+        navigate(targetPath);
+      };
+
+      return (
+        <div className='whitespace-pre-wrap'>
+          {text}
+          <div className='mt-2'>
+            <a
+              href='#'
+              onClick={handleDirectJoin}
+              className='underline text-blue-600 hover:text-blue-700'>
+              Join with this meeting ID
+            </a>
+          </div>
+        </div>
+      );
     }
 
     // Render with clickable join link that routes inside the SPA
