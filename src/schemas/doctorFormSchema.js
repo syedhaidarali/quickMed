@@ -149,6 +149,6 @@ export const defaultValues = {
   confirmPassword: "",
   agreement: false,
   hospitalVerified: false,
-  hospitalId: null,
+  hospitalId: "",
   fee: undefined,
 };

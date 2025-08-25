@@ -98,7 +98,7 @@ export const useFormHandler = () => {
       fullAddress: backendData.fullAddress?.trim(),
       city: backendData.city?.trim() || "",
       hospital: backendData.hospital?.trim(),
-      hospitalId: backendData.hospitalId || null,
+      hospitalId: backendData.hospitalId || "",
       hospitalVerified: backendData.hospitalVerified || false,
       cnic: backendData.cnic?.trim(),
       experience: Number(backendData.experience),
