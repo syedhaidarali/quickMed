@@ -337,15 +337,23 @@ const VideoChat = ({
             }
           }
         } else {
-          // Patient validation
+          // Patient flow: trust meetingId from doctor and attempt to join directly
           if (!meetingId || meetingId === "new") {
             throw new Error("Meeting ID is required for patients");
           }
 
-          const validation = await validateMeeting(token, meetingId);
-          if (!validation.isValid) {
-            throw new Error("Invalid meeting ID. Please check and try again.");
+          // Optionally validate, but don't block joining if validation endpoint fails
+          try {
+            const validation = await validateMeeting(token, meetingId);
+            if (!validation.isValid) {
+              console.warn(
+                "Validation reported invalid, attempting to join anyway"
+              );
+            }
+          } catch (e) {
+            console.warn("Validation request failed, proceeding to join", e);
           }
+
           setFinalMeetingId(meetingId);
         }
       } catch (error) {

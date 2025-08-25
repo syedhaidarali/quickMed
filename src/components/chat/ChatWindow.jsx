@@ -26,7 +26,11 @@ const ChatWindow = ({
   allDoctors = [],
   allUsers = [],
   user,
+  doctorSelf,
   participants = [],
+  onConfirmConsultation,
+  onCancelConsultation,
+  isDoctorRoute = false,
 }) => {
   const messagesEndRef = useRef(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -146,6 +150,10 @@ const ChatWindow = ({
               allUsers={allUsers}
               participants={participants}
               otherParticipant={selectedDoctor}
+              doctorSelf={doctorSelf}
+              onConfirmConsultation={onConfirmConsultation}
+              onCancelConsultation={onCancelConsultation}
+              isDoctorRoute={isDoctorRoute}
             />
             <div
               ref={messagesEndRef}

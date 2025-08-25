@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom";
 import { ConversationList, ChatWindow } from "../components/chat";
 
 const Chat = () => {
-  const { allDoctors } = useDoctor();
+  const { allDoctors, doctor } = useDoctor();
   const {
     sendMessage,
     loading,
@@ -20,6 +20,8 @@ const Chat = () => {
     currentThread,
     threadsLoading,
     messagesLoading,
+    confirmConsultation,
+    cancelConsultation,
   } = useChat();
   const { user, allUsers } = useAuth();
   const location = useLocation();
@@ -123,9 +125,13 @@ const Chat = () => {
           allDoctors={allDoctors}
           allUsers={allUsers}
           user={user}
+          doctorSelf={doctor}
           participants={
             threads.find((t) => t._id === currentThread)?.participants || []
           }
+          onConfirmConsultation={confirmConsultation}
+          onCancelConsultation={cancelConsultation}
+          isDoctorRoute={isDoctorRoute}
         />
       </div>
     </div>

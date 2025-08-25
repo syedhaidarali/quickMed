@@ -3,6 +3,9 @@ import React, { useEffect, useRef } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { formatTime } from "../../helpers/date.helper";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
+import { Check, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const MessagesList = ({
   messages = [],
@@ -11,8 +14,13 @@ const MessagesList = ({
   allUsers = [],
   participants = [],
   otherParticipant = null,
+  onConfirmConsultation,
+  onCancelConsultation,
+  isDoctorRoute = false,
+  doctorSelf,
 }) => {
   const endRef = useRef(null);
+  const navigate = useNavigate();
 
   if (!messages || messages.length === 0) {
     return (
@@ -214,6 +222,211 @@ const MessagesList = ({
     return ""; // caller can show fallback text if empty
   };
 
+  // Detect simple consultation request phrase
+  const isConsultationRequest = (message) => {
+    const text = getMessageText(message);
+    return text.includes("I would like to request a video consultation.");
+  };
+
+  // Extract join path (relative) from a confirmation message body
+  const extractJoinPath = (text) => {
+    if (!text) return null;
+    // handle formats like: "Join Link: /path", "Join Link:** /path", "Join Link :  /path"
+    const match = text.match(/Join\s*Link\s*:\s*\**\s*(\S+)/i);
+    if (!match) return null;
+    const raw = match[1];
+    return raw;
+  };
+
+  const getOtherParticipantId = () => {
+    const myId = (doctorSelf && (doctorSelf._id || doctorSelf.id)) || user?._id;
+    return pickOtherParticipantId(myId);
+  };
+
+  const extractMeetingIdFromPath = (path) => {
+    if (!path) return null;
+    const m =
+      path.match(/\/consultation\/([^/]+)/) ||
+      path.match(/\/doctor\/consultation\/([^/]+)/);
+    return m ? m[1] : null;
+  };
+
+  const renderMessageBody = (text) => {
+    const joinPath = extractJoinPath(text);
+    if (!joinPath) {
+      return <div className='whitespace-pre-wrap'>{text}</div>;
+    }
+
+    // Render with clickable join link that routes inside the SPA
+    const parts = text.split(/Join\s*Link\s*:\s*/i);
+    const before = parts[0] || "";
+    const afterPart = parts[1] || "";
+    // remove leading asterisks and spaces before the path echo
+    const cleanedAfter = afterPart.replace(/^\**\s*\S+/, "").trimStart();
+
+    const handleNavigate = (e) => {
+      e.preventDefault();
+      let targetPath = joinPath.replace(/\/+$/, "");
+      const isPatientPath = /^\/consultation\//.test(targetPath);
+      const isDoctorPath = /^\/doctor\/consultation\//.test(targetPath);
+      const meetingId = extractMeetingIdFromPath(targetPath);
+
+      // If current viewer is doctor and the link is patient path, rewrite to doctor path using patientId
+      if (isDoctorRoute && isPatientPath && meetingId) {
+        const patientId = getOtherParticipantId();
+        if (patientId)
+          targetPath = `/doctor/consultation/${meetingId}/${patientId}`;
+      }
+      // If current viewer is patient and the link is doctor path, rewrite to patient path using doctor id
+      if (!isDoctorRoute && isDoctorPath && meetingId) {
+        const doctorId = getOtherParticipantId();
+        if (doctorId) targetPath = `/consultation/${meetingId}/${doctorId}`;
+      }
+
+      navigate(targetPath);
+    };
+
+    return (
+      <div className='whitespace-pre-wrap'>
+        {before}
+        {"Join Link: "}
+        <a
+          href={joinPath}
+          onClick={handleNavigate}
+          className='underline text-blue-600 hover:text-blue-700'>
+          {joinPath}
+        </a>
+        {cleanedAfter ? ` ${cleanedAfter}` : ""}
+      </div>
+    );
+  };
+
+  // helper: normalize participant id from many shapes
+  const getParticipantId = (p) => {
+    if (!p) return null;
+    if (typeof p === "string") return p;
+    if (p.userId) {
+      const u = p.userId;
+      if (typeof u === "string") return u;
+      if (typeof u === "object") return u._id || u.id || null;
+    }
+    return p._id || p.id || null;
+  };
+
+  // Find a probable doctor id from participants different from a given user id
+  const pickOtherParticipantId = (excludeId) => {
+    const ids = (participants || []).map(getParticipantId).filter(Boolean);
+    const other = ids.find((id) => String(id) !== String(excludeId));
+    return other || null;
+  };
+
+  const handleConfirmConsultation = (message) => {
+    if (onConfirmConsultation) {
+      const senderProfile = getSenderProfile(message) || {};
+      const fallbackSenderId =
+        getSenderId(message) ||
+        message?.userId ||
+        message?.senderId ||
+        (typeof message?.user === "object"
+          ? message.user._id || message.user.id
+          : message?.user) ||
+        (typeof message?.sender === "object"
+          ? message.sender._id || message.sender.id
+          : message?.sender) ||
+        null;
+
+      const patientId = senderProfile._id || fallbackSenderId;
+      if (!patientId) return; // cannot proceed without a target
+
+      // resolve doctor identity robustly
+      const resolvedDoctorId =
+        (doctorSelf && (doctorSelf._id || doctorSelf.id)) ||
+        pickOtherParticipantId(patientId) ||
+        user?._id ||
+        null;
+      if (!resolvedDoctorId) return;
+
+      const resolvedDoctor = doctorSelf ||
+        allDoctors.find((d) => String(d._id) === String(resolvedDoctorId)) || {
+          _id: resolvedDoctorId,
+          name: "Doctor",
+          profileImage: null,
+        };
+
+      const request = {
+        _id: message._id || Date.now().toString(),
+        doctorId: resolvedDoctorId,
+        doctorProfile: {
+          _id: resolvedDoctor._id || resolvedDoctor.id,
+          name: resolvedDoctor.name,
+          profileImage:
+            resolvedDoctor.profileImage || resolvedDoctor.avatar || null,
+        },
+        patientId,
+        message: getMessageText(message),
+        status: "pending",
+        createdAt: message.createdAt || new Date().toISOString(),
+        patientProfile: Object.keys(senderProfile).length
+          ? senderProfile
+          : { _id: patientId, name: "Patient", profileImage: null },
+      };
+      onConfirmConsultation(request);
+    }
+  };
+
+  const handleCancelConsultation = (message) => {
+    if (onCancelConsultation) {
+      const senderProfile = getSenderProfile(message) || {};
+      const fallbackSenderId =
+        getSenderId(message) ||
+        message?.userId ||
+        message?.senderId ||
+        (typeof message?.user === "object"
+          ? message.user._id || message.user.id
+          : message?.user) ||
+        (typeof message?.sender === "object"
+          ? message.sender._id || message.sender.id
+          : message?.sender) ||
+        null;
+
+      const patientId = senderProfile._id || fallbackSenderId;
+      if (!patientId) return;
+
+      const resolvedDoctorId =
+        (doctorSelf && (doctorSelf._id || doctorSelf.id)) ||
+        pickOtherParticipantId(patientId) ||
+        user?._id ||
+        null;
+      if (!resolvedDoctorId) return;
+
+      const resolvedDoctor = doctorSelf ||
+        allDoctors.find((d) => String(d._id) === String(resolvedDoctorId)) || {
+          _id: resolvedDoctorId,
+          name: "Doctor",
+          profileImage: null,
+        };
+
+      const request = {
+        _id: message._id || Date.now().toString(),
+        doctorId: resolvedDoctorId,
+        doctorProfile: {
+          _id: resolvedDoctor._id || resolvedDoctor.id,
+          name: resolvedDoctor.name,
+          profileImage:
+            resolvedDoctor.profileImage || resolvedDoctor.avatar || null,
+        },
+        patientId,
+        message: getMessageText(message),
+        status: "pending",
+        createdAt: message.createdAt || new Date().toISOString(),
+        patientProfile: Object.keys(senderProfile).length
+          ? senderProfile
+          : { _id: patientId, name: "Patient", profileImage: null },
+      };
+      onCancelConsultation(request);
+    }
+  };
+
   return (
     <div className='h-full'>
       <ScrollArea className='h-full'>
@@ -222,6 +435,7 @@ const MessagesList = ({
             const sender = getSenderProfile(message);
             const isMine = String(getSenderId(message)) === String(user?._id);
             const text = getMessageText(message);
+            const isConsultationReq = isConsultationRequest(message);
 
             return (
               <div
@@ -256,14 +470,42 @@ const MessagesList = ({
                     className={`px-4 py-2 break-words text-sm leading-6 ${
                       isMine
                         ? "bg-gradient-to-r from-green-600 to-green-500 text-white rounded-2xl rounded-br-none shadow"
+                        : isConsultationReq
+                        ? "bg-blue-50 border border-blue-200 text-blue-900 rounded-2xl rounded-bl-none"
                         : "bg-gray-100 text-gray-900 rounded-2xl rounded-bl-none"
                     }`}>
                     {/* message text (preserves newlines) */}
                     {text ? (
-                      <div className='whitespace-pre-wrap'>{text}</div>
+                      renderMessageBody(text)
                     ) : (
                       <div className='whitespace-pre-wrap text-gray-400 italic'>
                         [No text]
+                      </div>
+                    )}
+
+                    {/* Consultation request buttons for doctors */}
+                    {isConsultationReq && !isMine && isDoctorRoute && (
+                      <div className='mt-3 pt-3 border-t border-blue-200'>
+                        <div className='text-xs text-blue-700 mb-2 font-medium'>
+                          Video Consultation Request
+                        </div>
+                        <div className='flex gap-2'>
+                          <Button
+                            size='sm'
+                            onClick={() => handleConfirmConsultation(message)}
+                            className='bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 h-8'>
+                            <Check className='h-3 w-3 mr-1' />
+                            Confirm
+                          </Button>
+                          <Button
+                            size='sm'
+                            variant='outline'
+                            onClick={() => handleCancelConsultation(message)}
+                            className='text-red-600 border-red-300 hover:bg-red-50 text-xs px-3 py-1 h-8'>
+                            <X className='h-3 w-3 mr-1' />
+                            Decline
+                          </Button>
+                        </div>
                       </div>
                     )}
 

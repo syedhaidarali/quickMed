@@ -227,7 +227,11 @@ const AppRoutes = () => (
     {/* Consultation routes - no layout wrapper */}
     <Route
       path='/consultation/:meetingId/:doctorId'
-      element={<Consultation />}
+      element={
+        <ProtectedUserRoute>
+          <Consultation />
+        </ProtectedUserRoute>
+      }
     />
     <Route
       path='/doctor/consultation/:meetingId/:patientId'

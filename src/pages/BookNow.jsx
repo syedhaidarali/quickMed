@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth, useDoctor } from "../context";
+import { useAuth, useChat, useDoctor } from "../context";
 import { useAppointments } from "../context";
 import { toast } from "sonner";
 import { ConsultationLauncher } from "../components/videoChat";
@@ -22,6 +22,7 @@ const BookNow = () => {
   const [consultationType, setConsultationType] = useState("in-person"); // "in-person" or "video"
   const [doctor, setDoctor] = useState(null);
   const { doctor: doctorData } = useDoctor();
+  const { sendMessage } = useChat();
   // Extract doctor ID from slug and find the doctor
   useEffect(() => {
     if (allDoctors && allDoctors.length > 0) {
@@ -88,13 +89,15 @@ const BookNow = () => {
     } catch (err) {}
   };
 
-  const handleVideoConsultation = () => {
-    if (!isAuthenticated) {
-      toast.error("Please login to start video consultation");
+  const handleVideoConsultationRequest = () => {
+    if (!isAuthenticated || !doctor) {
+      toast.error("Please login to request a video consultation");
       navigate("/login");
       return;
     }
-    // Video consultation will be handled by ConsultationLauncher component
+    sendMessage(doctor._id, "I would like to request a video consultation.");
+    navigate("/user/message");
+    toast.success("Video consultation request sent successfully");
   };
 
   if (loading) {
@@ -198,37 +201,15 @@ const BookNow = () => {
 
             {consultationType === "video" ? (
               <div className='bg-blue-50 p-4 rounded-lg border border-blue-200'>
-                <h4 className='font-semibold text-blue-800 mb-2'>
-                  Video Consultation
-                </h4>
-                <p className='text-blue-700 text-sm mb-4'>
-                  Connect with {doctor.name} via video call. Make sure you have
-                  a stable internet connection and allow camera/microphone
-                  access.
+                <p>
+                  Request a video consultation with {doctor.name}. You will be
+                  notified via email when the doctor is available.
                 </p>
-
-                {isAuthenticated || doctorData ? (
-                  <div className='space-y-3'>
-                    <div className='bg-yellow-50 border border-yellow-200 rounded-lg p-3'>
-                      <p className='text-yellow-800 text-sm'>
-                        <strong>Note:</strong> The doctor will start the video
-                        consultation and provide you with a meeting code to
-                        join.
-                      </p>
-                    </div>
-                    <ConsultationLauncher
-                      doctorId={doctor._id}
-                      doctorName={doctor.name}
-                      isDoctor={false}
-                    />
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => navigate("/login")}
-                    className='w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors'>
-                    Login to Join Video Consultation
-                  </button>
-                )}
+                <button
+                  className=' mt-3 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md'
+                  onClick={handleVideoConsultationRequest}>
+                  Request Consultation
+                </button>
               </div>
             ) : (
               /* In-Person Appointment Form */

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth, useDoctor, useRating } from "../context";
+import { useAdmin, useAuth, useDoctor, useRating } from "../context";
 import { toast } from "sonner";
 import { ConsultationLauncher } from "../components/videoChat";
 import { ReviewModal } from "../modals";
@@ -12,10 +12,12 @@ const DoctorProfile = () => {
 
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
+  const { admin } = useAdmin();
   const {
     allDoctors,
     loading,
     updateDoctorRating: updateDoctorRatingInContext,
+    doctor: authDoctor,
   } = useDoctor();
   const [doctor, setDoctor] = useState(null);
   const [openRatingModal, setOpenRatingModal] = useState(false);
@@ -25,6 +27,7 @@ const DoctorProfile = () => {
     updateDoctorRating: rateApiUpdate,
     deleteDoctorRating,
   } = useRating();
+  const isCurrentDoctor = doctor?._id === authDoctor?._id;
 
   useEffect(() => {
     window.requestAnimationFrame(() => {
@@ -154,23 +157,39 @@ const DoctorProfile = () => {
                   ({getReviewCount(doctor.rating)} reviews)
                 </span>
               </div>
-              <ReviewModal
-                trigger={
-                  <button className='px-3 mt-2 py-2 bg-yellow-500 text-white rounded'>
-                    Add Rating
-                  </button>
-                }
-                showActionButtons={true}
-                mode='rating-only'
-                onSubmit={handleRatingOnly}
-                onUpdate={handleUpdateRating}
-                onDelete={handleDeleteRating}
-                open={openRatingModal}
-                onOpenChange={setOpenRatingModal}
-                title='Rate this Service'
-                description='Tap the stars to leave a quick rating'
-                submitLabel='Add Rating'
-              />
+              <div className='flex items-center justify-center lg:justify-start space-x-2 mt-2'>
+                <button
+                  onClick={() => {
+                    if (user || admin || authDoctor) {
+                      navigate(`/doctor/book/${slug}`);
+                    } else {
+                      setIsOpen(true);
+                    }
+                  }}
+                  disabled={isCurrentDoctor}
+                  className='px-3 py-2 text-sm bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors duration-200 text-center'>
+                  {isCurrentDoctor ? "Not allowed" : "Book Now"}
+                </button>
+                {!isCurrentDoctor && (
+                  <ReviewModal
+                    trigger={
+                      <button className='px-3 py-2 text-sm bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors duration-200 text-center'>
+                        Add Rating
+                      </button>
+                    }
+                    showActionButtons={true}
+                    mode='rating-only'
+                    onSubmit={handleRatingOnly}
+                    onUpdate={handleUpdateRating}
+                    onDelete={handleDeleteRating}
+                    open={openRatingModal}
+                    onOpenChange={setOpenRatingModal}
+                    title='Rate this Service'
+                    description='Tap the stars to leave a quick rating'
+                    submitLabel='Add Rating'
+                  />
+                )}
+              </div>
             </div>
 
             {/* Key Information */}
@@ -274,7 +293,7 @@ const DoctorProfile = () => {
         </div>
 
         {/* Video Consultation Section */}
-        {doctor.availability && (
+        {doctor.availability && !isCurrentDoctor && (
           <div className='bg-white rounded-xl shadow-md p-8 mb-8'>
             <h2 className='text-2xl font-bold text-emerald-800 mb-6 text-center'>
               Start Video Consultation
