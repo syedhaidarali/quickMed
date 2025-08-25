@@ -5,7 +5,7 @@ import React, { useRef, useEffect } from "react";
 import { useParticipant } from "@videosdk.live/react-sdk";
 import { MicOffIcon, VideoOffIcon } from "../../assets/svg";
 
-const ParticipantView = ({ participantId }) => {
+const ParticipantView = ({ participantId, mirror = false }) => {
   const micRef = useRef(null);
   const videoRef = useRef(null);
 
@@ -57,7 +57,11 @@ const ParticipantView = ({ participantId }) => {
           playsInline
           muted={isLocal}
           className='w-full h-full object-contain'
-          style={isLocal ? { transform: "scaleX(-1)" } : { transform: "none" }}
+          style={
+            isLocal || mirror
+              ? { transform: "scaleX(-1)" }
+              : { transform: "none" }
+          }
           onLoadedMetadata={() =>
             console.log("Video metadata loaded for:", displayName)
           }

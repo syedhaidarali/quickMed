@@ -131,62 +131,72 @@ const ConversationList = ({
             <h3 className='text-sm font-medium text-gray-600'>Recent Chats</h3>
           </div>
 
-          {threads.map((thread) => {
-            const doctorOrParticipant = getDoctorFromThread(thread);
+          {[...threads]
+            .sort((a, b) => {
+              const aTime = new Date(
+                a?.updatedAt || a?.lastMessage?.createdAt || 0
+              ).getTime();
+              const bTime = new Date(
+                b?.updatedAt || b?.lastMessage?.createdAt || 0
+              ).getTime();
+              return bTime - aTime; // newest first
+            })
+            .map((thread) => {
+              const doctorOrParticipant = getDoctorFromThread(thread);
 
-            // optional: allow filtering threads by searchQuery (search by participant name or specialty)
-            const matchesSearch =
-              !searchQuery ||
-              doctorOrParticipant?.name
-                ?.toLowerCase()
-                .includes(searchQuery.toLowerCase()) ||
-              doctorOrParticipant?.specialty
-                ?.toLowerCase()
-                .includes(searchQuery.toLowerCase());
+              // optional: allow filtering threads by searchQuery (search by participant name or specialty)
+              const matchesSearch =
+                !searchQuery ||
+                doctorOrParticipant?.name
+                  ?.toLowerCase()
+                  .includes(searchQuery.toLowerCase()) ||
+                doctorOrParticipant?.specialty
+                  ?.toLowerCase()
+                  .includes(searchQuery.toLowerCase());
 
-            if (!matchesSearch) return null;
+              if (!matchesSearch) return null;
 
-            return (
-              <div
-                key={thread._id}
-                onClick={() => onThreadSelect(thread, doctorOrParticipant)}
-                className={`p-3 border-b cursor-pointer hover:bg-gray-50 transition-colors ${
-                  currentThread === thread._id
-                    ? "bg-green-50 border-l-4 border-l-green-500"
-                    : ""
-                }`}>
-                <div className='flex items-center space-x-3'>
-                  <Avatar className='h-12 w-12'>
-                    {doctorOrParticipant.profileImage ? (
-                      <AvatarImage src={doctorOrParticipant.profileImage} />
-                    ) : (
-                      <AvatarFallback className='bg-green-100 text-green-600'>
-                        {doctorOrParticipant.name?.charAt(0)}
-                      </AvatarFallback>
-                    )}
-                  </Avatar>
+              return (
+                <div
+                  key={thread._id}
+                  onClick={() => onThreadSelect(thread, doctorOrParticipant)}
+                  className={`p-3 border-b cursor-pointer hover:bg-gray-50 transition-colors ${
+                    currentThread === thread._id
+                      ? "bg-green-50 border-l-4 border-l-green-500"
+                      : ""
+                  }`}>
+                  <div className='flex items-center space-x-3'>
+                    <Avatar className='h-12 w-12'>
+                      {doctorOrParticipant.profileImage ? (
+                        <AvatarImage src={doctorOrParticipant.profileImage} />
+                      ) : (
+                        <AvatarFallback className='bg-green-100 text-green-600'>
+                          {doctorOrParticipant.name?.charAt(0)}
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
 
-                  <div className='flex-1 min-w-0'>
-                    <div className='flex items-center justify-between'>
-                      <h4 className='font-medium text-gray-900 truncate'>
-                        {doctorOrParticipant.isDoctor
-                          ? `Dr ${doctorOrParticipant.name}`
-                          : doctorOrParticipant.name}
-                      </h4>
-                      <span className='text-xs text-gray-500'>
-                        {formatDate(thread.updatedAt)}
-                      </span>
+                    <div className='flex-1 min-w-0'>
+                      <div className='flex items-center justify-between'>
+                        <h4 className='font-medium text-gray-900 truncate'>
+                          {doctorOrParticipant.isDoctor
+                            ? `Dr ${doctorOrParticipant.name}`
+                            : doctorOrParticipant.name}
+                        </h4>
+                        <span className='text-xs text-gray-500'>
+                          {formatDate(thread.updatedAt)}
+                        </span>
+                      </div>
+
+                      <p className='text-sm text-gray-500 truncate'>
+                        {getLastMessagePreview(thread) ||
+                          doctorOrParticipant.specialty}
+                      </p>
                     </div>
-
-                    <p className='text-sm text-gray-500 truncate'>
-                      {getLastMessagePreview(thread) ||
-                        doctorOrParticipant.specialty}
-                    </p>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       )}
 

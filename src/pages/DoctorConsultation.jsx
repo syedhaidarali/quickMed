@@ -58,7 +58,7 @@ const DoctorConsultation = () => {
   const handleLeaveConsultation = () => {
     setIsInConsultation(false);
     toast.info("Consultation ended");
-    navigate("/doctor/dashboard");
+    navigate("/doctor/messages");
   };
 
   if (loading) {

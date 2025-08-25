@@ -22,7 +22,33 @@ const MessagesList = ({
   const endRef = useRef(null);
   const navigate = useNavigate();
 
-  if (!messages || messages.length === 0) {
+  // Sort messages by createdAt ascending (oldest first)
+  const sortedMessages = Array.isArray(messages)
+    ? [...messages].sort((a, b) => {
+        const ta = new Date(
+          a.createdAt || a.created_at || a.timestamp || 0
+        ).getTime();
+        const tb = new Date(
+          b.createdAt || b.created_at || b.timestamp || 0
+        ).getTime();
+        return ta - tb;
+      })
+    : [];
+
+  // Auto-scroll to bottom when first rendered and whenever messages change
+  useEffect(() => {
+    if (endRef.current) {
+      endRef.current.scrollIntoView({ behavior: "auto", block: "end" });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (endRef.current) {
+      endRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, [sortedMessages.length]);
+
+  if (!sortedMessages || sortedMessages.length === 0) {
     return (
       <div className='flex-1 flex items-center justify-center p-6'>
         <div className='text-center text-gray-500'>
@@ -485,9 +511,12 @@ const MessagesList = ({
     <div className='h-full'>
       <ScrollArea className='h-full'>
         <div className='flex flex-col px-4 py-4 gap-4'>
-          {messages.map((message) => {
+          {sortedMessages.map((message) => {
             const sender = getSenderProfile(message);
-            const isMine = String(getSenderId(message)) === String(user?._id);
+            const myId = isDoctorRoute
+              ? doctorSelf && (doctorSelf._id || doctorSelf.id)
+              : user?._id;
+            const isMine = String(getSenderId(message)) === String(myId);
             const text = getMessageText(message);
             const isConsultationReq = isConsultationRequest(message);
 

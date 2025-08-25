@@ -18,6 +18,7 @@ import {
 import ParticipantView from "./ParticipantView";
 import MeetingControls from "./MeetingControls";
 import { ChatPanel, ParticipantsPanel } from "./SidebarPanels";
+import { useNavigate } from "react-router-dom";
 
 // ---------------------------
 // Meeting View Component
@@ -159,7 +160,10 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
           <div className='flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 overflow-auto'>
             {/* Local Participant */}
             {localParticipant && (
-              <ParticipantView participantId={localParticipant.id} />
+              <ParticipantView
+                participantId={localParticipant.id}
+                mirror
+              />
             )}
 
             {/* Remote Participants */}
@@ -167,6 +171,7 @@ function MeetingView({ onLeave, meetingId, participantName, isDoctor }) {
               <ParticipantView
                 participantId={participantId}
                 key={participantId}
+                mirror
               />
             ))}
 
@@ -281,12 +286,16 @@ const VideoChat = ({
   isPatient = true,
   onLeave,
 }) => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { doctor } = useDoctor();
   const [authToken, setAuthToken] = useState(null);
   const [finalMeetingId, setFinalMeetingId] = useState(meetingId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Default leave behavior: go to home route
+  const handleLeave = onLeave || (() => navigate("/"));
 
   // Determine role & display name
   const isDoctor = !isPatient;
@@ -408,7 +417,7 @@ const VideoChat = ({
               Retry Connection
             </button>
             <button
-              onClick={onLeave}
+              onClick={handleLeave}
               className='w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors'>
               Go Back
             </button>
@@ -428,12 +437,12 @@ const VideoChat = ({
         webcamEnabled: true,
         participantId: currentUser?._id || userId,
         maxResolution: "hd",
-        multiStream: false,
+        multiStream: true,
       }}
       token={authToken}
       joinWithoutUserInteraction={false}>
       <MeetingView
-        onLeave={onLeave}
+        onLeave={handleLeave}
         meetingId={finalMeetingId}
         participantName={participantName}
         isDoctor={isDoctor}

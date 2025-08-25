@@ -29,6 +29,7 @@ const Chat = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [newMessage, setNewMessage] = useState("");
+  const [restoredSelection, setRestoredSelection] = useState(false);
 
   const isDoctorRoute = location.pathname === "/doctor/messages";
   const isUserRoute = location.pathname === "/user/message";
@@ -37,9 +38,86 @@ const Chat = () => {
     getAllThreads({ showLoading: true });
   }, []);
 
+  // Restore last selected doctor/thread once after threads load
+  useEffect(() => {
+    if (restoredSelection) return;
+    if (!threads || threads.length === 0) return;
+
+    try {
+      const lastDoctorId = localStorage.getItem("chat:lastDoctorId");
+      const lastThreadId = localStorage.getItem("chat:lastThreadId");
+
+      // Determine my id based on route
+      const selfId = isDoctorRoute
+        ? doctor && (doctor._id || doctor.id)
+        : user && (user._id || user.id);
+
+      // The list to select the counterpart from
+      const counterpartList = isDoctorRoute ? allUsers : allDoctors;
+
+      // Prefer thread if present
+      if (lastThreadId) {
+        const thread = threads.find(
+          (t) => String(t._id) === String(lastThreadId)
+        );
+        if (thread) {
+          const otherParticipant = thread.participants?.find((p) => {
+            const id =
+              (p.userId && (p.userId._id || p.userId)) || p._id || p.id;
+            return String(id) !== String(selfId);
+          });
+          const counterpartId =
+            (otherParticipant &&
+              ((otherParticipant.userId &&
+                (otherParticipant.userId._id || otherParticipant.userId)) ||
+                otherParticipant._id ||
+                otherParticipant.id)) ||
+            lastDoctorId;
+          const counterpart = counterpartList.find(
+            (d) => String(d._id) === String(counterpartId)
+          );
+          if (counterpart) {
+            setSelectedDoctor(counterpart);
+            getMessageOfSingleThread(thread._id, { showLoading: true });
+            startPolling(thread._id);
+            setRestoredSelection(true);
+            return;
+          }
+        }
+      }
+
+      if (lastDoctorId) {
+        const counterpart = counterpartList.find(
+          (d) => String(d._id) === String(lastDoctorId)
+        );
+        if (counterpart) {
+          setSelectedDoctor(counterpart);
+          setRestoredSelection(true);
+          return;
+        }
+      }
+    } catch (e) {
+      // ignore restore errors
+    }
+
+    setRestoredSelection(true);
+  }, [
+    threads,
+    allDoctors,
+    allUsers,
+    user,
+    doctor,
+    isDoctorRoute,
+    restoredSelection,
+  ]);
+
   const handleDoctorSelect = async (doctor) => {
     setSelectedDoctor(doctor);
     setNewMessage("");
+
+    try {
+      localStorage.setItem("chat:lastDoctorId", doctor._id);
+    } catch (e) {}
 
     // Find if there's an existing thread with this doctor
     const existingThread = threads.find((thread) =>
@@ -50,6 +128,9 @@ const Chat = () => {
       // Load existing messages for this thread
       await getMessageOfSingleThread(existingThread._id, { showLoading: true });
       startPolling(existingThread._id);
+      try {
+        localStorage.setItem("chat:lastThreadId", existingThread._id);
+      } catch (e) {}
     } else {
       // Clear messages for new conversation
       // messages are managed in ChatContext; no direct reset here
@@ -62,6 +143,10 @@ const Chat = () => {
     setNewMessage("");
     await getMessageOfSingleThread(thread._id, { showLoading: true });
     startPolling(thread._id);
+    try {
+      localStorage.setItem("chat:lastDoctorId", doctor._id);
+      localStorage.setItem("chat:lastThreadId", thread._id);
+    } catch (e) {}
   };
 
   const handleSendMessage = async () => {
@@ -82,6 +167,9 @@ const Chat = () => {
       if (newThread) {
         startPolling(newThread._id);
         await getMessageOfSingleThread(newThread._id, { showLoading: true });
+        try {
+          localStorage.setItem("chat:lastThreadId", newThread._id);
+        } catch (e) {}
       }
 
       console.log("Message sent successfully to:", selectedDoctor.name);
